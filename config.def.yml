@@ -1,0 +1,83 @@
+option:
+  0: 
+    name: Quit
+    func: "exit 1"
+  1: 
+    name: Backup
+    func: backup
+  2: 
+    name: Mount
+    func: "mountFstab"
+  3: 
+    name: VPN Connect
+    func: "vpn connectSugar"
+  4: 
+    name: VPN Kill
+    func: "vpn kill"  
+  5: 
+    name: xbuild
+    func: "xbuild"
+  6: 
+    name: Git config global
+    func: "gitConfig global"
+
+git:
+  user:
+    name: "Your Name"
+    email: "email@domain.com"
+
+mount:
+  fstab:
+    0: "192.168.56.101:/srv/www/htdocs"
+    1: "192.168.56.101:/etc/apache2/vhosts.d"
+  
+backup:
+  serverip: 192.168.99.10
+  mountpoint: "/mnt/BackupSynk"
+  path: "$PATH:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
+  command:
+    mount: mount.cifs
+    umount: umount
+    rsync: grsync
+    domain: DOMAIN1
+    username: user.name
+
+xbuild:
+  flav: ent
+  version: 7.5.0
+  license: 'salesa8fb331009c9f0902d19c8edemo'
+  db:
+    user: root
+    password: root
+  rootPath: /srv/www/htdocs
+  repo:
+    0:
+      name: agfa
+      url: agfa.dev
+      path: /srv/www/git-repo/agfa-mango
+    1:
+      name: lapp
+      url: lapp.dev
+      path: /srv/www/git-repo/lapp-mango
+  dbContent:
+    email_addresses:
+      0:
+        id: a63521a9-bd97-d920-0d7a-5469e10a862a
+        email_address: admin@sugarcrm.com
+        email_address_caps: ADMIN@SUGARCRM.COM
+        invalid_email: 0
+        opt_out: 0
+        date_created: "2015-09-07 12:00:12"
+        date_modified: "2015-09-07 12:00:12"
+        deleted: 0
+    email_addr_bean_rel:
+      0:
+        id: a60ff377-d03b-6cca-8ca1-5469e19ae22e
+        email_address_id: a63521a9-bd97-d920-0d7a-5469e10a862a
+        bean_id: 1
+        bean_module: Users
+        primary_address: 1
+        reply_to_address: 0
+        date_created: "2015-09-07 12:00:12"
+        date_modified: "2015-09-07 12:00:12"
+        deleted: 0
