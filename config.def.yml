@@ -20,6 +20,12 @@ option:
   6: 
     name: Git config global
     func: "gitConfig global"
+  7:
+    name: Import SQL Dump
+    func: importSQLDump
+  8:
+    name: System Info
+    func: "sysInfo disk"
 
 git:
   user:
