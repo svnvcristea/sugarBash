@@ -83,7 +83,8 @@ vpn()
         ;;
 
         'connectSugar')
-            sudo vpnc /etc/vpnc/sugarvpn.conf
+            setYamlVal "_vpn_conf"
+            sudo vpnc ${ymlVal}
             break
         ;;
 

@@ -1,11 +1,24 @@
 Sugar Bash Helper
 =================
 
-### Clone SugarCRM CodeSniffer
+# 1) About
 
-* 
-  ```
-  git clone git@github.com:svnvcristea/sugarBash.git
+It's easy to extend and config having all configurable parameters into YAML format on config.yml
+This Sugar bash script helper will support daily routines as:
+ * Backup your files
+ * Mount shared folders
+ * VPN connect & disconnect
+ * SugarCRM create build (based on xbuild)
+ * Git config globals
+
+
+# 2) Installation
+
+### Clone sugarBash
+
+
+  ```bash
+ git clone git@github.com:svnvcristea/sugarBash.git
   ```
 
 ### SetUp config file
@@ -14,18 +27,19 @@ Copy config.def.yml to config.yml
 
   ```bash
 cd ./sugaBash
-cp -r ./config_def.yml ./config.yml
+cp ./config.def.yml ./config.yml
 
   ```
 
 Check your config.yml file and adjust accordingly
 
-### Run the helper
+### Run the helper and explore the options
 
   ```bash
 sudo bash helper.sh
 
   ```
 
-### Have Fun!
-* Explore the helper!
+# 3) See also
+
+* [SugarCRM CodeSniffer](https://github.com/svnvcristea/SugarCRMCodeSniffer)
