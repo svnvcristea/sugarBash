@@ -6,6 +6,12 @@ error()
     exit 1
 }
 
+checkWhich()
+{
+    which ${1} > /dev/null 2>&1
+    return $?
+}
+
 parse_yaml()
 {
    local prefix=$2
@@ -158,10 +164,16 @@ backup()
 	fi
 
 	# ----    aici trebuia sa verific daca exista comenzile
-	which ${MOUNT} > /dev/null 2>&1 && which ${RSYNC} > /dev/null 2>&1
+	checkWhich ${MOUNT} && checkWhich ${RSYNC}
+	if [  "$?" -ne "0"  ]; then
+		unixInstall $MOUNT
+		unixInstall $RSYNC
+	fi
+
+	checkWhich ${MOUNT} && checkWhich ${RSYNC}
 	if [  "$?" -ne "0"  ]; then
 		error "Can't find $MOUNT or $RSYNC";
-	fi    
+	fi
 
 	if [ ! -d ${MOUNTPOINT} ]; then
 		mkdir -p ${MOUNTPOINT} || ( echo "Unable to create mount point. Exiting..." exit 1; )
@@ -351,15 +363,16 @@ queryDBContent()
 
     while (( ${#ymlVal} > 0 ))
 	do
+	    key="_xbuild_dbContent_email_addresses_"
 	    query=${query}" '${ymlVal}'"
-	    setYamlVal "_xbuild_dbContent_email_addresses_${count}_email_address";      query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addresses_${count}_email_address_caps"; query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addresses_${count}_invalid_email";	    query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addresses_${count}_opt_out";    	    query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addresses_${count}_opt_out";    	    query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addresses_${count}_date_created";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
-        setYamlVal "_xbuild_dbContent_email_addresses_${count}_date_modified";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
-        setYamlVal "_xbuild_dbContent_email_addresses_${count}_deleted";    	    query=${query}",'${ymlVal}'"
+	    setYamlVal "${key}${count}_email_address";      query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_email_address_caps"; query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_invalid_email";	    query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_opt_out";    	    query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_opt_out";    	    query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_date_created";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
+        setYamlVal "${key}${count}_date_modified";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
+        setYamlVal "${key}${count}_deleted";    	    query=${query}",'${ymlVal}'"
         query=${query}"); "
 
 
@@ -374,20 +387,97 @@ queryDBContent()
 
     while (( ${#ymlVal} > 0 ))
 	do
+	    key="_xbuild_dbContent_email_addr_bean_rel_"
 	    query=${query}" '${ymlVal}'"
-	    setYamlVal "_xbuild_dbContent_email_addr_bean_rel_${count}_email_address";      query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addr_bean_rel_${count}_email_address_id";   query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addr_bean_rel_${count}_bean_id";            query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addr_bean_rel_${count}_bean_module";	    query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addr_bean_rel_${count}_primary_address";    query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addr_bean_rel_${count}_reply_to_address";   query=${query}",'${ymlVal}'"
-        setYamlVal "_xbuild_dbContent_email_addr_bean_rel_${count}_date_created";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
-        setYamlVal "_xbuild_dbContent_email_addr_bean_rel_${count}_date_modified";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
-        setYamlVal "_xbuild_dbContent_email_addr_bean_rel_${count}_deleted";    	    query=${query}",'${ymlVal}'"
+	    setYamlVal "${key}${count}_email_address";      query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_email_address_id";   query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_bean_id";            query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_bean_module";	    query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_primary_address";    query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_reply_to_address";   query=${query}",'${ymlVal}'"
+        setYamlVal "${key}${count}_date_created";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
+        setYamlVal "${key}${count}_date_modified";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
+        setYamlVal "${key}${count}_deleted";    	    query=${query}",'${ymlVal}'"
         query=${query}"); "
 
 
 	    count=$(( $count + 1 ))
 	    setYamlVal "_xbuild_dbContent_email_addresses_${count}_id"
 	done
+}
+
+importSQLDump()
+{
+    local DBName=$1
+    local sqlDumpFile=$2
+
+    if [ -z ${DBName} ]; then
+        read -p "Give DB name: " DBName
+    fi
+
+    if [ -z ${sqlDumpFile} ]; then
+        echo "-> Actual path: $PWD"
+        ls | grep .sql
+        read -p "Give sql dump file to import into ${DBName}: " sqlDumpFile
+    fi
+
+    if [ ! -f ${sqlDumpFile} ]; then
+        error "${sqlDumpFile} not found"
+    fi
+
+    echo "-> Proceed importing ${sqlDumpFile} into ${DBName}"
+
+    checkWhich pv
+	if [  "$?" -ne "0"  ]; then
+        unixInstall pv
+	fi
+
+	checkWhich pw
+	if [  "$?" -ne "0"  ]; then
+		mysql -u root -proot ${DBName} < ${sqlDumpFile}
+    else
+        pv -i 1 -p -t -e /path/to/sql/dump | mysql -u root -proot ${DBName}
+	fi
+
+}
+
+unixInstall()
+{
+    local cmd="apt-get";
+    checkWhich ${cmd}
+	if [  "$?" -ne "0"  ]; then
+		cmd="yum"; checkWhich ${cmd}
+        if [  "$?" -ne "0"  ]; then
+            cmd="zypper"; checkWhich ${cmd}
+            if [  "$?" -ne "0"  ]; then
+                error "Unable to determ Linux install command"
+            fi
+        fi
+	fi
+    echo "Executing: 'sudo ${cmd} install $1'"
+	sudo ${cmd} install $1
+}
+
+sysInfo()
+{
+    case ${1} in
+
+        'disk')
+			df -H
+			echo "---------------------------------------------"
+        ;;
+
+        *)
+            OS=$(lsb_release -si)
+            ARCH=$(uname -m)
+            VER=$(lsb_release -sr)
+
+            echo "OS:       ${OS}"
+            echo "ARCH:     ${ARCH}"
+            echo "VER:      ${VER}"
+			break
+        ;;
+
+    esac
+
 }
