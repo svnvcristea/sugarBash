@@ -235,8 +235,8 @@ xbuild()
 
             xbuild building
             xbuild configBuild
+            xbuild configOverride
             xbuild installSugar
-            xbuild postInstallConfig
             xbuild gitRepoInit
         ;;
 
@@ -310,7 +310,7 @@ EOL
             fi
         ;;
 
-        'postInstallConfig')
+        'configOverride')
 
             cat >> config_override.php <<EOL
 \$sugar_config['developerMode'] = true;
