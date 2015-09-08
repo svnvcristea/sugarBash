@@ -26,6 +26,9 @@ git:
     name: "Your Name"
     email: "email@domain.com"
 
+vpn:
+  conf: /etc/vpnc/sugarvpn.conf
+
 mount:
   fstab:
     0: "192.168.56.101:/srv/www/htdocs"
