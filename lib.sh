@@ -3,6 +3,7 @@
 error() 
 {
     echo -e "\033[1;31m${1}\033[0m" 1>&2
+    draw line
     exit 1
 }
 
@@ -58,6 +59,24 @@ renderArray()
 	done
 }
 
+draw()
+{
+    case ${1} in
+        'line')
+			echo "______________________________________________"
+        ;;
+        'sp_long')
+			echo "----------------------------------------------"
+        ;;
+        'sp')
+			echo "-----------------------"
+        ;;
+        *)
+			echo ""
+        ;;
+    esac
+}
+
 showOptions()
 {
     cat <<EOF
@@ -67,21 +86,22 @@ SugarBash Helper 1.0
 EOF
 
     renderArray "option"
-	echo ---------------------
+	draw sp
 
 }
 
 menu()
 {
-
+    draw line
+    helperAlias
     while ((OPT != 0));
-    showOptions
-    if [ ! -z $1 ] && [ "${OPT}" == "" ]; then
-        OPT=${1}
-    else
-        read -p "Select your main menu option: " OPT
-    fi
-
+        showOptions
+        if [ ! -z $1 ] && [ "${OPT}" == "" ]; then
+            OPT=${1}
+        else
+            read -p "Select your main menu option: " OPT
+            draw line
+        fi
     do
         setYamlVal "_option_${OPT}_func"
         ${ymlVal}
@@ -428,7 +448,7 @@ importSQLDump()
     fi
 
     if [ -z ${sqlDumpFile} ]; then
-        echo "-> Actual path: $PWD"
+        echo "-> Actual path: $PWD/"
         ls | grep .sql
         read -p "Give sql dump file to import into ${DBName}: " sqlDumpFile
     fi
@@ -445,10 +465,10 @@ importSQLDump()
 	fi
 
 	checkWhich pw
-	if [  "$?" -ne "0"  ]; then
+	if [  "$?" -eq "0"  ]; then
 		mysql -u root -proot ${DBName} < ${sqlDumpFile}
     else
-        pv -i 1 -p -t -e /path/to/sql/dump | mysql -u root -proot ${DBName}
+        pv -i 1 -p -t -e ${sqlDumpFile} | mysql -u root -proot ${DBName}
 	fi
 
 }
@@ -477,30 +497,40 @@ sysInfo()
             OS=$(lsb_release -si)
             ARCH=$(uname -m)
             VER=$(lsb_release -sr)
+            SHELL=$(ps -p $$ | tail -1 | awk '{ print $4 }')
             FULL=$(uname -a)
 
-            echo "OS:       ${OS}"
-            echo "ARCH:     ${ARCH}"
-            echo "VER:      ${VER}"
-            echo "FULL:     ${FULL}"
-            echo "---------------------------------------------"
+            draw sp_long
+            echo " OS:       ${OS}"
+            echo " ARCH:     ${ARCH}"
+            echo " VER:      ${VER}"
+            echo " SHELL:    ${SHELL}"
+            echo " FULL:     ${FULL}"
+            draw sp_long
         ;;
 
         'disk')
 			df -H
-			echo "---------------------------------------------"
+			draw sp_long
         ;;
 
         'foldersSize')
+            echo "# Actual folder size:"
+			du -hs ./
+			draw sp_long
+        ;;
+
+        'top10folders')
             echo "# Top 10 sub-folders:"
 			sudo find ./ -type d -print0 | xargs -0 du | sort -n | tail -10 | cut -f2 | xargs -I{} du -sh {}
-			echo "---------------------------------------------"
+			draw sp_long
         ;;
 
         *)
 			sysInfo OS
 			sysInfo disk
-			sysInfo foldersSize
+            sysInfo foldersSize
+			sysInfo top10folders
         ;;
 
     esac
