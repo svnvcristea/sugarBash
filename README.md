@@ -10,6 +10,8 @@ This Sugar bash script helper will support daily routines as:
  * VPN connect & disconnect
  * SugarCRM create build (based on xbuild)
  * Git config globals
+ * Import SQL dump
+ * System Info
 
 
 # 2) Installation

@@ -12,6 +12,13 @@ checkWhich()
     return $?
 }
 
+helperAlias()
+{
+    local aliasHelper="alias helper='bash ${DIR}/helper.sh'"
+    echo "You may add the Sugar Bash Helper as alias using:"
+    echo ${aliasHelper}
+}
+
 parse_yaml()
 {
    local prefix=$2
@@ -461,6 +468,18 @@ unixInstall()
 sysInfo()
 {
     case ${1} in
+        'OS')
+            OS=$(lsb_release -si)
+            ARCH=$(uname -m)
+            VER=$(lsb_release -sr)
+            FULL=$(uname -a)
+
+            echo "OS:       ${OS}"
+            echo "ARCH:     ${ARCH}"
+            echo "VER:      ${VER}"
+            echo "FULL:     ${FULL}"
+            echo "---------------------------------------------"
+        ;;
 
         'disk')
 			df -H
@@ -468,18 +487,15 @@ sysInfo()
         ;;
 
         'foldersSize')
-			sudo find . -type d -print0 | xargs -0 du | sort -n | tail -10 | cut -f2 | xargs -I{} du -sh {}
+            echo "# Top 10 sub-folders:"
+			sudo find ./ -type d -print0 | xargs -0 du | sort -n | tail -10 | cut -f2 | xargs -I{} du -sh {}
+			echo "---------------------------------------------"
         ;;
 
         *)
-            OS=$(lsb_release -si)
-            ARCH=$(uname -m)
-            VER=$(lsb_release -sr)
-
-            echo "OS:       ${OS}"
-            echo "ARCH:     ${ARCH}"
-            echo "VER:      ${VER}"
-			break
+			sysInfo OS
+			sysInfo disk
+			sysInfo foldersSize
         ;;
 
     esac
