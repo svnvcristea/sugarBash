@@ -8,7 +8,7 @@ boot()
     OPT=""
     # read yaml file
     eval $(parse_yaml "$DIR/config.yml" "_")
-
+    helperAlias
     menu
 }
 

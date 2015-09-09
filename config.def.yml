@@ -25,7 +25,7 @@ option:
     func: importSQLDump
   8:
     name: System Info
-    func: "sysInfo disk"
+    func: "sysInfo"
 
 git:
   user:
