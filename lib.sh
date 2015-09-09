@@ -76,7 +76,12 @@ menu()
 
     while ((OPT != 0));
     showOptions
-    read -p "Select your main menu option: " OPT
+    if [ ! -z $1 ] && [ "${OPT}" == "" ]; then
+        OPT=${1}
+    else
+        read -p "Select your main menu option: " OPT
+    fi
+
     do
         setYamlVal "_option_${OPT}_func"
         ${ymlVal}
