@@ -9,7 +9,7 @@ boot()
     # read yaml file
     eval $(parse_yaml "$DIR/config.yml" "_")
     helperAlias
-    menu
+    menu $1
 }
 
-boot
+boot $1
