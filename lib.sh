@@ -258,7 +258,11 @@ xbuild()
             setYamlVal "_xbuild_db_user" "dbUser";                   echo "db user:             ${dbUser}"
             setYamlVal "_xbuild_db_password" "dbPass";               echo "db password:         ${dbPass}"
             setYamlVal "_xbuild_license" "license";                  echo "license:             ${license}"
-            echo "---------------------"
+            draw sp_long
+
+            if [ ! -d ${repoPath} ]; then
+                error "Source repo path ${repoPath} aka 'Mango' folder desn't exist! Check config.yml"
+            fi
 
             if [ -d "${rootPath}/${repoName}" ]; then
                 echo "Cleaning ${rootPath}/${repoName}"
@@ -472,7 +476,7 @@ importSQLDump()
 	if [  "$?" -eq "0"  ]; then
 		mysql -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} < ${sqlDumpFile}
     else
-        pv -i 1 -p -t -e ${sqlDumpFile} | mysql -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName}
+        pv -i 1 -p -t -e -r -b ${sqlDumpFile} | mysql -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName}
 	fi
 
 }
