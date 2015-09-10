@@ -90,3 +90,7 @@ xbuild:
         date_created: "2015-09-07 12:00:12"
         date_modified: "2015-09-07 12:00:12"
         deleted: 0
+mysql:
+  host: localhost
+  user: root
+  pass: root
