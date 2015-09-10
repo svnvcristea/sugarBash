@@ -440,24 +440,28 @@ queryDBContent()
 
 importSQLDump()
 {
-    local DBName=$1
+    local dbName=$1
     local sqlDumpFile=$2
 
-    if [ -z ${DBName} ]; then
-        read -p "Give DB name: " DBName
+    setYamlVal "_mysql_host" "dbHost";
+    setYamlVal "_mysql_user" "dbUser";
+    setYamlVal "_mysql_pass" "dbPass";
+
+    if [ -z ${dbName} ]; then
+        read -p "Give DB name: " dbName
     fi
 
     if [ -z ${sqlDumpFile} ]; then
         echo "-> Actual path: $PWD/"
         ls | grep .sql
-        read -p "Give sql dump file to import into ${DBName}: " sqlDumpFile
+        read -p "Give sql dump file to import into ${dbName}: " sqlDumpFile
     fi
 
     if [ ! -f ${sqlDumpFile} ]; then
         error "${sqlDumpFile} not found"
     fi
 
-    echo "-> Proceed importing ${sqlDumpFile} into ${DBName}"
+    echo "-> Proceed importing ${sqlDumpFile} into ${dbName}@${dbHost}"
 
     checkWhich pv
 	if [  "$?" -ne "0"  ]; then
@@ -466,9 +470,9 @@ importSQLDump()
 
 	checkWhich pw
 	if [  "$?" -eq "0"  ]; then
-		mysql -u root -proot ${DBName} < ${sqlDumpFile}
+		mysql -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} < ${sqlDumpFile}
     else
-        pv -i 1 -p -t -e ${sqlDumpFile} | mysql -u root -proot ${DBName}
+        pv -i 1 -p -t -e ${sqlDumpFile} | mysql -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName}
 	fi
 
 }
