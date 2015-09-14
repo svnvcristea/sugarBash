@@ -152,6 +152,27 @@ gitConfig()
             break
         ;;
 
+        'cloneMango')
+            setYamlVal "_git_clone_mango_origin"
+            echo "Will clone ${ymlVal} into ${PWD}"
+            read -p "Give Mango prefix: " OPT
+            if [ -z ${OPT} ]; then
+                error 'Proceeding abort!'
+            fi
+
+            git clone ${ymlVal} "${OPT}-mango"
+            cd ${OPT}-mango
+            git status
+            git remote -v
+            setYamlVal "_git_clone_mango_upstream"
+            git remote add upstream ${ymlVal}
+            git remote -v
+            git fetch upstream
+            git submodule update --init
+            cd sugarcrm
+            composer install
+        ;;
+
         *)
 			break
         ;;

@@ -21,9 +21,12 @@ option:
     name: Git config global
     func: "gitConfig global"
   7:
-    name: Import SQL Dump
-    func: importSQLDump
+    name: Git clone Mango
+    func: "gitConfig cloneMango"
   8:
+    name: Import SQL Dump
+    func: "importSQLDump"
+  9:
     name: System Info
     func: "sysInfo"
 
@@ -31,7 +34,10 @@ git:
   user:
     name: "Your Name"
     email: "email@domain.com"
-
+  clone:
+    mango:
+      origin:   git@github.com:svnvcristea/Mango.git
+      upstream: git@github.com:ps-dev-lapp/Mango.git
 vpn:
   conf: /etc/vpnc/sugarvpn.conf
 
