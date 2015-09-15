@@ -70,6 +70,8 @@ xbuild:
       name: agfa
       url: agfa.dev
       path: /srv/www/git-repo/agfa-mango
+      flav: ent
+      version: 7.5.1.0
     1:
       name: lapp
       url: lapp.dev

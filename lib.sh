@@ -269,16 +269,37 @@ xbuild()
             read -p "Choose repo to build: " RID
 
             echo "# Build Info #"
-            setYamlVal "_xbuild_repo_${RID}_name" "repoName";        echo "build name:          ${repoName}"
-            setYamlVal "_xbuild_repo_${RID}_path" "repoPath";        echo "source repo path:    ${repoPath}"
-            setYamlVal "_xbuild_rootPath" "rootPath";                echo "build destination:   ${rootPath}/${repoName}"
-            setYamlVal "_xbuild_repo_${RID}_url" "buildUrl";         echo "build url:           ${buildUrl}"
-            setYamlVal "_xbuild_version" "builVersion";              echo "build version        ${builVersion}"
-            setYamlVal "_xbuild_flav" "buildFlav";                   echo "build flav:          ${buildFlav}"
-            setYamlVal "_xbuild_repo_${RID}_name" "db";              echo "db name:             ${db}"
-            setYamlVal "_xbuild_db_user" "dbUser";                   echo "db user:             ${dbUser}"
-            setYamlVal "_xbuild_db_password" "dbPass";               echo "db password:         ${dbPass}"
-            setYamlVal "_xbuild_license" "license";                  echo "license:             ${license}"
+            setYamlVal "_xbuild_repo_${RID}_name" "repoName"
+            setYamlVal "_xbuild_repo_${RID}_path" "repoPath"
+            setYamlVal "_xbuild_rootPath" "rootPath"
+            setYamlVal "_xbuild_repo_${RID}_url" "buildUrl"
+            setYamlVal "_xbuild_repo_${RID}_name" "db"
+            setYamlVal "_xbuild_db_user" "dbUser"
+            setYamlVal "_xbuild_db_password" "dbPass"
+
+            setYamlVal "_xbuild_repo_${RID}_version" "builVersion"
+            setYamlVal "_xbuild_repo_${RID}_flav" "buildFlav"
+            setYamlVal "_xbuild_repo_${RID}_license" "license"
+            if [ -z ${builVersion} ]; then
+                setYamlVal "_xbuild_version" "builVersion"
+            fi
+            if [ -z ${buildFlav} ]; then
+                setYamlVal "_xbuild_flav" "buildFlav"
+            fi
+            if [ -z ${license} ]; then
+                setYamlVal "_xbuild_license" "license"
+            fi
+
+            echo "build name:          ${repoName}"
+            echo "source path:         ${repoPath}"
+            echo "destination:         ${rootPath}/${repoName}"
+            echo "db name:             ${db}"
+            echo "db user:             ${dbUser}"
+            echo "db password:         ${dbPass}"
+            echo "url:                 ${buildUrl}"
+            echo "flav:                ${buildFlav}"
+            echo "version              ${builVersion}"
+            echo "license:             ${license}"
             draw sp_long
 
             if [ ! -d ${repoPath} ]; then
@@ -382,6 +403,8 @@ EOL
         'configOverride')
 
             cat >> config_override.php <<EOL
+<?php
+
 \$sugar_config['developerMode'] = true;
 \$sugar_config['passwordsetting']['minpwdlength'] = '';
 \$sugar_config['passwordsetting']['oneupper'] = '0';
