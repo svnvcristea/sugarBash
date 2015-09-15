@@ -152,7 +152,22 @@ gitConfig()
             break
         ;;
 
-        'cloneMango')
+        *)
+			break
+        ;;
+
+    esac
+
+    echo "-> FINISH"
+}
+
+gitMango()
+{
+    echo "## gitMango: $@"
+
+    case ${1} in
+
+        'clone')
             setYamlVal "_git_clone_mango_origin"
             echo "Will clone ${ymlVal} into ${PWD}"
             read -p "Give Mango prefix: " OPT
@@ -167,11 +182,15 @@ gitConfig()
             setYamlVal "_git_clone_mango_upstream"
             git remote add upstream ${ymlVal}
             git remote -v
-            git fetch upstream
-            git submodule update --init
-            cd sugarcrm
-            composer install
+            gitConfig mangoCheckoutHook
+
         ;;
+
+        'postCheckout')
+            git fetch upstream
+            git submodule update
+            composer install -d=sugarcrm
+		;;
 
         *)
 			break
