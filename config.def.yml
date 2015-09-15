@@ -18,15 +18,18 @@ option:
     name: xbuild
     func: "xbuild"
   6: 
-    name: Git config global
+    name: Git Config: global
     func: "gitConfig global"
   7:
-    name: Git clone Mango
-    func: "gitConfig cloneMango"
+    name: Git Mango: clone
+    func: "gitMango clone"
   8:
+    name: Git Mango: post checkout
+    func: "gitMango postCheckout"
+  9:
     name: Import SQL Dump
     func: "importSQLDump"
-  9:
+  10:
     name: System Info
     func: "sysInfo"
 

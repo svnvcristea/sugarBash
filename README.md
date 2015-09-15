@@ -9,8 +9,9 @@ This Sugar bash script helper will support daily routines as:
  * Mount shared folders
  * VPN connect & disconnect
  * SugarCRM create build (based on xbuild)
- * Git config globals
- * Git clone and setup Mango repo
+ * Git Config: globals
+ * Git Mango: clone and setup Mango repo
+ * Git Mango: post checkout branch
  * Import SQL dump
  * System Info
 
