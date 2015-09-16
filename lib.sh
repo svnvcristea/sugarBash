@@ -422,7 +422,15 @@ EOL
             then
                 echo 'Successfull'
             else
+                echo "-> cat install.log"
+                cat ${rootPath}/${repoName}/install.log
+                draw sp
+                echo "-> cat sugarcrm.log"
+                cat ${rootPath}/${repoName}/sugarcrm.log
+                draw sp
+                echo "-> cat /tmp/${repoName}_installation_fail.html"
                 echo "$installHtml" > /tmp/${repoName}_installation_fail.html
+                draw sp
                 error "Installation failed! Please refer install.log, sugarcrm.log and /tmp/${repoName}_installation_fail.html"
             fi
         ;;
