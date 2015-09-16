@@ -7,13 +7,22 @@ It's easy to extend and config having all configurable parameters into YAML form
 This Sugar bash script helper will support daily routines as:
  * Backup your files
  * Mount shared folders
- * VPN connect & disconnect
- * SugarCRM create build (based on xbuild)
- * Git Config: globals
- * Git Mango: clone and setup Mango repo
- * Git Mango: post checkout branch
+ * VPN
+    * kill
+    * connect
+ * Git Config:
+    * globals email and username
+ * xBuild - SugarCRM create build
+ * Git Mango:
+    * clone
+    * setup repo
+    * post checkout branch
  * Import SQL dump
  * System Info
+    * OS
+    * Disk
+    * Actual folder size
+    * Top 10 sub-folders size
 
 
 # 2) Installation
