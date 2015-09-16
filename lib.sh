@@ -65,6 +65,7 @@ renderArray()
 
 draw()
 {
+    local line
     case ${1} in
         'line')
 			echo "______________________________________________"
@@ -76,38 +77,43 @@ draw()
 			echo "-----------------------"
         ;;
         *)
-			echo ""
+			for i in `seq 1 $2`;
+            do
+                line="${line}${1}"
+            done
+            echo ${line}
         ;;
     esac
 }
 
 showOptions()
 {
-    cat <<EOF
+    setYamlVal "_${1/_opt/_name}"
+    if [[ -z ${ymlVal} ]]; then
+        ymlVal=${1}
+    fi
 
-SugarBash Helper 1.0
-=====================
-EOF
-
-    renderArray "option"
+    local title="SugarBash Helper: ${ymlVal}"
+    echo ""
+    echo ${title}
+    draw = ${#title}
+    renderArray $1
 	draw sp
 
 }
 
 menu()
 {
-    draw line
-    helperAlias
     while ((OPT != 0));
-        showOptions
-        if [ ! -z $1 ] && [ "${OPT}" == "" ]; then
-            OPT=${1}
+        showOptions $1
+        if [ ! -z $2 ] && [ "${OPT}" == "" ]; then
+            OPT=${2}
         else
             read -p "Select your main menu option: " OPT
             draw line
         fi
     do
-        setYamlVal "_option_${OPT}_func"
+        setYamlVal "_${1}_${OPT}_func"
         ${ymlVal}
     done
 
@@ -146,14 +152,15 @@ gitConfig()
     case ${1} in
 
         'global')
-			echo "Before config:"
+			echo "-> Before config:"
 			echo ${_git_user_name}
             git config --global -l
             git config --global user.name "${_git_user_name}"
             git config --global user.email "${_git_user_email}"
-            echo "After config:"
+            draw sp
+            echo "-> After config:"
             git config --global -l
-            break
+            draw sp
         ;;
 
         *)
@@ -236,7 +243,7 @@ backup()
 	# ----------------------------------------------
 
 	if [ ! "$SUDO_UID" ]; then
-		error "Use sudo $0 $@"
+		error "Use sudo bash $0 $@"
 	fi
 
 	# ----    aici trebuia sa verific daca exista comenzile
