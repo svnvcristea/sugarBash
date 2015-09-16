@@ -331,7 +331,7 @@ xbuild()
                 pwd
                 askToProceed "to remove folder content"
                 rm -Rf ./*
-                rm -Rf .htaccess .git
+                rm -Rf .htaccess .git .gitignore
             else
                 mkdir ${rootPath}/${repoName}
             fi
@@ -364,7 +364,7 @@ xbuild()
         'configBuild')
             echo "drop database if exists ${db};" | mysql -u ${dbUser} -p${dbPass}
             cd ${rootPath}/${repoName}
-            cat >config_si.php <<EOL
+            cat > config_si.php <<EOL
 <?php
 
 \$sugar_config_si = array (
@@ -376,31 +376,39 @@ xbuild()
 #'setup_fts_hide_config' => 'true',
 
 'setup_db_host_name' => 'localhost',
-'setup_db_database_name' => '$db',
+'setup_db_database_name' => '${db}',
 'setup_db_drop_tables' => 1,
 'setup_db_create_database' => 1,
-'setup_db_admin_user_name' => '$dbUser',
-'setup_db_admin_password' => '$dbPass',
+'setup_db_admin_user_name' => '${dbUser}',
+'setup_db_admin_password' => '${dbPass}',
 'setup_db_type' => 'mysql',
 
-'setup_license_key' => '$license',
+'setup_license_key' => '${license}',
 'setup_system_name' => 'SugarCRM',
-'setup_site_url' => 'http://$url',
+'setup_site_url' => 'http://${buildUrl}',
 );
 EOL
 
-cat > .gitignore <<EOL
+            cat > .gitignore <<EOL
+# OS and IDE
+*~
+.DS_Store
 .idea/
-cache/
-sugarcrm.log
+.project
+.settings
+
+# SugarCRM
+*.log
 config_override.php
-custom/history/
+
+cache/
 upload/
 
 include/javascript/yui3/
 include/javascript/yui/
 include/javascript/tiny_mce/
 
+custom/history/
 custom/modules/Connectors/metadata/connectors.php
 custom/modules/*/Ext/**
 custom/application/Ext/**
