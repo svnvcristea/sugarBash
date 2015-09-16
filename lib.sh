@@ -53,7 +53,11 @@ renderArray()
 
 	while (( ${#ymlVal} > 0 ))
 	do
-	    echo ${count} - ${ymlVal}
+	    if [[ ( 10 -gt ${count} ) ]]; then
+            echo " ${count} - ${ymlVal}"
+	    else
+	        echo ${count} - ${ymlVal}
+        fi
 	    count=$(( $count + 1 ))
 	    setYamlVal "_$1_${count}_name"
 	done
@@ -182,7 +186,7 @@ gitMango()
             setYamlVal "_git_clone_mango_upstream"
             git remote add upstream ${ymlVal}
             git remote -v
-            gitConfig mangoCheckoutHook
+            gitMango postCheckout
 
         ;;
 
