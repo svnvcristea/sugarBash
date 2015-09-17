@@ -13,11 +13,15 @@ option:
     func: "menu option_3_opt"
     opt:
       0:
-        name: VPN Kill
-        func: "vpn kill"
+        name: Main menu
+        func: menu option
       1:
         name: VPN Connect
         func: "vpn connectSugar"
+      2:
+        name: VPN Kill
+        func: "vpn kill"
+
   4:
     name: Git Config
     func: "menu option_4_opt"
@@ -26,7 +30,7 @@ option:
         name: Main menu
         func: menu option
       1:
-        name: global email and username
+        name: Global email and username
         func: "gitConfig global"
   5:
     name: xbuild
@@ -36,9 +40,12 @@ option:
     func: "menu option_6_opt"
     opt:
       0:
+        name: Main menu
+        func: menu option
+      1:
         name: clone
         func: "gitMango clone"
-      1:
+      2:
         name: post checkout
         func: "gitMango postCheckout"
   7:
