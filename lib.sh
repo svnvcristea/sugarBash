@@ -1,9 +1,16 @@
-#!/bin/bash 
+#!/bin/bash
+#===============================================================================
+#          FILE:  lib.sh
+#         USAGE:  ./helper.sh -h
+#   DESCRIPTION:  SugarCRM bash helper library for Linux
+#       AUTHORS:  Nicolae V. CRISTEA;
+#       VERSION:  0.9.0
+#===============================================================================
 
 error() 
 {
     echo -e "\033[1;31m${1}\033[0m" 1>&2
-    draw line
+    draw _ ${#1} red
     exit 1
 }
 
@@ -61,29 +68,61 @@ renderArray()
 	    count=$(( $count + 1 ))
 	    setYamlVal "_$1_${count}_name"
 	done
+
+	draw - '' 'menu'
 }
 
+#   FUNCTION:   secho       Echo the message into specific color
+# PARAMETERS:   $1          The message to display
+#               $2          The color of the message
+secho()
+{
+    local code=0
+
+    case ${2} in
+        red)
+			code=31
+        ;;
+        green)
+			code=32
+        ;;
+        yellow|menu)
+			code=33
+        ;;
+        blue)
+			code=34
+        ;;
+        *)
+			code=${2}
+        ;;
+    esac
+
+    echo -e "\e[${code}m${1}\e[0m"
+}
+
+#   FUNCTION:   draw        Echo Specific line
+# PARAMETERS:   $1          Type of the line
+#               $2          Lenght of the line
+#               $3          Color of the line
 draw()
 {
     local line
-    case ${1} in
-        'line')
-			echo "______________________________________________"
-        ;;
-        'sp_long')
-			echo "----------------------------------------------"
-        ;;
-        'sp')
-			echo "-----------------------"
-        ;;
-        *)
-			for i in `seq 1 $2`;
-            do
-                line="${line}${1}"
-            done
-            echo ${line}
-        ;;
-    esac
+    local lineLenght=${titleLenght}
+
+    if [ ! -z ${2} ]; then
+        lineLenght=${2}
+    fi
+
+    for i in `seq 1 ${lineLenght}`;
+    do
+        line="${line}${1}"
+    done
+    secho "${line}" ${3}
+}
+
+drawOptionDone()
+{
+    draw - "" 'menu'
 }
 
 showOptions()
@@ -95,11 +134,10 @@ showOptions()
 
     local title="SugarBash Helper: ${ymlVal}"
     echo ""
-    echo ${title}
-    draw = ${#title}
+    secho "${title}" 'menu'
+    titleLenght=${#title}
+    draw "=" ${titleLenght} 'menu'
     renderArray $1
-	draw sp
-
 }
 
 menu()
@@ -109,31 +147,30 @@ menu()
         if [ ! -z $2 ] && [ "${OPT}" == "" ]; then
             OPT=${2}
         else
-            read -p "Select your main menu option: " OPT
-            draw line
+            read -p "Select your menu option: " OPT
+            draw _ "" 'menu'
         fi
     do
         setYamlVal "_${1}_${OPT}_func"
         ${ymlVal}
     done
-
 }
 
 vpn() 
 {
-    echo "## VPN: $@"
+    secho "# VPN: $@" 'menu'
 
     case ${1} in
 
         'kill')
             sudo killall vpnc
-            break
+            drawOptionDone
         ;;
 
         'connectSugar')
             setYamlVal "_vpn_conf"
             sudo vpnc ${ymlVal}
-            break
+            drawOptionDone
         ;;
 
         *)
@@ -141,26 +178,22 @@ vpn()
         ;;
 
     esac
-
-    echo "-> FINISH"
 }
 
 gitConfig() 
 {
-    echo "## gitConfig: $@"
+    secho "# gitConfig: $@" 'menu'
 
     case ${1} in
 
         'global')
-			echo "-> Before config:"
-			echo ${_git_user_name}
+			secho "Before config:" 'menu'
             git config --global -l
             git config --global user.name "${_git_user_name}"
             git config --global user.email "${_git_user_email}"
-            draw sp
-            echo "-> After config:"
+            secho "After config:" 'menu'
             git config --global -l
-            draw sp
+            drawOptionDone
         ;;
 
         *)
@@ -168,13 +201,11 @@ gitConfig()
         ;;
 
     esac
-
-    echo "-> FINISH"
 }
 
 gitMango()
 {
-    echo "## gitMango: $@"
+    secho "# gitMango: $@" 'menu'
 
     case ${1} in
 
@@ -199,7 +230,10 @@ gitMango()
 
         'postCheckout')
             git fetch upstream
+            git submodule update --init
             git submodule update
+            echo "-> Submodules:"
+            git submodule
             composer install -d=sugarcrm
 		;;
 
@@ -209,12 +243,12 @@ gitMango()
 
     esac
 
-    echo "-> FINISH"
+    drawOptionDone
 }
 
 mountFstab()
 {
-    echo "## mountFstab: $@"
+    secho "# mountFstab: $@" 'menu'
 
 	local count=0
 	setYamlVal "_mount_fstab_${count}"
@@ -224,9 +258,9 @@ mountFstab()
 	    sudo mount ${ymlVal}
 	    count=$(( $count + 1 ))
 	    setYamlVal "_mount_fstab_${count}"
-	done    
+	done
 
-    echo "-> FINISH"
+    drawOptionDone
 }
 
 backup()
@@ -277,11 +311,12 @@ backup()
 	fi       
 	${UMOUNT} ${MOUNTPOINT} || ${UMOUNT} -l ${MOUNTPOINT} || echo "Umounting failed. Please run  $UMOUNT $MOUNTPOINT"
 
+    drawOptionDone
 }
 
 askToProceed()
 {
-    read -p "Proceed $1 ? (y/n): " OPT
+    echo -e "\033[93m"; read -e -p "Proceed $1 ? (y/n): " -i "y" OPT ; echo -e "\033[0m"
     if [ ${OPT} != "y" ]; then
         error 'Proceeding abort!'
     fi
@@ -289,7 +324,7 @@ askToProceed()
 
 xbuild()
 {
-    echo "## xbuild: $@"
+    secho "# xbuild: $@" 'menu'
 
     case ${1} in
 
@@ -298,7 +333,6 @@ xbuild()
             renderArray "xbuild_repo"
             read -p "Choose repo to build: " RID
 
-            echo "# Build Info #"
             setYamlVal "_xbuild_repo_${RID}_name" "repoName"
             setYamlVal "_xbuild_repo_${RID}_path" "repoPath"
             setYamlVal "_xbuild_rootPath" "rootPath"
@@ -320,6 +354,7 @@ xbuild()
                 setYamlVal "_xbuild_license" "license"
             fi
 
+            secho "# Build Info #" 'menu'
             echo "build name:          ${repoName}"
             echo "source path:         ${repoPath}"
             echo "destination:         ${rootPath}/${repoName}"
@@ -330,16 +365,15 @@ xbuild()
             echo "flav:                ${buildFlav}"
             echo "version              ${builVersion}"
             echo "license:             ${license}"
-            draw sp_long
+            draw - 60
 
             if [ ! -d ${repoPath} ]; then
                 error "Source repo path ${repoPath} aka 'Mango' folder desn't exist! Check config.yml"
             fi
 
             if [ -d "${rootPath}/${repoName}" ]; then
-                echo "Cleaning ${rootPath}/${repoName}"
+                secho "Cleaning ${rootPath}/${repoName}"
                 cd ${rootPath}/${repoName}
-                pwd
                 askToProceed "to remove folder content"
                 rm -Rf ./*
                 rm -Rf .htaccess .git .gitignore
@@ -351,13 +385,8 @@ xbuild()
                 rm -Rf /tmp/sugarbuild${repoName}
             fi
 
-            askToProceed "building..."
-
-            xbuild building
-            xbuild configBuild
-            xbuild configOverride
-            xbuild installSugar
-            xbuild gitRepoInit
+            cd ${repoPath}
+            gitMango postCheckout
         ;;
 
         'building')
@@ -426,26 +455,6 @@ custom/application/Ext/**
 EOL
         ;;
 
-        'installSugar')
-            local installHtml=$(curl -XGET "http://${buildUrl}/install.php?goto=SilentInstall&cli=true" 2>/dev/null)
-
-            if [[ ${installHtml} == *\<bottle\>Success\!\</bottle\>* ]]
-            then
-                echo 'Successfull'
-            else
-                echo "-> cat install.log"
-                cat ${rootPath}/${repoName}/install.log
-                draw sp
-                echo "-> cat sugarcrm.log"
-                cat ${rootPath}/${repoName}/sugarcrm.log
-                draw sp
-                echo "-> cat /tmp/${repoName}_installation_fail.html"
-                echo "$installHtml" > /tmp/${repoName}_installation_fail.html
-                draw sp
-                error "Installation failed! Please refer install.log, sugarcrm.log and /tmp/${repoName}_installation_fail.html"
-            fi
-        ;;
-
         'configOverride')
 
             cat >> config_override.php <<EOL
@@ -461,6 +470,26 @@ EOL
 EOL
         ;;
 
+        'installSugar')
+            local installHtml=$(curl -XGET "http://${buildUrl}/install.php?goto=SilentInstall&cli=true" 2>/dev/null)
+
+            if [[ ${installHtml} == *\<bottle\>Success\!\</bottle\>* ]]
+            then
+                echo 'Successfull'
+            else
+                echo "-> cat install.log"
+                cat ${rootPath}/${repoName}/install.log
+                draw -
+                echo "-> cat sugarcrm.log"
+                cat ${rootPath}/${repoName}/sugarcrm.log
+                draw -
+                echo "-> cat /tmp/${repoName}_installation_fail.html"
+                echo "$installHtml" > /tmp/${repoName}_installation_fail.html
+                draw -
+                error "Installation failed! Please refer install.log, sugarcrm.log and /tmp/${repoName}_installation_fail.html"
+            fi
+        ;;
+
         'dbContent')
 
             queryDBContent
@@ -474,11 +503,18 @@ EOL
 
         *)
             xbuild prepare
-            echo "-> FINISH"
-			break
+            askToProceed "building..."
+
+            xbuild building
+            xbuild configBuild
+            xbuild configOverride
+            xbuild installSugar
+            xbuild gitRepoInit
         ;;
 
     esac
+
+    drawOptionDone
 }
 
 queryDBContent()
@@ -505,7 +541,6 @@ queryDBContent()
 	    count=$(( $count + 1 ))
 	    setYamlVal "_xbuild_dbContent_email_addresses_${count}_id"
 	done
-
 
     query==${query}"INSERT INTO email_addr_bean_rel (id,email_address_id,bean_id,bean_module,primary_address,reply_to_address,date_created,date_modified,deleted) VALUES ("
     local count=0
@@ -534,6 +569,8 @@ queryDBContent()
 
 importSQLDump()
 {
+    secho "# importSQLDump: $@" 'menu'
+
     local dbName=$1
     local sqlDumpFile=$2
 
@@ -555,7 +592,7 @@ importSQLDump()
         error "${sqlDumpFile} not found"
     fi
 
-    echo "-> Proceed importing ${sqlDumpFile} into ${dbName}@${dbHost}"
+    secho "Proceed importing ${sqlDumpFile} into ${dbName}@${dbHost}" 'menu'
 
     checkWhich pv
 	if [  "$?" -ne "0"  ]; then
@@ -569,6 +606,7 @@ importSQLDump()
         pv -i 1 -p -t -e -r -b ${sqlDumpFile} | mysql -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName}
 	fi
 
+    drawOptionDone
 }
 
 unixInstall()
@@ -586,10 +624,13 @@ unixInstall()
 	fi
     echo "Executing: 'sudo ${cmd} install $1'"
 	sudo ${cmd} install $1
+	drawOptionDone
 }
 
 sysInfo()
 {
+    secho "# sysInfo: $@" 'menu'
+
     case ${1} in
         'OS')
             OS=$(lsb_release -si)
@@ -598,30 +639,23 @@ sysInfo()
             SHELL=$(ps -p $$ | tail -1 | awk '{ print $4 }')
             FULL=$(uname -a)
 
-            draw sp_long
             echo " OS:       ${OS}"
             echo " ARCH:     ${ARCH}"
             echo " VER:      ${VER}"
             echo " SHELL:    ${SHELL}"
             echo " FULL:     ${FULL}"
-            draw sp_long
         ;;
 
         'disk')
 			df -H
-			draw sp_long
         ;;
 
         'foldersSize')
-            echo "# Actual folder size:"
 			du -hs ./
-			draw sp_long
         ;;
 
         'top10folders')
-            echo "# Top 10 sub-folders:"
 			sudo find ./ -type d -print0 | xargs -0 du | sort -n | tail -10 | cut -f2 | xargs -I{} du -sh {}
-			draw sp_long
         ;;
 
         *)
@@ -633,4 +667,5 @@ sysInfo()
 
     esac
 
+    drawOptionDone
 }

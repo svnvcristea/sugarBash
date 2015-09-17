@@ -53,6 +53,12 @@ sudo bash helper.sh
 
   ```
 
+Usage:
+  ```bash
+bash helper.sh -h
+
+  ```
+
 # 3) See also
 
 * [SugarCRM CodeSniffer](https://github.com/svnvcristea/SugarCRMCodeSniffer)
