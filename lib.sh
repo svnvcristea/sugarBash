@@ -211,7 +211,7 @@ gitMango()
 
         'clone')
             setYamlVal "_git_clone_mango_origin"
-            echo "Will clone ${ymlVal} into ${PWD}"
+            secho "Will clone ${ymlVal} into ${PWD}" 'menu'
             read -p "Give Mango prefix: " OPT
             if [ -z ${OPT} ]; then
                 error 'Proceeding abort!'
@@ -232,9 +232,27 @@ gitMango()
             git fetch upstream
             git submodule update --init
             git submodule update
-            echo "-> Submodules:"
+            secho "Submodules:" 'menu'
             git submodule
             composer install -d=sugarcrm
+		;;
+
+        'patch')
+            xbuild setParameters
+
+            secho "# Patch Info #" 'menu'
+            echo "Based on staged files of:       ${rootPath}/${repoName}"
+            echo "Mango repo applying on:         ${repoPath}/sugarcrm"
+
+            askToProceed "applying patch"
+
+            secho "Creating patch based on staged files from: ${rootPath}/${repoName}" 'menu'
+            cd ${rootPath}/${repoName}
+            git diff --staged > /tmp/${repoName}.patch
+            secho "Apply patch into Mango repo: ${repoPath}/sugarcrm" 'menu'
+            cd ${repoPath}/sugarcrm
+            patch -p1 < /tmp/${repoName}.patch
+            git status
 		;;
 
         *)
@@ -328,10 +346,9 @@ xbuild()
 
     case ${1} in
 
-        'prepare')
-
+        'setParameters')
             renderArray "xbuild_repo"
-            read -p "Choose repo to build: " RID
+            read -p "Choose repo: " RID
 
             setYamlVal "_xbuild_repo_${RID}_name" "repoName"
             setYamlVal "_xbuild_repo_${RID}_path" "repoPath"
@@ -340,7 +357,6 @@ xbuild()
             setYamlVal "_xbuild_repo_${RID}_name" "db"
             setYamlVal "_xbuild_db_user" "dbUser"
             setYamlVal "_xbuild_db_password" "dbPass"
-
             setYamlVal "_xbuild_repo_${RID}_version" "builVersion"
             setYamlVal "_xbuild_repo_${RID}_flav" "buildFlav"
             setYamlVal "_xbuild_repo_${RID}_license" "license"
@@ -353,7 +369,10 @@ xbuild()
             if [ -z ${license} ]; then
                 setYamlVal "_xbuild_license" "license"
             fi
+            db=${db//[^[:alnum:]]/}
+        ;;
 
+        'prepare')
             secho "# Build Info #" 'menu'
             echo "build name:          ${repoName}"
             echo "source path:         ${repoPath}"
@@ -502,6 +521,7 @@ EOL
         ;;
 
         *)
+            xbuild setParameters
             xbuild prepare
             askToProceed "building..."
 
