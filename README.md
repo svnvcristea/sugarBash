@@ -4,7 +4,7 @@ Sugar Bash Helper
 # 1) About
 
 It's easy to extend and config having all configurable parameters into YAML format on config.yml
-This Sugar bash script helper will support daily routines as:
+This Sugar Bash helper will support daily routines as:
  * Backup your files
  * Mount shared folders
  * VPN
@@ -17,6 +17,7 @@ This Sugar bash script helper will support daily routines as:
     * clone
     * setup repo
     * post checkout branch
+    * patch based on instance staged files
  * Import SQL dump
  * System Info
     * OS

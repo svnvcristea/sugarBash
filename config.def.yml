@@ -48,6 +48,9 @@ option:
       2:
         name: post checkout
         func: "gitMango postCheckout"
+      3:
+        name: patch
+        func: "gitMango patch"
   7:
     name: Import SQL Dump
     func: "importSQLDump"
