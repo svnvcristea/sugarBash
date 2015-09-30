@@ -355,8 +355,10 @@ xbuild()
             setYamlVal "_xbuild_rootPath" "rootPath"
             setYamlVal "_xbuild_repo_${RID}_url" "buildUrl"
             setYamlVal "_xbuild_repo_${RID}_name" "db"
-            setYamlVal "_xbuild_db_user" "dbUser"
-            setYamlVal "_xbuild_db_password" "dbPass"
+            setYamlVal "_xbuild_repo_${RID}_db_user" "dbUser"
+            setYamlVal "_xbuild_repo_${RID}_db_password" "dbPass"
+            setYamlVal "_xbuild_repo_${RID}_db_host" "dbHost"
+            setYamlVal "_xbuild_repo_${RID}_db_type" "dbType"
             setYamlVal "_xbuild_repo_${RID}_version" "builVersion"
             setYamlVal "_xbuild_repo_${RID}_flav" "buildFlav"
             setYamlVal "_xbuild_repo_${RID}_license" "license"
@@ -369,6 +371,18 @@ xbuild()
             if [ -z ${license} ]; then
                 setYamlVal "_xbuild_license" "license"
             fi
+            if [ -z ${dbUser} ]; then
+                setYamlVal "_xbuild_db_user" "dbUser"
+            fi
+            if [ -z ${dbPass} ]; then
+                setYamlVal "_xbuild_db_password" "dbPass"
+            fi
+            if [ -z ${dbHost} ]; then
+                setYamlVal "_xbuild_db_host" "dbHost"
+            fi
+            if [ -z ${dbType} ]; then
+                setYamlVal "_xbuild_db_type" "dbType"
+            fi
             db=${db//[^[:alnum:]]/}
         ;;
 
@@ -380,6 +394,8 @@ xbuild()
             echo "db name:             ${db}"
             echo "db user:             ${dbUser}"
             echo "db password:         ${dbPass}"
+            echo "db host:             ${dbHost}"
+            echo "db type:             ${dbType}"
             echo "url:                 ${buildUrl}"
             echo "flav:                ${buildFlav}"
             echo "version              ${builVersion}"
@@ -421,30 +437,69 @@ xbuild()
         ;;
 
         'configBuild')
-            echo "drop database if exists ${db};" | mysql -u ${dbUser} -p${dbPass}
+            if [[  "${dbType}" == "mysql"  ]]; then
+                echo "drop database if exists ${db};" | mysql -u ${dbUser} -p${dbPass}
+            fi
             cd ${rootPath}/${repoName}
             cat > config_si.php <<EOL
 <?php
 
 \$sugar_config_si = array (
-'setup_site_admin_user_name'=>'admin',
-'setup_site_admin_password' => 'admin',
-'setup_fts_type' => 'Elastic',
-'setup_fts_host' => 'localhost',
-'setup_fts_port' => '9200',
-#'setup_fts_hide_config' => 'true',
+    'setup_site_admin_user_name'=>'admin',
+    'setup_site_admin_password' => 'admin',
 
-'setup_db_host_name' => 'localhost',
-'setup_db_database_name' => '${db}',
-'setup_db_drop_tables' => 1,
-'setup_db_create_database' => 1,
-'setup_db_admin_user_name' => '${dbUser}',
-'setup_db_admin_password' => '${dbPass}',
-'setup_db_type' => 'mysql',
+    'setup_db_host_name' => '${dbHost}',
+    'setup_db_database_name' => '${db}',
+    'setup_db_drop_tables' => 'true',
+    'setup_db_create_database' => 'true',
+    'setup_db_admin_user_name' => '${dbUser}',
+    'setup_db_admin_password' => '${dbPass}',
+    'setup_db_type' => '${dbType}',
 
-'setup_license_key' => '${license}',
-'setup_system_name' => 'SugarCRM',
-'setup_site_url' => 'http://${buildUrl}',
+    'setup_license_key' => '${license}',
+    'setup_system_name' => 'SugarCRM',
+    'setup_site_url' => 'http://${buildUrl}',
+
+    'default_currency_iso4217' => 'USD',
+    'default_currency_name' => 'US Dollar',
+    'default_currency_significant_digits' => '2',
+    'default_currency_symbol' => '$',
+    'default_date_format' => 'Y-m-d',
+    'default_time_format' => 'H:i',
+    'default_decimal_seperator' => '.',
+    'default_language' => 'en_us',
+    'default_locale_name_format' => 's f l',
+    'default_number_grouping_seperator' => ',',
+    'export_delimiter' => ',',
+
+    'setup_fts_type' => 'Elastic',
+    'setup_fts_host' => 'localhost',
+    'setup_fts_port' => '9200',
+    #'setup_fts_hide_config' => 'true',
+
+EOL
+            if [[  "${dbType}" == "oci8"  ]]; then
+                secho "Oracle Db config" 'menu'
+
+                cat >> config_si.php <<EOL
+# Config Oracle DB
+    'setup_db_create_sugarsales_user' => 'false',
+    'setup_license_key_users' => '100',
+    'setup_license_key_expire_date' => '2016-10-01',
+    'setup_num_lic_oc' => '10',
+    'dbUSRData' => 'same',
+    'install_type' => 'typical',
+    'demoData' => 'yes',
+    'setup_db_pop_demo_data' => '0',
+    'setup_site_sugarbeet_anonymous_stats' => 'true',
+    'setup_site_sugarbeet_automatic_checks' => '1',
+    'setup_db_database_name' => '0.0.0.0/orcl',
+#    'web_user' => 'vagrant',
+#    'web_group' => 'apache',
+    'setup_fts_skip' => 'true',
+EOL
+           fi
+           cat >> config_si.php <<EOL
 );
 EOL
 

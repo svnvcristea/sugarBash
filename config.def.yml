@@ -111,15 +111,28 @@ xbuild:
   db:
     user: root
     password: root
+    host: localhost
+    type: mysql
   rootPath: /srv/www/htdocs
   repo:
     0:
+      name: sugar-qa
+      url: qa.sugar.dev
+      path: /srv/git-repo/jpm-mango
+      flav: ent
+      version: 7.6.1.0
+      db:
+        user: system
+        password: manager
+        host: localhost
+        type: oci8
+    1:
       name: agfa
       url: agfa.dev
       path: /srv/www/git-repo/agfa-mango
       flav: ent
       version: 7.5.1.0
-    1:
+    2:
       name: lapp
       url: lapp.dev
       path: /srv/www/git-repo/lapp-mango
