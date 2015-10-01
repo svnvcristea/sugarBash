@@ -410,6 +410,7 @@ xbuild()
                 secho "Cleaning ${rootPath}/${repoName}"
                 cd ${rootPath}/${repoName}
                 askToProceed "to remove folder content"
+                proceedXBuild=1
                 rm -Rf ./*
                 rm -Rf .htaccess .git .gitignore
             else
@@ -578,8 +579,9 @@ EOL
         *)
             xbuild setParameters
             xbuild prepare
-            askToProceed "building..."
-
+            if [ -z ${proceedXBuild} ]; then
+                askToProceed "building..."
+            fi
             xbuild building
             xbuild configBuild
             xbuild configOverride
