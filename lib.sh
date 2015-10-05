@@ -523,6 +523,7 @@ include/javascript/yui3/
 include/javascript/yui/
 include/javascript/tiny_mce/
 
+custom/blowfish/
 custom/history/
 custom/modules/Connectors/metadata/connectors.php
 custom/modules/*/Ext/**
