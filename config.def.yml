@@ -113,6 +113,7 @@ xbuild:
     password: root
     host: localhost
     type: mysql
+    demoData: no
   rootPath: /srv/www/htdocs
   repo:
     0:
@@ -126,6 +127,7 @@ xbuild:
         password: manager
         host: localhost
         type: oci8
+        demoData: yes
     1:
       name: agfa
       url: agfa.dev
