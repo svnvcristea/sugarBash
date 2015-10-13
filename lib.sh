@@ -359,6 +359,7 @@ xbuild()
             setYamlVal "_xbuild_repo_${RID}_db_password" "dbPass"
             setYamlVal "_xbuild_repo_${RID}_db_host" "dbHost"
             setYamlVal "_xbuild_repo_${RID}_db_type" "dbType"
+            setYamlVal "_xbuild_repo_${RID}_db_demoData" "dbDemoData"
             setYamlVal "_xbuild_repo_${RID}_version" "builVersion"
             setYamlVal "_xbuild_repo_${RID}_flav" "buildFlav"
             setYamlVal "_xbuild_repo_${RID}_license" "license"
@@ -383,6 +384,9 @@ xbuild()
             if [ -z ${dbType} ]; then
                 setYamlVal "_xbuild_db_type" "dbType"
             fi
+            if [ -z ${dbType} ]; then
+                setYamlVal "_xbuild_db_demoData" "dbDemoData"
+            fi
             db=${db//[^[:alnum:]]/}
         ;;
 
@@ -396,6 +400,7 @@ xbuild()
             echo "db password:         ${dbPass}"
             echo "db host:             ${dbHost}"
             echo "db type:             ${dbType}"
+            echo "db demoData:         ${dbDemoData}"
             echo "url:                 ${buildUrl}"
             echo "flav:                ${buildFlav}"
             echo "version              ${builVersion}"
@@ -457,6 +462,8 @@ xbuild()
     'setup_db_admin_password' => '${dbPass}',
     'setup_db_type' => '${dbType}',
 
+    'demoData' => '${dbDemoData}',
+
     'setup_license_key' => '${license}',
     'setup_system_name' => 'SugarCRM',
     'setup_site_url' => 'http://${buildUrl}',
@@ -490,7 +497,6 @@ EOL
     'setup_num_lic_oc' => '10',
     'dbUSRData' => 'same',
     'install_type' => 'typical',
-    'demoData' => 'yes',
     'setup_db_pop_demo_data' => '0',
     'setup_site_sugarbeet_anonymous_stats' => 'true',
     'setup_site_sugarbeet_automatic_checks' => '1',
