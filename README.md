@@ -23,6 +23,7 @@ This Sugar Bash helper will support daily routines as:
     * OS
     * Disk
     * Actual folder size
+    * Actual folder write benchmark
     * Top 10 sub-folders size
 
 

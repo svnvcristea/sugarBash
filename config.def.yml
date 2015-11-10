@@ -74,6 +74,9 @@ option:
         name: Actual folder size
         func: sysInfo foldersSize
       5:
+        name: Actual folder write benchmark
+        func: sysInfo writeTest
+      6:
         name: Top 10 sub-folders size
         func: sysInfo top10folders
 
