@@ -5,6 +5,7 @@ Sugar Bash Helper
 
 It's easy to extend and config having all configurable parameters into YAML format on config.yml
 This Sugar Bash helper will support daily routines as:
+
  * Backup your files
  * Mount shared folders
  * VPN
@@ -23,6 +24,7 @@ This Sugar Bash helper will support daily routines as:
     * OS
     * Disk
     * Actual folder size
+    * Actual folder write benchmark
     * Top 10 sub-folders size
 
 

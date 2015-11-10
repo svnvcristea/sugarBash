@@ -340,6 +340,36 @@ askToProceed()
     fi
 }
 
+diskBenchmark()
+{
+    local count=512
+    local testFiles="./t3st7i1e_1.tmp ./t3st7i1e_2.tmp ./t3st7i1e_3.tmp"
+
+	if [ ! -z "$1" ]; then
+	    count=${1}
+	fi
+
+    secho "New: bs=1M count=${count}" 'menu'
+    for testFile in ${testFiles};
+    do
+        if [ -f ${testFile} ]; then
+            ls -l ${testFile}
+            echo -e "\033[93m"; read -e -p "Remove ${testFile} ? (y/n): " -i "y" OPT ; echo -e "\033[0m"
+            if [ ${OPT} != "y" ]; then
+                rm ${testFile}
+            fi
+        fi
+        dd if=/dev/zero of=${testFile} bs=1M count=${count}
+    done
+
+    secho "Same: bs=1M count=${count}" 'menu'
+    for testFile in ${testFiles};
+    do
+        dd if=/dev/zero of=${testFile} bs=1M count=${count}
+        rm ${testFile}
+    done
+}
+
 xbuild()
 {
     secho "# xbuild: $@" 'menu'
@@ -736,6 +766,10 @@ sysInfo()
 
         'foldersSize')
 			du -hs ./
+        ;;
+
+        'writeTest')
+            diskBenchmark 1024
         ;;
 
         'top10folders')
