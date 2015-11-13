@@ -55,8 +55,36 @@ option:
     name: Import SQL Dump
     func: "importSQLDump"
   8:
-    name: System Info
+    name: vagrantON
     func: "menu option_8_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: clone
+        func: vagrantON clone
+      2:
+        name: status
+        func: vagrantON status
+      3:
+        name: up
+        func: vagrantON up
+      4:
+        name: ssh
+        func: vagrantON ssh
+      5:
+        name: resume
+        func: vagrantON resume
+      6:
+        name: suspend
+        func: vagrantON suspend
+      7:
+        name: destroy
+        func: vagrantON destroy
+  9:
+    name: System Info
+    func: "menu option_9_opt"
     opt:
       0:
         name: Main menu
@@ -167,3 +195,8 @@ mysql:
   host: localhost
   user: root
   pass: root
+
+vagrantON:
+  repo: git@github.com:svnvcristea/vagrantON.git
+  path: ./
+  stack: php54

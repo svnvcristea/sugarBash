@@ -335,7 +335,7 @@ backup()
 askToProceed()
 {
     echo -e "\033[93m"; read -e -p "Proceed $1 ? (y/n): " -i "y" OPT ; echo -e "\033[0m"
-    if [ ${OPT} != "y" ]; then
+    if [ ${OPT} != "y" ] && [ -z ${2} ]; then
         error 'Proceeding abort!'
     fi
 }
@@ -781,6 +781,46 @@ sysInfo()
 			sysInfo disk
             sysInfo foldersSize
 			sysInfo top10folders
+        ;;
+
+    esac
+
+    drawOptionDone
+}
+
+vagrantON()
+{
+    secho "# vagrantON: $@" 'menu'
+
+    case ${1} in
+
+        'clone')
+            setYamlVal "_vagrantON_path"
+            cd ${ymlVal}
+            setYamlVal "_vagrantON_repo"
+
+            if [ -d vagrantON ]; then
+                error "${PWD}/vagrantON exists"
+            fi
+            secho "Will clone ${ymlVal} into ${PWD}" 'menu'
+
+            git clone ${ymlVal}
+            cd vagrantON
+            git submodule init
+            git submodule update
+            cp _examples/config.yml ./
+            askToProceed "edit config.yml" true
+            if [[ ${OPT} == "y" ]]; then
+                nano config.yml
+            fi
+
+        ;;
+
+        *)
+            setYamlVal "_vagrantON_path"
+            cd ${ymlVal}/vagrantON
+            setYamlVal "_vagrantON_stack"
+            vagrant ${1} ${ymlVal}
         ;;
 
     esac
