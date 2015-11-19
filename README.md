@@ -1,66 +1,70 @@
-Sugar Bash Helper
-=================
+SugarBash Helper
+================
 
-# 1) About
+## About
 
-It's easy to extend and config having all configurable parameters into YAML format on config.yml
-This Sugar Bash helper will support daily routines as:
- * Backup your files
- * Mount shared folders
- * VPN
-    * kill
-    * connect
- * Git Config:
-    * globals email and username
- * xBuild - SugarCRM create build
- * Git Mango:
-    * clone
-    * setup repo
-    * post checkout branch
-    * patch based on instance staged files
- * Import SQL dump
- * System Info
-    * OS
-    * Disk
-    * Actual folder size
-    * Actual folder write benchmark
-    * Top 10 sub-folders size
+Sugar Bash Helper may help developers with daily routines such as:
 
+```bash
+SugarBash Helper: option
+========================
+ 0 - Quit
+ 1 - Backup
+ 2 - Mount
+ 3 - VPN
+ 4 - Git Config
+ 5 - xbuild
+ 6 - Git Mango
+ 7 - DB SQL
+ 8 - vagrantON
+ 9 - System Info
+------------------------
+Select your menu option:
+```
 
-# 2) Installation
+It's easy to extend and config having all configurable parameters into YAML format on [config.yml](https://github.com/svnvcristea/sugarBash/blob/master/config.def.yml)
+
+## Installation
 
 ### Clone sugarBash
 
-
-  ```bash
- git clone git@github.com:svnvcristea/sugarBash.git
-  ```
+```bash
+git clone git@github.com:svnvcristea/sugarBash.git
+```
 
 ### SetUp config file
 
-Copy config.def.yml to config.yml
-
-  ```bash
+```bash
 cd ./sugaBash
 cp ./config.def.yml ./config.yml
-
-  ```
+nano config.yml
+```
 
 Check your config.yml file and adjust accordingly
 
 ### Run the helper and explore the options
 
-  ```bash
+```bash
 sudo bash helper.sh
-
-  ```
+```
 
 Usage:
-  ```bash
+
+```bash
 bash helper.sh -h
+```
 
-  ```
+### Permanent Alias
 
-# 3) See also
+Add helper.sh as alias:
+```bash
+echo "alias helper='bash ~/git-repo/sugarBash/helper.sh'" >> ~/.bashrc
+```
+then you can just type 
+```bash
+helper
+```
+
+## See also
 
 * [SugarCRM CodeSniffer](https://github.com/svnvcristea/SugarCRMCodeSniffer)

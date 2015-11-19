@@ -23,8 +23,12 @@ checkWhich()
 helperAlias()
 {
     local aliasHelper="alias helper='bash ${DIR}/helper.sh'"
-    echo "You may add the Sugar Bash Helper as alias using:"
-    echo ${aliasHelper}
+    if [ "$PWD" == "${DIR}" ]; then
+        secho "You may add the Sugar Bash Helper as alias using:" menu
+        secho "${aliasHelper}" green
+        secho "or add permanent alias trough" menu
+        secho "echo \"${aliasHelper}\" >> ~/.bashrc" green
+    fi
 }
 
 parse_yaml()
@@ -142,7 +146,7 @@ showOptions()
 
 menu()
 {
-    while ((OPT != 0));
+    while (( OPT != 0 ));
         showOptions $1
         if [ ! -z $2 ] && [ "${OPT}" == "" ]; then
             OPT=${2}
@@ -151,6 +155,9 @@ menu()
             draw _ "" 'menu'
         fi
     do
+        if (( OPT == q )) || (( OPT == Q )); then
+            OPT=0
+        fi
         setYamlVal "_${1}_${OPT}_func"
         ${ymlVal}
     done
@@ -821,6 +828,33 @@ vagrantON()
             cd ${ymlVal}/vagrantON
             setYamlVal "_vagrantON_stack"
             vagrant ${1} ${ymlVal}
+        ;;
+
+    esac
+
+    drawOptionDone
+}
+
+mysqlCLI()
+{
+    secho "${1}" menu
+    draw - "${#1}" menu
+    echo "${1}" | mysql -h localhost -u root -psugarcrm
+}
+
+dbSQL()
+{
+    secho "# dbSQL: $@" 'menu'
+
+    case ${1} in
+
+        'MySQLsetRoot')
+            mysqlCLI "SELECT User,Host FROM mysql.user; CREATE USER 'root'@'%' IDENTIFIED BY 'pspass';"
+            mysqlCLI "GRANT ALL ON *.* TO 'root'@'%'; SHOW GRANTS FOR 'root'@'%'; FLUSH PRIVILEGES;"
+        ;;
+
+        *)
+
         ;;
 
     esac

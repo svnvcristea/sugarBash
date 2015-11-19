@@ -30,7 +30,7 @@ boot()
     OPT=""
     # read yaml file
     eval $(parse_yaml "$DIR/config.yml" "_")
-    draw line
+    draw _ 24 'menu'
     helperAlias
     menu "option" $1
 }
