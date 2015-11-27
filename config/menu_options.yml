@@ -1,0 +1,129 @@
+option:
+  0:
+    name: Quit
+    func: "exit 1"
+  1:
+    name: Backup
+    func: backup
+  2:
+    name: Mount
+    func: "menu option_2_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: SugarEPS
+        func: mountFstab SugarEPS
+      2:
+        name: php54
+        func: mountFstab php54
+  3:
+    name: VPN
+    func: "menu option_3_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: VPN Connect
+        func: "vpn connectSugar"
+      2:
+        name: VPN Kill
+        func: "vpn kill"
+
+  4:
+    name: Git Config
+    func: "menu option_4_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: Global email and username
+        func: "gitConfig global"
+  5:
+    name: xbuild
+    func: "xbuild"
+  6:
+    name: Git Mango
+    func: "menu option_6_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: clone
+        func: "gitMango clone"
+      2:
+        name: post checkout
+        func: "gitMango postCheckout"
+      3:
+        name: patch
+        func: "gitMango patch"
+  7:
+    name: DB
+    func: "menu option_7_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: MySQL setRoot
+        func: db mysqlSetRoot
+      2:
+        name: MySQL Import Dump
+        func: importSQLDump
+  8:
+    name: vagrantON
+    func: "menu option_8_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: clone
+        func: vagrantON clone
+      2:
+        name: status
+        func: vagrantON status
+      3:
+        name: up
+        func: vagrantON up
+      4:
+        name: ssh
+        func: vagrantON ssh
+      5:
+        name: resume
+        func: vagrantON resume
+      6:
+        name: suspend
+        func: vagrantON suspend
+      7:
+        name: destroy
+        func: vagrantON destroy
+  9:
+    name: System Info
+    func: "menu option_9_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: Full info
+        func: sysInfo
+      2:
+        name: OS
+        func: sysInfo OS
+      3:
+        name: disk
+        func: sysInfo disk
+      4:
+        name: Actual folder size
+        func: sysInfo foldersSize
+      5:
+        name: Actual folder write benchmark
+        func: sysInfo writeTest
+      6:
+        name: Top 10 sub-folders size
+        func: sysInfo top10folders

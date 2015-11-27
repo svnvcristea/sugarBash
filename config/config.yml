@@ -1,0 +1,48 @@
+git:
+  user:
+    name: "Your Name"
+    email: "email@domain.com"
+  clone:
+    mango:
+      origin:   git@github.com:svnvcristea/Mango.git
+      upstream: git@github.com:ps-dev-lapp/Mango.git
+
+vpn:
+  conf: /etc/vpnc/sugarvpn.conf
+
+mount:
+  fstab:
+    SugarEPS:
+      0: "192.168.56.101:/srv/www/htdocs"
+      1: "192.168.56.101:/etc/apache2/vhosts.d"
+    php54:
+      0: "192.168.56.14:/var/www/html"
+
+backup:
+  serverip: 192.168.99.10
+  mountpoint: "/mnt/BackupSynk"
+  path: "$PATH:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
+  command:
+    mount: mount.cifs
+    umount: umount
+    rsync: grsync
+    domain: DOMAIN1
+    username: user.name
+
+mysql:
+  host: localhost
+  user: root
+  pass: root
+
+db:
+  mysql:
+    localRootPass: psugarcrm
+    setRoot:
+      host: %
+      user: root
+      pass: pspass
+
+vagrantON:
+  repo: git@github.com:svnvcristea/vagrantON.git
+  path: ./
+  stack: php54

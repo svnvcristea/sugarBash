@@ -4,7 +4,6 @@
 #         USAGE:  ./helper.sh -h
 #   DESCRIPTION:  SugarCRM bash helper library for Linux
 #       AUTHORS:  Nicolae V. CRISTEA;
-#       VERSION:  0.9.0
 #===============================================================================
 
 error() 
@@ -276,13 +275,14 @@ mountFstab()
     secho "# mountFstab: $@" 'menu'
 
 	local count=0
-	setYamlVal "_mount_fstab_${count}"
+	setYamlVal "_mount_fstab_${1}_${count}"
 
 	while (( ${#ymlVal} > 0 ))
 	do
+	    secho "mount ${ymlVal}"
 	    sudo mount ${ymlVal}
 	    count=$(( $count + 1 ))
-	    setYamlVal "_mount_fstab_${count}"
+	    setYamlVal "_mount_fstab_${1}_${count}"
 	done
 
     drawOptionDone
@@ -839,18 +839,24 @@ mysqlCLI()
 {
     secho "${1}" menu
     draw - "${#1}" menu
-    echo "${1}" | mysql -h localhost -u root -psugarcrm
+    setYamlVal "_db_mysql_localRootPass"
+    cmd="echo \"${1}\" | mysql -h localhost -u root -${ymlVal}"
+    ${cmd}
 }
 
-dbSQL()
+db()
 {
-    secho "# dbSQL: $@" 'menu'
+    secho "# db: $@" 'menu'
 
     case ${1} in
 
-        'MySQLsetRoot')
-            mysqlCLI "SELECT User,Host FROM mysql.user; CREATE USER 'root'@'%' IDENTIFIED BY 'pspass';"
-            mysqlCLI "GRANT ALL ON *.* TO 'root'@'%'; SHOW GRANTS FOR 'root'@'%'; FLUSH PRIVILEGES;"
+        'mysqlSetRoot')
+            setYamlVal "_db_mysql_setRoot_host" "dbMysqlRootHost"
+            setYamlVal "_db_mysql_setRoot_user" "dbMysqlRootUser"
+            setYamlVal "_db_mysql_setRoot_pass" "dbMysqlRootPass"
+
+            mysqlCLI "SELECT User,Host FROM mysql.user; CREATE USER '${dbMysqlRootUser}'@'${dbMysqlRootHost}' IDENTIFIED BY '${dbMysqlRootPass}';"
+            mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlRootUser}'@'${dbMysqlRootHost}'; SHOW GRANTS FOR '${dbMysqlRootUser}'@'${dbMysqlRootHost}'; FLUSH PRIVILEGES;"
         ;;
 
         *)
