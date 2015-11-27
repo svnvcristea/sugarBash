@@ -1,0 +1,56 @@
+xbuild:
+  flav: ent
+  version: 7.5.0
+  license: 'salesa8fb331009c9f0902d19c8edemo'
+  db:
+    user: root
+    password: root
+    host: localhost
+    type: mysql
+    demoData: no
+  rootPath: /srv/www/htdocs
+  repo:
+    0:
+      name: sugar-qa
+      url: qa.sugar.dev
+      path: /srv/git-repo/jpm-mango
+      flav: ent
+      version: 7.6.1.0
+      db:
+        user: system
+        password: manager
+        host: localhost
+        type: oci8
+        demoData: yes
+    1:
+      name: agfa
+      url: agfa.dev
+      path: /srv/www/git-repo/agfa-mango
+      flav: ent
+      version: 7.5.1.0
+    2:
+      name: lapp
+      url: lapp.dev
+      path: /srv/www/git-repo/lapp-mango
+  dbContent:
+    email_addresses:
+      0:
+        id: a63521a9-bd97-d920-0d7a-5469e10a862a
+        email_address: admin@sugarcrm.com
+        email_address_caps: ADMIN@SUGARCRM.COM
+        invalid_email: 0
+        opt_out: 0
+        date_created: "2015-09-07 12:00:12"
+        date_modified: "2015-09-07 12:00:12"
+        deleted: 0
+    email_addr_bean_rel:
+      0:
+        id: a60ff377-d03b-6cca-8ca1-5469e19ae22e
+        email_address_id: a63521a9-bd97-d920-0d7a-5469e10a862a
+        bean_id: 1
+        bean_module: Users
+        primary_address: 1
+        reply_to_address: 0
+        date_created: "2015-09-07 12:00:12"
+        date_modified: "2015-09-07 12:00:12"
+        deleted: 0

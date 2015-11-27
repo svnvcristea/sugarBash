@@ -36,8 +36,7 @@ git clone git@github.com:svnvcristea/sugarBash.git
 
 ```bash
 cd ./sugaBash
-cp ./config.def.yml ./config.yml
-nano config.yml
+nano config/_private.yml
 ```
 
 Check your config.yml file and adjust accordingly
@@ -58,7 +57,7 @@ bash helper.sh -h
 
 Add helper.sh as alias:
 ```bash
-echo "alias helper='bash ~/git-repo/sugarBash/helper.sh'" >> ~/.bashrc
+echo "alias helper='bash ~/sugarBash/helper.sh'" >> ~/.bashrc
 ```
 then you can just type 
 ```bash
