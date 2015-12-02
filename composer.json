@@ -1,0 +1,13 @@
+{
+  "name": "svnvcristea/stacks",
+  "type": "library",
+  "description": "SugarBash Helper - bash for daily routines",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Nicolae V. Cristea",
+      "email": "ncristea@sugarcrm.com"
+    }
+  ],
+  "minimum-stability": "stable"
+}

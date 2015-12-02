@@ -1,12 +1,15 @@
 CHANGELOG
 =========
 
-1.0.1
+1.1.0
 -----
 
  * vagrantON integration
- * MySQl root password
+ * MySQL root password
  * mount folders grouped by VM names
+ * new code architecture
+ * mount distinct grouped folders
+ * composer, licence and changelog
 
 1.0.0
 -----

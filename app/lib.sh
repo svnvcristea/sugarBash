@@ -4,6 +4,7 @@
 #         USAGE:  ./helper.sh -h
 #   DESCRIPTION:  SugarCRM bash helper library for Linux
 #       AUTHORS:  Nicolae V. CRISTEA;
+#       LICENSE:  MIT
 #===============================================================================
 
 error() 
@@ -840,8 +841,8 @@ mysqlCLI()
     secho "${1}" menu
     draw - "${#1}" menu
     setYamlVal "_db_mysql_localRootPass"
-    cmd="echo \"${1}\" | mysql -h localhost -u root -${ymlVal}"
-    ${cmd}
+    cmd="echo \"${1}\" | mysql -h localhost -u root -p${ymlVal}"
+    eval ${cmd}
 }
 
 db()
