@@ -4,6 +4,7 @@
 #         USAGE:  ./helper.sh -h
 #   DESCRIPTION:  SugarCRM bash helper library for Linux
 #       AUTHORS:  Nicolae V. CRISTEA;
+#       LICENSE:  MIT
 #===============================================================================
 
 DIR="${BASH_SOURCE%/*}"
