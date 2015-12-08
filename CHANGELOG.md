@@ -12,7 +12,8 @@ CHANGELOG
  * composer, licence and changelog
  * von alias sub command
  * dedicated git init for SugarCRM Build
- * config xbuild overwrite rootPath 
+ * xbuild config overwrite rootPath
+ * xbuild db use encryption
 
 1.0.0
 -----

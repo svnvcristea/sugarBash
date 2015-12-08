@@ -8,6 +8,8 @@ xbuild:
     host: localhost
     type: mysql
     demoData: no
+    encryption: false
+    encryptionPass: n44tUh3oBY4=
   rootPath: /srv/www/htdocs
   repo:
     0:
