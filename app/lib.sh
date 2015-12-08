@@ -439,6 +439,8 @@ xbuild()
             setYamlVal "_xbuild_repo_${RID}_db_host" "dbHost"
             setYamlVal "_xbuild_repo_${RID}_db_type" "dbType"
             setYamlVal "_xbuild_repo_${RID}_db_demoData" "dbDemoData"
+            setYamlVal "_xbuild_repo_${RID}_db_encryption" "dbEncryption"
+            setYamlVal "_xbuild_repo_${RID}_db_encryptionPass" "dbEncryptionPass"
             setYamlVal "_xbuild_repo_${RID}_version" "builVersion"
             setYamlVal "_xbuild_repo_${RID}_flav" "buildFlav"
             setYamlVal "_xbuild_repo_${RID}_license" "license"
@@ -469,6 +471,9 @@ xbuild()
             if [ -z ${dbType} ]; then
                 setYamlVal "_xbuild_db_demoData" "dbDemoData"
             fi
+            if [ -z ${dbEncryption} ]; then
+                setYamlVal "_xbuild_db_encryption" "dbEncryption"
+            fi
             db=${db//[^[:alnum:]]/}
         ;;
 
@@ -483,6 +488,8 @@ xbuild()
             echo "db host:             ${dbHost}"
             echo "db type:             ${dbType}"
             echo "db demoData:         ${dbDemoData}"
+            echo "db encryption:       ${dbEncryption}"
+            echo "db encryption pass:  ${dbEncryptionPass}"
             echo "url:                 ${buildUrl}"
             echo "flav:                ${buildFlav}"
             echo "version              ${builVersion}"
@@ -526,6 +533,7 @@ xbuild()
 
         'configBuild')
             if [[  "${dbType}" == "mysql"  ]]; then
+                echo "Will drop DB: ${db} using user: ${dbUser} and password: ${dbPass}"
                 echo "drop database if exists ${db};" | mysql -u ${dbUser} -p${dbPass}
             fi
             cd ${rootPath}/${repoName}
@@ -612,9 +620,14 @@ EOL
         'installSugar')
             local installHtml=$(curl -XGET "http://${buildUrl}/install.php?goto=SilentInstall&cli=true" 2>/dev/null)
 
-            if [[ ${installHtml} == *\<bottle\>Success\!\</bottle\>* ]]
-            then
+            if [[ ${installHtml} == *\<bottle\>Success\!\</bottle\>* ]]; then
                 echo 'Successfull'
+                if [ ${dbEncryption} == "true" ]; then
+                    cat >> config_override.php <<EOL
+\$sugar_config['dbconfig']['use_encryption'] = ${dbEncryption};
+\$sugar_config['dbconfig']['db_password'] = '${dbEncryptionPass}';
+EOL
+                fi
             else
                 echo "-> cat install.log"
                 cat ${rootPath}/${repoName}/install.log
