@@ -46,3 +46,6 @@ vagrantON:
   repo: git@github.com:svnvcristea/vagrantON.git
   path: ./
   stack: php54
+
+von:
+  path: /home/nicolaecristea/git-repo/stacks/vagrant-on

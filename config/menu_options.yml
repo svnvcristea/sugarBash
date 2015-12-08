@@ -16,8 +16,11 @@ option:
         name: SugarEPS
         func: mountFstab SugarEPS
       2:
-        name: php54
+        name: Stack php54
         func: mountFstab php54
+      3:
+        name: Stack oracle12c
+        func: mountFstab oracle12c
   3:
     name: VPN
     func: "menu option_3_opt"
@@ -42,6 +45,9 @@ option:
       1:
         name: Global email and username
         func: "gitConfig global"
+      2:
+        name: SugarCRM Build init
+        func: "gitConfig initSugarBuild"
   5:
     name: xbuild
     func: "xbuild"
