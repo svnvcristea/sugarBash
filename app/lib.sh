@@ -144,6 +144,21 @@ showOptions()
     renderArray $1
 }
 
+von()
+{
+    setYamlVal "_von_path"
+    cd ${ymlVal}
+    vagrant $1 $2
+}
+
+subCmd()
+{
+    if [ ! -z "${1}" ] && [ -z "${1##*[!0-9]*}" ]; then
+        $1 $2 $3
+        exit 1
+    fi
+}
+
 menu()
 {
     while (( OPT != 0 ));
@@ -155,9 +170,6 @@ menu()
             draw _ "" 'menu'
         fi
     do
-        if (( OPT == q )) || (( OPT == Q )); then
-            OPT=0
-        fi
         setYamlVal "_${1}_${OPT}_func"
         ${ymlVal}
     done
@@ -201,6 +213,35 @@ gitConfig()
             secho "After config:" 'menu'
             git config --global -l
             drawOptionDone
+        ;;
+
+        'initSugarBuild')
+            cat > .gitignore <<EOL
+# OS and IDE
+*~
+.DS_Store
+.idea/
+.project
+.settings
+
+# SugarCRM
+*.log
+config_override.php
+
+cache/
+upload/
+
+include/javascript/yui3/
+include/javascript/yui/
+include/javascript/tiny_mce/
+
+custom/blowfish/
+custom/history/
+custom/modules/Connectors/metadata/connectors.php
+custom/modules/*/Ext/**
+custom/application/Ext/**
+EOL
+			git init && git add . && git commit -m 'Initial commit'
         ;;
 
         *)
@@ -390,7 +431,7 @@ xbuild()
 
             setYamlVal "_xbuild_repo_${RID}_name" "repoName"
             setYamlVal "_xbuild_repo_${RID}_path" "repoPath"
-            setYamlVal "_xbuild_rootPath" "rootPath"
+            setYamlVal "_xbuild_repo_${RID}_rootPath" "rootPath"
             setYamlVal "_xbuild_repo_${RID}_url" "buildUrl"
             setYamlVal "_xbuild_repo_${RID}_name" "db"
             setYamlVal "_xbuild_repo_${RID}_db_user" "dbUser"
@@ -401,6 +442,9 @@ xbuild()
             setYamlVal "_xbuild_repo_${RID}_version" "builVersion"
             setYamlVal "_xbuild_repo_${RID}_flav" "buildFlav"
             setYamlVal "_xbuild_repo_${RID}_license" "license"
+            if [ -z ${rootPath} ]; then
+                setYamlVal "_xbuild_rootPath" "rootPath"
+            fi
             if [ -z ${builVersion} ]; then
                 setYamlVal "_xbuild_version" "builVersion"
             fi
@@ -548,31 +592,6 @@ EOL
 );
 EOL
 
-            cat > .gitignore <<EOL
-# OS and IDE
-*~
-.DS_Store
-.idea/
-.project
-.settings
-
-# SugarCRM
-*.log
-config_override.php
-
-cache/
-upload/
-
-include/javascript/yui3/
-include/javascript/yui/
-include/javascript/tiny_mce/
-
-custom/blowfish/
-custom/history/
-custom/modules/Connectors/metadata/connectors.php
-custom/modules/*/Ext/**
-custom/application/Ext/**
-EOL
         ;;
 
         'configOverride')
@@ -618,7 +637,7 @@ EOL
         ;;
 
         'gitRepoInit')
-            git init && git add . && git commit -m 'Initial commit' > /dev/null
+            gitConfig initSugarBuild
         ;;
 
         *)

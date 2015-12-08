@@ -37,6 +37,7 @@ boot()
 
     draw _ 24 'menu'
     helperAlias
+    subCmd $@
     menu "option" $1
 }
 
@@ -51,4 +52,4 @@ done
 # skip over the processed options
 shift $((OPTIND-1))
 
-boot $1
+boot $@

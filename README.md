@@ -15,7 +15,7 @@ SugarBash Helper: option
  4 - Git Config
  5 - xbuild
  6 - Git Mango
- 7 - DB SQL
+ 7 - DB
  8 - vagrantON
  9 - System Info
 ------------------------

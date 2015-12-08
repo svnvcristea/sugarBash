@@ -10,6 +10,9 @@ CHANGELOG
  * new code architecture
  * mount distinct grouped folders
  * composer, licence and changelog
+ * von alias sub command
+ * dedicated git init for SugarCRM Build
+ * config xbuild overwrite rootPath 
 
 1.0.0
 -----
