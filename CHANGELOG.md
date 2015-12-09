@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+1.2.0
+-----
+ * git clone GitHub repo
+
 1.1.0
 -----
 
