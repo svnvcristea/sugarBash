@@ -76,6 +76,25 @@ renderArray()
 	draw - '' 'menu'
 }
 
+renderOptKeys()
+{
+
+    local key="_$1_keys"
+	setYamlVal $key
+
+	eval keys="(${ymlVal})"
+
+	for key in ${!keys[@]}; do
+	    if [[ ( 10 -gt ${key} ) ]]; then
+            echo " ${key} - ${keys[$key]}"
+	    else
+	        echo ${key} - ${keys[$key]}
+        fi
+    done
+
+	draw - '' 'menu'
+}
+
 #   FUNCTION:   secho       Echo the message into specific color
 # PARAMETERS:   $1          The message to display
 #               $2          The color of the message
@@ -129,6 +148,17 @@ drawOptionDone()
     draw - "" 'menu'
 }
 
+showTitle()
+{
+
+    local title="SugarBash Helper: ${1}"
+    echo ""
+    secho "${title}" 'menu'
+    titleLenght=${#title}
+    draw "=" ${titleLenght} 'menu'
+
+}
+
 showOptions()
 {
     setYamlVal "_${1/_opt/_name}"
@@ -136,12 +166,32 @@ showOptions()
         ymlVal=${1}
     fi
 
-    local title="SugarBash Helper: ${ymlVal}"
-    echo ""
-    secho "${title}" 'menu'
-    titleLenght=${#title}
-    draw "=" ${titleLenght} 'menu'
-    renderArray $1
+    showTitle ${ymlVal}
+
+    if [[ $2 == "keys" ]]; then
+        renderOptKeys $1
+    else
+        renderArray $1
+    fi
+}
+
+menuKeys()
+{
+    ymlVal=''
+
+    while true;
+        showOptions $1 'keys'
+        read -p "Select your menu option: " OPT
+        draw _ "" 'menu'
+    do
+        setYamlVal "_${1}_${keys[$OPT]}"
+        optKey=${keys[$OPT]}
+        if [[ ! -z ${ymlVal} ]]; then
+           break
+        fi
+
+        secho "_${1}_${keys[$OPT]}  ${optKey}: ${ymlVal}"
+    done
 }
 
 menu()
@@ -197,6 +247,24 @@ gitConfig()
             git config --global user.email "${_git_user_email}"
             secho "After config:" 'menu'
             git config --global -l
+            drawOptionDone
+        ;;
+
+        'clone')
+
+            menuKeys "git_GitHub"
+            local repo=${ymlVal}
+            setYamlVal "_git_path" 'gitRepoPath'
+            secho "#${optKey}: git clone ${repo} ${gitRepoPath}/${optKey}" 'menu'
+
+            git clone ${repo} ${gitRepoPath}/${optKey}
+            cd ${gitRepoPath}/${optKey}
+            git submodule init
+            git submodule update
+            git submodule
+            git remote -v
+            git status
+
             drawOptionDone
         ;;
 

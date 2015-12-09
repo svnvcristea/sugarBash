@@ -10,7 +10,9 @@
 subCmd()
 {
     if [ ! -z "${1}" ] && [ -z "${1##*[!0-9]*}" ]; then
+        showTitle "${1} ${2} ${3}"
         $1 $2 $3
+        drawOptionDone
         exit 1
     fi
 }

@@ -1,11 +1,22 @@
 git:
+  # the local git folder path where most of the repositories will be cloned into
+  path: /home/git-repo
   user:
     name: "Your Name"
-    email: "email@domain.com"
+    email: "email@softvision.ro"
   clone:
     mango:
       origin:   git@github.com:svnvcristea/Mango.git
       upstream: git@github.com:ps-dev-lapp/Mango.git
+  GitHub:
+    keys: "mango sugarBash SugarCRMCodeSniffer stacks stackDeployer vagrantON toolshed"
+    mango: git@github.com:svnvcristea/Mango.git
+    sugarBash: git@github.com:svnvcristea/sugarBash.git
+    SugarCRMCodeSniffer: git@github.com:svnvcristea/SugarCRMCodeSniffer.git
+    stacks: git@github.com:svnvcristea/stacks.git
+    stackDeployer: git@github.com:svnvcristea/stack-deployer.git
+    vagrantON: git@github.com:svnvcristea/vagrantON.git
+    toolshed: git@github.com:sugarcrm/toolshed.git
 
 vpn:
   conf: /etc/vpnc/sugarvpn.conf
