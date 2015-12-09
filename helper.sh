@@ -10,6 +10,7 @@
 DIR="${BASH_SOURCE%/*}"
 if [ ! -d "$DIR" ]; then DIR="$PWD"; fi
 . "$DIR/app/lib.sh"
+. "$DIR/app/cmd.sh"
 
 usage() {
     cat <<EOM
