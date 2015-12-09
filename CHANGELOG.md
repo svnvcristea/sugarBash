@@ -14,6 +14,7 @@ CHANGELOG
  * dedicated git init for SugarCRM Build
  * xbuild config overwrite rootPath
  * xbuild db use encryption
+ * von sub command auto mount/umount it's folders
 
 1.0.0
 -----

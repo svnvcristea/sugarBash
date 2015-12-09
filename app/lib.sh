@@ -144,21 +144,6 @@ showOptions()
     renderArray $1
 }
 
-von()
-{
-    setYamlVal "_von_path"
-    cd ${ymlVal}
-    vagrant $1 $2
-}
-
-subCmd()
-{
-    if [ ! -z "${1}" ] && [ -z "${1##*[!0-9]*}" ]; then
-        $1 $2 $3
-        exit 1
-    fi
-}
-
 menu()
 {
     while (( OPT != 0 ));
@@ -316,13 +301,17 @@ mountFstab()
 {
     secho "# mountFstab: $@" 'menu'
 
+    local cmd="mount"
 	local count=0
 	setYamlVal "_mount_fstab_${1}_${count}"
+	if [[ $2 == "umount" ]]; then
+	    cmd="umount"
+	fi
 
 	while (( ${#ymlVal} > 0 ))
 	do
-	    secho "mount ${ymlVal}"
-	    sudo mount ${ymlVal}
+	    secho "${cmd} ${ymlVal}"
+	    sudo ${cmd} ${ymlVal}
 	    count=$(( $count + 1 ))
 	    setYamlVal "_mount_fstab_${1}_${count}"
 	done
