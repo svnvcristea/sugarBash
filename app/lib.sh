@@ -217,13 +217,22 @@ vpn()
     case ${1} in
 
         'kill')
-            sudo killall vpnc
+            sudo killall vpnc >> $DIR/log/vpn.log
+            echo "killall vpnc" >> $DIR/log/vpn.log
             drawOptionDone
         ;;
 
         'connectSugar')
             setYamlVal "_vpn_conf"
-            sudo vpnc ${ymlVal}
+            touch $DIR/log/vpn.log
+            sudo vpnc ${ymlVal} >> $DIR/log/vpn.log
+            drawOptionDone
+        ;;
+
+        'status')
+            OUTPUT=$(sudo pgrep vpnc)
+            echo "PID: $OUTPUT"
+            echo "PID: $OUTPUT" >> $DIR/log/vpn.log
             drawOptionDone
         ;;
 
@@ -590,7 +599,6 @@ xbuild()
 
         'configBuild')
             if [[  "${dbType}" == "mysql"  ]]; then
-                echo "Will drop DB: ${db} using user: ${dbUser} and password: ${dbPass}"
                 echo "drop database if exists ${db};" | mysql -u ${dbUser} -p${dbPass}
             fi
             cd ${rootPath}/${repoName}

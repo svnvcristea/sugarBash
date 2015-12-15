@@ -34,6 +34,9 @@ option:
       2:
         name: VPN Kill
         func: "vpn kill"
+      3:
+        name: VPN status
+        func: "vpn status"
 
   4:
     name: Git
