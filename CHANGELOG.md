@@ -4,6 +4,7 @@ CHANGELOG
 1.2.0
 -----
  * git clone GitHub repo
+ * VPN status
 
 1.1.0
 -----

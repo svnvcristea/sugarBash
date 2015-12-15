@@ -17,6 +17,7 @@ SugarBash Helper: option
  3 - VPN
      1 - VPN Connect
      2 - VPN Kill
+     3 - VPN status
  4 - Git
      1 - Config email and username
      2 - GitHub Clone
