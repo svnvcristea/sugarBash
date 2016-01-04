@@ -123,6 +123,33 @@ secho()
     echo -e "\e[${code}m${1}\e[0m"
 }
 
+sEncode()
+{
+    read -s -p "Provide [sudo] password for $USER: " OPT
+    ymlVal=$( echo ${OPT} | base64 )
+    echo -e "\nencode_sudo_pass: ${ymlVal}" >> $DIR/config/_private.yml
+}
+
+sDecode()
+{
+    setYamlVal "_encode_sudo_pass"
+    if [ -z ${ymlVal} ]; then
+        sEncode
+    fi
+    ymlVal=$( echo ${ymlVal} | base64 --decode )
+}
+
+ssudo()
+{
+    setYamlVal "_encode_sudo_use"
+    if [ ${ymlVal} == "true" ]; then
+        sDecode
+        echo ${ymlVal} | sudo -S $@
+    else
+        sudo -S $@
+    fi
+}
+
 #   FUNCTION:   draw        Echo Specific line
 # PARAMETERS:   $1          Type of the line
 #               $2          Lenght of the line
@@ -217,22 +244,20 @@ vpn()
     case ${1} in
 
         'kill')
-            sudo killall vpnc >> $DIR/log/vpn.log
-            echo "killall vpnc" >> $DIR/log/vpn.log
+            ssudo killall vpnc
             drawOptionDone
         ;;
 
         'connectSugar')
             setYamlVal "_vpn_conf"
             touch $DIR/log/vpn.log
-            sudo vpnc ${ymlVal} >> $DIR/log/vpn.log
-            drawOptionDone
+            ssudo vpnc ${ymlVal} >> $DIR/log/vpn.log
+            vpn status
         ;;
 
         'status')
-            OUTPUT=$(sudo pgrep vpnc)
+            OUTPUT=$(ssudo pgrep vpnc)
             echo "PID: $OUTPUT"
-            echo "PID: $OUTPUT" >> $DIR/log/vpn.log
             drawOptionDone
         ;;
 
@@ -388,7 +413,7 @@ mountFstab()
 	while (( ${#ymlVal} > 0 ))
 	do
 	    secho "${cmd} ${ymlVal}"
-	    sudo ${cmd} ${ymlVal}
+	    ssudo ${cmd} ${ymlVal}
 	    count=$(( $count + 1 ))
 	    setYamlVal "_mount_fstab_${1}_${count}"
 	done
@@ -842,7 +867,7 @@ unixInstall()
         fi
 	fi
     echo "Executing: 'sudo ${cmd} install $1'"
-	sudo ${cmd} install $1
+	ssudo ${cmd} install $1
 	drawOptionDone
 }
 
@@ -878,7 +903,7 @@ sysInfo()
         ;;
 
         'top10folders')
-			sudo find ./ -type d -print0 | xargs -0 du | sort -n | tail -10 | cut -f2 | xargs -I{} du -sh {}
+			ssudo find ./ -type d -print0 | xargs -0 du | sort -n | tail -10 | cut -f2 | xargs -I{} du -sh {}
         ;;
 
         *)

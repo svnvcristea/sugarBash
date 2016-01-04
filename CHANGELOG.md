@@ -5,6 +5,7 @@ CHANGELOG
 -----
  * git clone GitHub repo
  * VPN status
+ * use encoded sudo password
 
 1.1.0
 -----
