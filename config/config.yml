@@ -1,3 +1,7 @@
+encode:
+  sudo:
+    use: true
+
 git:
   # the local git folder path where most of the repositories will be cloned into
   path: /home/git-repo
