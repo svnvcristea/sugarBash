@@ -6,6 +6,8 @@ CHANGELOG
  * git clone GitHub repo
  * VPN status
  * use encoded sudo password
+ * fix auto install command on unix
+ * improve mySQL dump file import
 
 1.1.0
 -----

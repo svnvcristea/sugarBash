@@ -435,7 +435,7 @@ backup()
 	# ----------------------------------------------
 
 	if [ ! "$SUDO_UID" ]; then
-		error "Use sudo bash $0 $@"
+		error "Use: \nsudo bash $0 1"
 	fi
 
 	# ----    aici trebuia sa verific daca exista comenzile
@@ -818,9 +818,9 @@ importSQLDump()
     local dbName=$1
     local sqlDumpFile=$2
 
-    setYamlVal "_mysql_host" "dbHost";
-    setYamlVal "_mysql_user" "dbUser";
-    setYamlVal "_mysql_pass" "dbPass";
+    setYamlVal "_db_mysql_connect_host" "dbHost";
+    setYamlVal "_db_mysql_connect_user" "dbUser";
+    setYamlVal "_db_mysql_connect_pass" "dbPass";
 
     if [ -z ${dbName} ]; then
         read -p "Give DB name: " dbName
@@ -843,6 +843,7 @@ importSQLDump()
         unixInstall pv
 	fi
 
+    mysqlCLI "CREATE DATABASE IF NOT EXISTS ${dbName}"
 	checkWhich pw
 	if [  "$?" -eq "0"  ]; then
 		mysql -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} < ${sqlDumpFile}
@@ -867,7 +868,7 @@ unixInstall()
         fi
 	fi
     echo "Executing: 'sudo ${cmd} install $1'"
-	ssudo ${cmd} install $1
+	ssudo ${cmd} -y install $1
 	drawOptionDone
 }
 
@@ -962,8 +963,11 @@ mysqlCLI()
 {
     secho "${1}" menu
     draw - "${#1}" menu
-    setYamlVal "_db_mysql_localRootPass"
-    cmd="echo \"${1}\" | mysql -h localhost -u root -p${ymlVal}"
+    setYamlVal "_db_mysql_connect_host" "dbMysqlRootHost"
+    setYamlVal "_db_mysql_connect_user" "dbMysqlRootUser"
+    setYamlVal "_db_mysql_connect_pass" "dbMysqlRootPass"
+
+    cmd="echo \"${1}\" | mysql -h ${dbMysqlRootHost} -u ${dbMysqlRootUser} -p${dbMysqlRootPass}"
     eval ${cmd}
 }
 
