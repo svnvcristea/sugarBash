@@ -44,14 +44,12 @@ backup:
     domain: DOMAIN1
     username: user.name
 
-mysql:
-  host: localhost
-  user: root
-  pass: root
-
 db:
   mysql:
-    localRootPass: sugarcrm
+    connect:
+      host: localhost
+      user: root
+      pass: sugarcrm
     setRoot:
       host: %
       user: root
