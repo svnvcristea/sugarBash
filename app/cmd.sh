@@ -28,8 +28,8 @@ von()
         mountFstab ${stack} umount
     fi
 
-    setYamlVal "_von_path"
-    cd ${ymlVal}
+    setYamlVal "_vagrantON_path"
+    cd ${ymlVal}/vagrantON
     vagrant $1 $2
 
     if [ $1 == "up" ]; then
