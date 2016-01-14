@@ -935,16 +935,9 @@ vagrantON()
             fi
             secho "Will clone ${ymlVal} into ${PWD}" 'menu'
 
-            git clone ${ymlVal}
+            git clone ${ymlVal} -b develop
             cd vagrantON
-            git submodule init
-            git submodule update
-            cp _examples/config.yml ./
-            askToProceed "edit config.yml" true
-            if [[ ${OPT} == "y" ]]; then
-                nano config.yml
-            fi
-
+            bash app/setup.sh
         ;;
 
         *)

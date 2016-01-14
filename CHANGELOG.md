@@ -8,6 +8,7 @@ CHANGELOG
  * use encoded sudo password
  * fix auto install command on unix
  * improve mySQL dump file import
+ * vagrantON clone updates
 
 1.1.0
 -----
