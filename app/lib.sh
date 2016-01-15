@@ -76,6 +76,25 @@ renderArray()
 	draw - '' 'menu'
 }
 
+renderOptKeys()
+{
+
+    local key="_$1_keys"
+	setYamlVal $key
+
+	eval keys="(${ymlVal})"
+
+	for key in ${!keys[@]}; do
+	    if [[ ( 10 -gt ${key} ) ]]; then
+            echo " ${key} - ${keys[$key]}"
+	    else
+	        echo ${key} - ${keys[$key]}
+        fi
+    done
+
+	draw - '' 'menu'
+}
+
 #   FUNCTION:   secho       Echo the message into specific color
 # PARAMETERS:   $1          The message to display
 #               $2          The color of the message
@@ -104,6 +123,33 @@ secho()
     echo -e "\e[${code}m${1}\e[0m"
 }
 
+sEncode()
+{
+    read -s -p "Provide [sudo] password for $USER: " OPT
+    ymlVal=$( echo ${OPT} | base64 )
+    echo -e "\nencode_sudo_pass: ${ymlVal}" >> $DIR/config/_private.yml
+}
+
+sDecode()
+{
+    setYamlVal "_encode_sudo_pass"
+    if [ -z ${ymlVal} ]; then
+        sEncode
+    fi
+    ymlVal=$( echo ${ymlVal} | base64 --decode )
+}
+
+ssudo()
+{
+    setYamlVal "_encode_sudo_use"
+    if [ ${ymlVal} == "true" ]; then
+        sDecode
+        echo ${ymlVal} | sudo -S $@
+    else
+        sudo -S $@
+    fi
+}
+
 #   FUNCTION:   draw        Echo Specific line
 # PARAMETERS:   $1          Type of the line
 #               $2          Lenght of the line
@@ -129,6 +175,17 @@ drawOptionDone()
     draw - "" 'menu'
 }
 
+showTitle()
+{
+
+    local title="SugarBash Helper: ${1}"
+    echo ""
+    secho "${title}" 'menu'
+    titleLenght=${#title}
+    draw "=" ${titleLenght} 'menu'
+
+}
+
 showOptions()
 {
     setYamlVal "_${1/_opt/_name}"
@@ -136,12 +193,32 @@ showOptions()
         ymlVal=${1}
     fi
 
-    local title="SugarBash Helper: ${ymlVal}"
-    echo ""
-    secho "${title}" 'menu'
-    titleLenght=${#title}
-    draw "=" ${titleLenght} 'menu'
-    renderArray $1
+    showTitle ${ymlVal}
+
+    if [[ $2 == "keys" ]]; then
+        renderOptKeys $1
+    else
+        renderArray $1
+    fi
+}
+
+menuKeys()
+{
+    ymlVal=''
+
+    while true;
+        showOptions $1 'keys'
+        read -p "Select your menu option: " OPT
+        draw _ "" 'menu'
+    do
+        setYamlVal "_${1}_${keys[$OPT]}"
+        optKey=${keys[$OPT]}
+        if [[ ! -z ${ymlVal} ]]; then
+           break
+        fi
+
+        secho "_${1}_${keys[$OPT]}  ${optKey}: ${ymlVal}"
+    done
 }
 
 menu()
@@ -167,13 +244,20 @@ vpn()
     case ${1} in
 
         'kill')
-            sudo killall vpnc
+            ssudo killall vpnc
             drawOptionDone
         ;;
 
         'connectSugar')
             setYamlVal "_vpn_conf"
-            sudo vpnc ${ymlVal}
+            touch $DIR/log/vpn.log
+            ssudo vpnc ${ymlVal} >> $DIR/log/vpn.log
+            vpn status
+        ;;
+
+        'status')
+            OUTPUT=$(ssudo pgrep vpnc)
+            echo "PID: $OUTPUT"
             drawOptionDone
         ;;
 
@@ -197,6 +281,24 @@ gitConfig()
             git config --global user.email "${_git_user_email}"
             secho "After config:" 'menu'
             git config --global -l
+            drawOptionDone
+        ;;
+
+        'clone')
+
+            menuKeys "git_GitHub"
+            local repo=${ymlVal}
+            setYamlVal "_git_path" 'gitRepoPath'
+            secho "#${optKey}: git clone ${repo} ${gitRepoPath}/${optKey}" 'menu'
+
+            git clone ${repo} ${gitRepoPath}/${optKey}
+            cd ${gitRepoPath}/${optKey}
+            git submodule init
+            git submodule update
+            git submodule
+            git remote -v
+            git status
+
             drawOptionDone
         ;;
 
@@ -311,7 +413,7 @@ mountFstab()
 	while (( ${#ymlVal} > 0 ))
 	do
 	    secho "${cmd} ${ymlVal}"
-	    sudo ${cmd} ${ymlVal}
+	    ssudo ${cmd} ${ymlVal}
 	    count=$(( $count + 1 ))
 	    setYamlVal "_mount_fstab_${1}_${count}"
 	done
@@ -333,7 +435,7 @@ backup()
 	# ----------------------------------------------
 
 	if [ ! "$SUDO_UID" ]; then
-		error "Use sudo bash $0 $@"
+		error "Use: \nsudo bash $0 1"
 	fi
 
 	# ----    aici trebuia sa verific daca exista comenzile
@@ -522,7 +624,6 @@ xbuild()
 
         'configBuild')
             if [[  "${dbType}" == "mysql"  ]]; then
-                echo "Will drop DB: ${db} using user: ${dbUser} and password: ${dbPass}"
                 echo "drop database if exists ${db};" | mysql -u ${dbUser} -p${dbPass}
             fi
             cd ${rootPath}/${repoName}
@@ -717,9 +818,9 @@ importSQLDump()
     local dbName=$1
     local sqlDumpFile=$2
 
-    setYamlVal "_mysql_host" "dbHost";
-    setYamlVal "_mysql_user" "dbUser";
-    setYamlVal "_mysql_pass" "dbPass";
+    setYamlVal "_db_mysql_connect_host" "dbHost";
+    setYamlVal "_db_mysql_connect_user" "dbUser";
+    setYamlVal "_db_mysql_connect_pass" "dbPass";
 
     if [ -z ${dbName} ]; then
         read -p "Give DB name: " dbName
@@ -742,6 +843,7 @@ importSQLDump()
         unixInstall pv
 	fi
 
+    mysqlCLI "CREATE DATABASE IF NOT EXISTS ${dbName}"
 	checkWhich pw
 	if [  "$?" -eq "0"  ]; then
 		mysql -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} < ${sqlDumpFile}
@@ -766,7 +868,7 @@ unixInstall()
         fi
 	fi
     echo "Executing: 'sudo ${cmd} install $1'"
-	sudo ${cmd} install $1
+	ssudo ${cmd} -y install $1
 	drawOptionDone
 }
 
@@ -802,7 +904,7 @@ sysInfo()
         ;;
 
         'top10folders')
-			sudo find ./ -type d -print0 | xargs -0 du | sort -n | tail -10 | cut -f2 | xargs -I{} du -sh {}
+			ssudo find ./ -type d -print0 | xargs -0 du | sort -n | tail -10 | cut -f2 | xargs -I{} du -sh {}
         ;;
 
         *)
@@ -833,16 +935,9 @@ vagrantON()
             fi
             secho "Will clone ${ymlVal} into ${PWD}" 'menu'
 
-            git clone ${ymlVal}
+            git clone ${ymlVal} -b develop
             cd vagrantON
-            git submodule init
-            git submodule update
-            cp _examples/config.yml ./
-            askToProceed "edit config.yml" true
-            if [[ ${OPT} == "y" ]]; then
-                nano config.yml
-            fi
-
+            bash app/setup.sh
         ;;
 
         *)
@@ -861,8 +956,11 @@ mysqlCLI()
 {
     secho "${1}" menu
     draw - "${#1}" menu
-    setYamlVal "_db_mysql_localRootPass"
-    cmd="echo \"${1}\" | mysql -h localhost -u root -p${ymlVal}"
+    setYamlVal "_db_mysql_connect_host" "dbMysqlRootHost"
+    setYamlVal "_db_mysql_connect_user" "dbMysqlRootUser"
+    setYamlVal "_db_mysql_connect_pass" "dbMysqlRootPass"
+
+    cmd="echo \"${1}\" | mysql -h ${dbMysqlRootHost} -u ${dbMysqlRootUser} -p${dbMysqlRootPass}"
     eval ${cmd}
 }
 
@@ -873,12 +971,12 @@ db()
     case ${1} in
 
         'mysqlSetRoot')
-            setYamlVal "_db_mysql_setRoot_host" "dbMysqlRootHost"
-            setYamlVal "_db_mysql_setRoot_user" "dbMysqlRootUser"
-            setYamlVal "_db_mysql_setRoot_pass" "dbMysqlRootPass"
+            setYamlVal "_db_mysql_setRoot_host" "dbMysqlSetRootHost"
+            setYamlVal "_db_mysql_setRoot_user" "dbMysqlSetRootUser"
+            setYamlVal "_db_mysql_setRoot_pass" "dbMysqlSetRootPass"
 
-            mysqlCLI "SELECT User,Host FROM mysql.user; CREATE USER '${dbMysqlRootUser}'@'${dbMysqlRootHost}' IDENTIFIED BY '${dbMysqlRootPass}';"
-            mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlRootUser}'@'${dbMysqlRootHost}'; SHOW GRANTS FOR '${dbMysqlRootUser}'@'${dbMysqlRootHost}'; FLUSH PRIVILEGES;"
+            mysqlCLI "SELECT User,Host FROM mysql.user; CREATE USER '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}' IDENTIFIED BY '${dbMysqlSetRootPass}';"
+            mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; FLUSH PRIVILEGES;"
         ;;
 
         *)

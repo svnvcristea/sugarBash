@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #===============================================================================
 #          FILE:  cmd.sh
 #         USAGE:  ./helper.sh -h
@@ -10,7 +10,9 @@
 subCmd()
 {
     if [ ! -z "${1}" ] && [ -z "${1##*[!0-9]*}" ]; then
+        showTitle "${1} ${2} ${3}"
         $1 $2 $3
+        drawOptionDone
         exit 1
     fi
 }
@@ -26,8 +28,8 @@ von()
         mountFstab ${stack} umount
     fi
 
-    setYamlVal "_von_path"
-    cd ${ymlVal}
+    setYamlVal "_vagrantON_path"
+    cd ${ymlVal}/vagrantON
     vagrant $1 $2
 
     if [ $1 == "up" ]; then
