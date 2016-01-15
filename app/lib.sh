@@ -971,12 +971,12 @@ db()
     case ${1} in
 
         'mysqlSetRoot')
-            setYamlVal "_db_mysql_setRoot_host" "dbMysqlRootHost"
-            setYamlVal "_db_mysql_setRoot_user" "dbMysqlRootUser"
-            setYamlVal "_db_mysql_setRoot_pass" "dbMysqlRootPass"
+            setYamlVal "_db_mysql_setRoot_host" "dbMysqlSetRootHost"
+            setYamlVal "_db_mysql_setRoot_user" "dbMysqlSetRootUser"
+            setYamlVal "_db_mysql_setRoot_pass" "dbMysqlSetRootPass"
 
-            mysqlCLI "SELECT User,Host FROM mysql.user; CREATE USER '${dbMysqlRootUser}'@'${dbMysqlRootHost}' IDENTIFIED BY '${dbMysqlRootPass}';"
-            mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlRootUser}'@'${dbMysqlRootHost}'; SHOW GRANTS FOR '${dbMysqlRootUser}'@'${dbMysqlRootHost}'; FLUSH PRIVILEGES;"
+            mysqlCLI "SELECT User,Host FROM mysql.user; CREATE USER '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}' IDENTIFIED BY '${dbMysqlSetRootPass}';"
+            mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; FLUSH PRIVILEGES;"
         ;;
 
         *)
