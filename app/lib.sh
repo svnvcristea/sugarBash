@@ -53,7 +53,7 @@ setYamlVal()
 	ymlVal=${!1}
 
 	if [ ! -z "$2" ]; then
-	    eval ${2}=${!1}
+	    eval "${2}=${!1}"
 	fi
 }
 
@@ -320,6 +320,7 @@ config_override.php
 
 cache/
 upload/
+_PSBook/
 
 include/javascript/yui3/
 include/javascript/yui/
@@ -438,7 +439,8 @@ backup()
 	# ----------------------------------------------
 
 	if [ ! "$SUDO_UID" ]; then
-		error "Use: \nsudo bash $0 1"
+	    ssudo bash $0 1
+	    exit 1
 	fi
 
 	# ----    aici trebuia sa verific daca exista comenzile
@@ -473,6 +475,7 @@ backup()
 	${UMOUNT} ${MOUNTPOINT} || ${UMOUNT} -l ${MOUNTPOINT} || echo "Umounting failed. Please run  $UMOUNT $MOUNTPOINT"
 
     drawOptionDone
+    exit 1
 }
 
 askToProceed()
@@ -627,7 +630,7 @@ xbuild()
 
         'configBuild')
             if [[  "${dbType}" == "mysql"  ]]; then
-                echo "drop database if exists ${db};" | mysql -u ${dbUser} -p${dbPass}
+                mysqlCLI "drop database if exists ${db};"
             fi
             cd ${rootPath}/${repoName}
             cat > config_si.php <<EOL
@@ -746,6 +749,11 @@ EOL
             gitConfig initSugarBuild
         ;;
 
+        'PSBook')
+            wget https://github.com/svnvcristea/PSBook/archive/master.tar.gz -O - | tar xz
+            mv PSBook-master _PSBook
+        ;;
+
         *)
             xbuild setParameters
             xbuild prepare
@@ -757,6 +765,7 @@ EOL
             xbuild configOverride
             xbuild installSugar
             xbuild gitRepoInit
+            xbuild PSBook
         ;;
 
     esac
