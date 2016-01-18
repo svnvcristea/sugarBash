@@ -1,8 +1,17 @@
 CHANGELOG
 =========
 
+1.3.0
+-----
+
+ *  refactor mysql cli trough mysql_config_editor
+ *  mySQL show users
+ *  mySQL show user privileges
+ *  mySQL DB size
+
 1.2.0
 -----
+
  * git clone GitHub repo
  * VPN status
  * use encoded sudo password

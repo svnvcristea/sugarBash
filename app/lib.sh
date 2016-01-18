@@ -109,11 +109,14 @@ secho()
         green)
 			code=32
         ;;
-        yellow|menu)
+        menu)
 			code=33
         ;;
         blue)
 			code=34
+        ;;
+        yellow)
+			code=93
         ;;
         *)
 			code=${2}
@@ -412,8 +415,8 @@ mountFstab()
 
 	while (( ${#ymlVal} > 0 ))
 	do
-	    secho "${cmd} ${ymlVal}"
-	    ssudo ${cmd} ${ymlVal}
+	    secho "${cmd} ${ymlVal}" yellow
+	    ssudo "${cmd} ${ymlVal}"
 	    count=$(( $count + 1 ))
 	    setYamlVal "_mount_fstab_${1}_${count}"
 	done
@@ -952,31 +955,66 @@ vagrantON()
     drawOptionDone
 }
 
-mysqlCLI()
+setMysqlConfigEditor()
 {
-    secho "${1}" menu
-    draw - "${#1}" menu
     setYamlVal "_db_mysql_connect_host" "dbMysqlRootHost"
     setYamlVal "_db_mysql_connect_user" "dbMysqlRootUser"
     setYamlVal "_db_mysql_connect_pass" "dbMysqlRootPass"
 
-    cmd="echo \"${1}\" | mysql -h ${dbMysqlRootHost} -u ${dbMysqlRootUser} -p${dbMysqlRootPass}"
-    eval ${cmd}
+    local loginPath="$(echo 'quit' | mysql --login-path=sugarBash 2>&1)"
+    if [[ ${loginPath} =~ ^ERROR.* ]]; then
+        secho "${loginPath}" red
+        mysql_config_editor remove --login-path=sugarBash
+    fi
+
+    loginPath="$(mysql_config_editor print --login-path=sugarBash)"
+    if [ -z "$loginPath" ]; then
+	    secho "Provide the connect password of ${dbMysqlRootUser}@${dbMysqlRootHost}"
+        mysql_config_editor set --login-path=sugarBash --host=${dbMysqlRootHost} --user=${dbMysqlRootUser} --password
+        mysql_config_editor print --login-path=sugarBash
+	fi
 }
 
-db()
+mysqlCLI()
 {
-    secho "# db: $@" 'menu'
+    secho "${1}" menu
+    draw - "${#1}" menu
+    echo -e "\033[93m";
+    cmd="echo \"${1}\" | mysql --login-path=sugarBash"
+    eval ${cmd}
+    echo -e "\033[0m"
+}
+
+dbMySQL()
+{
+    secho "# DB MySQL: $@" 'menu'
 
     case ${1} in
 
-        'mysqlSetRoot')
+        'showUsers')
+            mysqlCLI "SELECT User,Host FROM mysql.user;"
+        ;;
+
+        'showUserPrivileges')
+            read -p "user: " dbMysqlUser
+            read -p "host: " dbMysqlHost
+            mysqlCLI "SHOW GRANTS FOR '${dbMysqlUser}'@'${dbMysqlHost}';"
+        ;;
+
+        'setRoot')
             setYamlVal "_db_mysql_setRoot_host" "dbMysqlSetRootHost"
             setYamlVal "_db_mysql_setRoot_user" "dbMysqlSetRootUser"
             setYamlVal "_db_mysql_setRoot_pass" "dbMysqlSetRootPass"
 
-            mysqlCLI "SELECT User,Host FROM mysql.user; CREATE USER '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}' IDENTIFIED BY '${dbMysqlSetRootPass}';"
+            setMysqlConfigEditor
+            mysqlCLI "CREATE USER '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}' IDENTIFIED BY '${dbMysqlSetRootPass}';"
             mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; FLUSH PRIVILEGES;"
+        ;;
+
+        'dbSize')
+            local query="SELECT table_schema as DB, Round(Sum(data_length + index_length) / 1024 / 1024, 2) as MB"
+            query+=" FROM information_schema.tables GROUP BY table_schema HAVING DB NOT IN ('information_schema', 'performance_schema');"
+            mysqlCLI "${query}"
         ;;
 
         *)
