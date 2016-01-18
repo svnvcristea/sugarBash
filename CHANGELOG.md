@@ -4,10 +4,12 @@ CHANGELOG
 1.3.0
 -----
 
- *  refactor mysql cli trough mysql_config_editor
- *  mySQL show users
- *  mySQL show user privileges
- *  mySQL DB size
+ * refactor mysql cli trough mysql_config_editor
+ * mySQL show users
+ * mySQL show user privileges
+ * mySQL DB size
+ * run backup on `helper 1` alias 
+ * add _PSBook to xbuild
 
 1.2.0
 -----

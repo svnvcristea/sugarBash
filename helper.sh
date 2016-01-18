@@ -33,7 +33,7 @@ boot()
     for conf in $(find "$DIR/config" -name '*.yml' -or -name '*.yaml')
     do
         # read .yml file
-        eval $(parse_yaml ${conf} "_")
+        eval "$(parse_yaml ${conf} '_')"
     done
 
     draw _ 24 'menu'
