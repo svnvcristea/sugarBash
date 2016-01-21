@@ -128,16 +128,16 @@ secho()
 
 sEncode()
 {
-    read -s -p "Provide [sudo] password for $USER: " OPT
+    read -s -p "Provide [${1}] password: " OPT
     ymlVal=$( echo ${OPT} | base64 )
-    echo -e "\nencode_sudo_pass: ${ymlVal}" >> $DIR/config/_private.yml
+    echo -e "\n${1}: ${ymlVal}" >> $DIR/config/_private.yml
 }
 
 sDecode()
 {
-    setYamlVal "_encode_sudo_pass"
+    setYamlVal "_${1}"
     if [ -z ${ymlVal} ]; then
-        sEncode
+        sEncode ${1}
     fi
     ymlVal=$( echo ${ymlVal} | base64 --decode )
 }
@@ -146,11 +146,16 @@ ssudo()
 {
     setYamlVal "_encode_sudo_use"
     if [ ${ymlVal} == "true" ]; then
-        sDecode
+        sDecode encode_sudo_pass
         echo ${ymlVal} | sudo -S $@
     else
         sudo -S $@
     fi
+}
+
+getBackupPass()
+{
+    sDecode "backup_pass_encoded"
 }
 
 #   FUNCTION:   draw        Echo Specific line
@@ -439,8 +444,7 @@ backup()
 	# ----------------------------------------------
 
 	if [ ! "$SUDO_UID" ]; then
-	    ssudo bash $0 1
-	    exit 1
+	    SUDO_UID=$(ssudo bash $0 sudoUid)
 	fi
 
 	# ----    aici trebuia sa verific daca exista comenzile
@@ -459,7 +463,9 @@ backup()
 		mkdir -p ${MOUNTPOINT} || ( echo "Unable to create mount point. Exiting..." exit 1; )
 	fi
 
-	${MOUNT} '//'${SERVER_IP}'/'${USERNAME} ${MOUNTPOINT} -o username=${USERNAME},domain=${DOMAIN},uid=${SUDO_UID}
+    getBackupPass
+	ssudo ${MOUNT} '//'${SERVER_IP}'/'${USERNAME} ${MOUNTPOINT} -o username=${USERNAME},domain=${DOMAIN},uid=${SUDO_UID},password=${ymlVal}
+
 	if [  "$?" -eq "0"  ]; then
 	    echo "Remote folder mounted in $MOUNTPOINT";
 	else 
@@ -472,7 +478,7 @@ backup()
 	else 
 		error "Error sync folders" ;
 	fi       
-	${UMOUNT} ${MOUNTPOINT} || ${UMOUNT} -l ${MOUNTPOINT} || echo "Umounting failed. Please run  $UMOUNT $MOUNTPOINT"
+	ssudo ${UMOUNT} ${MOUNTPOINT} || ${UMOUNT} -l ${MOUNTPOINT} || echo "Umounting failed. Please run  $UMOUNT $MOUNTPOINT"
 
     drawOptionDone
     exit 1
@@ -1024,6 +1030,39 @@ dbMySQL()
             local query="SELECT table_schema as DB, Round(Sum(data_length + index_length) / 1024 / 1024, 2) as MB"
             query+=" FROM information_schema.tables GROUP BY table_schema HAVING DB NOT IN ('information_schema', 'performance_schema');"
             mysqlCLI "${query}"
+        ;;
+
+        *)
+
+        ;;
+
+    esac
+
+    drawOptionDone
+}
+
+PHPUnit()
+{
+    secho "# PHPUnit: $@" 'menu'
+
+    case ${1} in
+
+        'install')
+            unixInstall phpunit
+        ;;
+
+        'install_last')
+            wget https://phar.phpunit.de/phpunit.phar -O phpunit.phar
+            chmod +x phpunit.phar
+            ssudo mv phpunit.phar /usr/local/bin/phpunit
+            phpunit --version
+        ;;
+
+        'runCustomizationTestSuite')
+            xbuild setParameters
+            secho "# SugarCRM Instance: ${rootPath}/${repoName} " 'menu'
+            cd ${rootPath}/${repoName}/tests
+            phpunit --testsuite "Sugar Customization Test Suite"
         ;;
 
         *)

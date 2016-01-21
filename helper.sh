@@ -9,6 +9,7 @@
 
 DIR="${BASH_SOURCE%/*}"
 if [ ! -d "$DIR" ]; then DIR="$PWD"; fi
+logFile=$DIR/log/day_$(date '+%Y-%m-%d').log
 . "$DIR/app/lib.sh"
 . "$DIR/app/cmd.sh"
 
@@ -36,9 +37,9 @@ boot()
         eval "$(parse_yaml ${conf} '_')"
     done
 
+    subCmd $@
     draw _ 24 'menu'
     helperAlias
-    subCmd $@
     menu "option" $1
 }
 

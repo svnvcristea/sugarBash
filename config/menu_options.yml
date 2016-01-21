@@ -148,3 +148,23 @@ option:
       6:
         name: Top 10 sub-folders size
         func: sysInfo top10folders
+  10:
+    name: SugarDevEnv
+    func: "menu option_10_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: PHPUnit
+        func: "menu option_10_opt_1_opt"
+        opt:
+          0:
+            name: Back menu
+            func: menu option_10_opt
+          1:
+            name: install
+            func: PHPUnit install
+          2:
+            name: PHPUnit Sugar Customization Test Suite
+            func: PHPUnit runCustomizationTestSuite
