@@ -59,3 +59,18 @@ vagrantON:
   repo: git@github.com:svnvcristea/vagrantON.git
   path: ~/git-repo
   stack: php54
+
+day:
+  on:
+    0: "von resume"
+    1: /mnt/ssd/PhpStorm/bin/phpstorm.sh
+    2: skype
+    3: hipchat
+    4: thunderbird
+    5: firefox
+    6: /usr/bin/google-chrome-stable
+    7: "vlc /home/nicolaecristea/play.pls"
+    8: "git -C /home/nicolaecristea/git-repo/jpm-mango fetch --all"
+  off:
+    0: "von suspend"
+    1: "bash $0 1"

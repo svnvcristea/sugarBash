@@ -8,8 +8,10 @@ CHANGELOG
  * mySQL show users
  * mySQL show user privileges
  * mySQL DB size
- * run backup on `helper 1` alias 
+ * run backup without `sudo bash helper.sh`
  * add _PSBook to xbuild
+ * SugarDevEnv install and run phpunit
+ * day on | off
 
 1.2.0
 -----
