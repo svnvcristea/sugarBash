@@ -12,6 +12,7 @@ CHANGELOG
  * add _PSBook to xbuild
  * SugarDevEnv install and run phpunit
  * day on | off
+ * check and set MySQL root pass while xbuild
 
 1.2.0
 -----

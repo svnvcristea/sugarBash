@@ -337,7 +337,7 @@ custom/modules/Connectors/metadata/connectors.php
 custom/modules/*/Ext/**
 custom/application/Ext/**
 EOL
-			git init && git add . && git commit -m 'Initial commit'
+			git init && git add . && git commit -m 'Initial commit' &> /dev/null
         ;;
 
         *)
@@ -636,6 +636,7 @@ xbuild()
 
         'configBuild')
             if [[  "${dbType}" == "mysql"  ]]; then
+                dbMySQL setRoot
                 mysqlCLI "drop database if exists ${db};"
             fi
             cd ${rootPath}/${repoName}
@@ -1021,9 +1022,14 @@ dbMySQL()
             setYamlVal "_db_mysql_setRoot_user" "dbMysqlSetRootUser"
             setYamlVal "_db_mysql_setRoot_pass" "dbMysqlSetRootPass"
 
-            setMysqlConfigEditor
-            mysqlCLI "CREATE USER '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}' IDENTIFIED BY '${dbMysqlSetRootPass}';"
-            mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; FLUSH PRIVILEGES;"
+            rootUserError=$(mysqlCLI "SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}';" | grep "Grants for")
+            if [ "${#rootUserError}" == 0 ]; then
+                setMysqlConfigEditor
+                mysqlCLI "CREATE USER '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}' IDENTIFIED BY '${dbMysqlSetRootPass}';"
+                mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; FLUSH PRIVILEGES;"
+            else
+                mysqlCLI "SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}';"
+            fi
         ;;
 
         'dbSize')

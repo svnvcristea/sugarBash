@@ -26,7 +26,7 @@ von()
     if [ $1 == "halt" ] || [ $1 == "suspend" ]; then
         mountFstab ${stack} umount &> /dev/null
         vpn kill
-    elif [ $1 == "up" ]; then
+    elif [ $1 == "up" ] || [ $1 == "resume" ]; then
         vpn connectSugar
     fi
 
@@ -71,7 +71,7 @@ day()
                 setYamlVal "_day_off_${count}"
             done
             ssudo shutdown -h now
-            askToProceed "Bye bye... !"
+            echo "# Bye bye... !" >> ${logFile}
         ;;
 
         *)
@@ -85,6 +85,9 @@ wh(){
     minElapsed=$(( ( $(date -ud "${now}" +'%s') - $(date -ud "${startedAt}" +'%s') )/60 ))
     hElapsed=$((${minElapsed}/60))
     mElapsed=$((${minElapsed}%60))
+    if [[ "${#mElapsed}" == 1 ]]; then
+        mElapsed="0${mElapsed}"
+    fi
     echo At work: ${hElapsed}:${mElapsed}
 }
 
