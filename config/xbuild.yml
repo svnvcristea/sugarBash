@@ -25,15 +25,15 @@ xbuild:
         type: oci8
         demoData: yes
     1:
-      name: agfa
-      url: agfa.dev
-      path: /srv/www/git-repo/agfa-mango
+      name: sugar
+      url: sugar.dev
+      path: /srv/www/git-repo/sugar-mango
       flav: ent
       version: 7.5.1.0
     2:
-      name: lapp
-      url: lapp.dev
-      path: /srv/www/git-repo/lapp-mango
+      name: qa
+      url: qa.dev
+      path: /srv/www/git-repo/qa-mango
   dbContent:
     email_addresses:
       0:

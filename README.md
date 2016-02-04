@@ -24,19 +24,24 @@ SugarBash Helper: option
      3 - SugarCRM Build init
  5 - xbuild
      0 - sugar-qa
-     1 - agfa
-     2 - lapp
-     3 - qad
-     4 - jpm
-     5 - JPM
  6 - Git Mango
      1 - clone
      2 - post checkout
      3 - patch
- 7 - DB
-     1 - MySQL setRoot
-     2 - MySQL Import Dump
+ 7 - DB MySQL
+     1 - show users
+     2 - user privileges
+     3 - set root
+     4 - DB size
+     5 - import dump
  8 - vagrantON
+     1 - clone
+     2 - status
+     3 - up
+     4 - ssh
+     5 - resume
+     6 - suspend
+     7 - destroy
  9 - System Info
      1 - Full info
      2 - OS
@@ -44,6 +49,10 @@ SugarBash Helper: option
      4 - Actual folder size
      5 - Actual folder write benchmark
      6 - Top 10 sub-folders size
+10 - SugarDevEnv
+     1 - PHPUnit
+         1 - install
+         2 - PHPUnit Sugar Customization Test Suite
 ------------------------
 Select your menu option:
 ```
