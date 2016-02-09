@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.3.1
+-----
+
+ * mySQL fix for SuSe and Mint to use mysql_config_editor
+
 1.3.0
 -----
 
