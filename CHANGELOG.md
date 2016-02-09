@@ -9,10 +9,11 @@ CHANGELOG
  * mySQL show user privileges
  * mySQL DB size
  * run backup without `sudo bash helper.sh`
- * add _PSBook to xbuild
+ * add [PSBook](https://github.com/svnvcristea/PSBook) to xbuild
  * SugarDevEnv install and run phpunit
  * day on | off
  * check and set MySQL root pass while xbuild
+ * mySQL fix for SuSe and Mint to use mysql_config_editor
 
 1.2.0
 -----

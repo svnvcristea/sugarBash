@@ -973,6 +973,16 @@ vagrantON()
 
 setMysqlConfigEditor()
 {
+
+    checkWhich mysql_config_editor
+	if [  "$?" -ne "0"  ]; then
+	    mysql_config_editor -V
+        secho "You have to install mysql_config_editor" red
+        secho "SuSE: sudo zypper install mysql-community-server-client" green
+        secho "Mint: sudo apt-get install mysql-client-5.6" green
+        error 'mysql_config_editor is required !'
+	fi
+
     setYamlVal "_db_mysql_connect_host" "dbMysqlRootHost"
     setYamlVal "_db_mysql_connect_user" "dbMysqlRootUser"
     setYamlVal "_db_mysql_connect_pass" "dbMysqlRootPass"
@@ -985,7 +995,7 @@ setMysqlConfigEditor()
 
     loginPath="$(mysql_config_editor print --login-path=sugarBash)"
     if [ -z "$loginPath" ]; then
-	    secho "Provide the connect password of ${dbMysqlRootUser}@${dbMysqlRootHost}"
+	    secho "Provide the mysql connect password of ${dbMysqlRootUser}@${dbMysqlRootHost}"
         mysql_config_editor set --login-path=sugarBash --host=${dbMysqlRootHost} --user=${dbMysqlRootUser} --password
         mysql_config_editor print --login-path=sugarBash
 	fi
