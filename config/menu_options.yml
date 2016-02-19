@@ -168,3 +168,6 @@ option:
           2:
             name: PHPUnit Sugar Customization Test Suite
             func: PHPUnit runCustomizationTestSuite
+  11:
+    name: "Git Mango Patch"
+    func: "gitMango patch $2"

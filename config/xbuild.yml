@@ -34,6 +34,14 @@ xbuild:
       name: qa
       url: qa.dev
       path: /srv/www/git-repo/qa-mango
+    3:
+      name: jpmc
+      url: localhost/jpmc/
+      path: /home/dev/git/jpmc/Mango
+      version: 7.6.3.0
+      flav: ent
+      db:
+        demoData: yes
   dbContent:
     email_addresses:
       0:
