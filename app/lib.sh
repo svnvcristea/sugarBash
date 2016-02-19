@@ -382,7 +382,7 @@ gitMango()
 		;;
 
         'patch')
-            xbuild setParameters
+            xbuild setParameters $2
 
             secho "# Patch Info #" 'menu'
             echo "Based on staged files of:       ${rootPath}/${repoName}"
@@ -530,8 +530,11 @@ xbuild()
 
         'setParameters')
             renderArray "xbuild_repo"
-            read -p "Choose repo: " RID
-
+            if [ -z "$2" ]; then
+                read -p "Choose repo: " RID
+            else
+                RID=$2
+            fi
             setYamlVal "_xbuild_repo_${RID}_name" "repoName"
             setYamlVal "_xbuild_repo_${RID}_path" "repoPath"
             setYamlVal "_xbuild_repo_${RID}_rootPath" "rootPath"
