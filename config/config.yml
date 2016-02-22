@@ -1,11 +1,26 @@
+encode:
+  sudo:
+    use: true
+
 git:
+  # the local git folder path where most of the repositories will be cloned into
+  path: /home/git-repo
   user:
     name: "Your Name"
-    email: "email@domain.com"
+    email: "email@softvision.ro"
   clone:
     mango:
       origin:   git@github.com:svnvcristea/Mango.git
       upstream: git@github.com:ps-dev-lapp/Mango.git
+  GitHub:
+    keys: "mango sugarBash SugarCRMCodeSniffer stacks stackDeployer vagrantON toolshed"
+    mango: git@github.com:svnvcristea/Mango.git
+    sugarBash: git@github.com:svnvcristea/sugarBash.git
+    SugarCRMCodeSniffer: git@github.com:svnvcristea/SugarCRMCodeSniffer.git
+    stacks: git@github.com:svnvcristea/stacks.git
+    stackDeployer: git@github.com:svnvcristea/stack-deployer.git
+    vagrantON: git@github.com:svnvcristea/vagrantON.git
+    toolshed: git@github.com:sugarcrm/toolshed.git
 
 vpn:
   conf: /etc/vpnc/sugarvpn.conf
@@ -29,14 +44,12 @@ backup:
     domain: DOMAIN1
     username: user.name
 
-mysql:
-  host: localhost
-  user: root
-  pass: root
-
 db:
   mysql:
-    localRootPass: sugarcrm
+    connect:
+      host: localhost
+      user: root
+      pass: sugarcrm
     setRoot:
       host: %
       user: root
@@ -44,8 +57,5 @@ db:
 
 vagrantON:
   repo: git@github.com:svnvcristea/vagrantON.git
-  path: ./
+  path: ~/git-repo
   stack: php54
-
-von:
-  path: /home/nicolaecristea/git-repo/stacks/vagrant-on

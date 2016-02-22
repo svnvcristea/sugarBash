@@ -34,18 +34,24 @@ option:
       2:
         name: VPN Kill
         func: "vpn kill"
+      3:
+        name: VPN status
+        func: "vpn status"
 
   4:
-    name: Git Config
+    name: Git
     func: "menu option_4_opt"
     opt:
       0:
         name: Main menu
         func: menu option
       1:
-        name: Global email and username
+        name: Config email and username
         func: "gitConfig global"
       2:
+        name: GitHub Clone
+        func: "gitConfig clone"
+      3:
         name: SugarCRM Build init
         func: "gitConfig initSugarBuild"
   5:
