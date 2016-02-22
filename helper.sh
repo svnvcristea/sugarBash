@@ -4,12 +4,13 @@
 #         USAGE:  ./helper.sh -h
 #   DESCRIPTION:  SugarCRM bash helper library for Linux
 #       AUTHORS:  Nicolae V. CRISTEA;
-#       VERSION:  0.9.0
+#       LICENSE:  MIT
 #===============================================================================
 
 DIR="${BASH_SOURCE%/*}"
 if [ ! -d "$DIR" ]; then DIR="$PWD"; fi
-. "$DIR/lib.sh"
+. "$DIR/app/lib.sh"
+. "$DIR/app/cmd.sh"
 
 usage() {
     cat <<EOM
@@ -28,10 +29,16 @@ EOM
 boot()
 {
     OPT=""
-    # read yaml file
-    eval $(parse_yaml "$DIR/config.yml" "_")
-    draw line
+
+    for conf in $(find "$DIR/config" -name '*.yml' -or -name '*.yaml')
+    do
+        # read .yml file
+        eval $(parse_yaml ${conf} "_")
+    done
+
+    draw _ 24 'menu'
     helperAlias
+    subCmd $@
     menu "option" $1
 }
 
@@ -46,4 +53,4 @@ done
 # skip over the processed options
 shift $((OPTIND-1))
 
-boot $1
+boot $@

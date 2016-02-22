@@ -4,7 +4,7 @@
 #         USAGE:  ./helper.sh -h
 #   DESCRIPTION:  SugarCRM bash helper library for Linux
 #       AUTHORS:  Nicolae V. CRISTEA;
-#       VERSION:  0.9.0
+#       LICENSE:  MIT
 #===============================================================================
 
 error() 
@@ -23,8 +23,12 @@ checkWhich()
 helperAlias()
 {
     local aliasHelper="alias helper='bash ${DIR}/helper.sh'"
-    echo "You may add the Sugar Bash Helper as alias using:"
-    echo ${aliasHelper}
+    if [ "$PWD" == "${DIR}" ]; then
+        secho "You may add the Sugar Bash Helper as alias using:" menu
+        secho "${aliasHelper}" green
+        secho "or add permanent alias trough" menu
+        secho "echo \"${aliasHelper}\" >> ~/.bashrc" green
+    fi
 }
 
 parse_yaml()
@@ -142,7 +146,7 @@ showOptions()
 
 menu()
 {
-    while ((OPT != 0));
+    while (( OPT != 0 ));
         showOptions $1
         if [ ! -z $2 ] && [ "${OPT}" == "" ]; then
             OPT=${2}
@@ -194,6 +198,35 @@ gitConfig()
             secho "After config:" 'menu'
             git config --global -l
             drawOptionDone
+        ;;
+
+        'initSugarBuild')
+            cat > .gitignore <<EOL
+# OS and IDE
+*~
+.DS_Store
+.idea/
+.project
+.settings
+
+# SugarCRM
+*.log
+config_override.php
+
+cache/
+upload/
+
+include/javascript/yui3/
+include/javascript/yui/
+include/javascript/tiny_mce/
+
+custom/blowfish/
+custom/history/
+custom/modules/Connectors/metadata/connectors.php
+custom/modules/*/Ext/**
+custom/application/Ext/**
+EOL
+			git init && git add . && git commit -m 'Initial commit'
         ;;
 
         *)
@@ -268,14 +301,19 @@ mountFstab()
 {
     secho "# mountFstab: $@" 'menu'
 
+    local cmd="mount"
 	local count=0
-	setYamlVal "_mount_fstab_${count}"
+	setYamlVal "_mount_fstab_${1}_${count}"
+	if [[ $2 == "umount" ]]; then
+	    cmd="umount"
+	fi
 
 	while (( ${#ymlVal} > 0 ))
 	do
-	    sudo mount ${ymlVal}
+	    secho "${cmd} ${ymlVal}"
+	    sudo ${cmd} ${ymlVal}
 	    count=$(( $count + 1 ))
-	    setYamlVal "_mount_fstab_${count}"
+	    setYamlVal "_mount_fstab_${1}_${count}"
 	done
 
     drawOptionDone
@@ -335,7 +373,7 @@ backup()
 askToProceed()
 {
     echo -e "\033[93m"; read -e -p "Proceed $1 ? (y/n): " -i "y" OPT ; echo -e "\033[0m"
-    if [ ${OPT} != "y" ]; then
+    if [ ${OPT} != "y" ] && [ -z ${2} ]; then
         error 'Proceeding abort!'
     fi
 }
@@ -382,7 +420,7 @@ xbuild()
 
             setYamlVal "_xbuild_repo_${RID}_name" "repoName"
             setYamlVal "_xbuild_repo_${RID}_path" "repoPath"
-            setYamlVal "_xbuild_rootPath" "rootPath"
+            setYamlVal "_xbuild_repo_${RID}_rootPath" "rootPath"
             setYamlVal "_xbuild_repo_${RID}_url" "buildUrl"
             setYamlVal "_xbuild_repo_${RID}_name" "db"
             setYamlVal "_xbuild_repo_${RID}_db_user" "dbUser"
@@ -390,9 +428,14 @@ xbuild()
             setYamlVal "_xbuild_repo_${RID}_db_host" "dbHost"
             setYamlVal "_xbuild_repo_${RID}_db_type" "dbType"
             setYamlVal "_xbuild_repo_${RID}_db_demoData" "dbDemoData"
+            setYamlVal "_xbuild_repo_${RID}_db_encryption" "dbEncryption"
+            setYamlVal "_xbuild_repo_${RID}_db_encryptionPass" "dbEncryptionPass"
             setYamlVal "_xbuild_repo_${RID}_version" "builVersion"
             setYamlVal "_xbuild_repo_${RID}_flav" "buildFlav"
             setYamlVal "_xbuild_repo_${RID}_license" "license"
+            if [ -z ${rootPath} ]; then
+                setYamlVal "_xbuild_rootPath" "rootPath"
+            fi
             if [ -z ${builVersion} ]; then
                 setYamlVal "_xbuild_version" "builVersion"
             fi
@@ -417,6 +460,9 @@ xbuild()
             if [ -z ${dbType} ]; then
                 setYamlVal "_xbuild_db_demoData" "dbDemoData"
             fi
+            if [ -z ${dbEncryption} ]; then
+                setYamlVal "_xbuild_db_encryption" "dbEncryption"
+            fi
             db=${db//[^[:alnum:]]/}
         ;;
 
@@ -431,6 +477,8 @@ xbuild()
             echo "db host:             ${dbHost}"
             echo "db type:             ${dbType}"
             echo "db demoData:         ${dbDemoData}"
+            echo "db encryption:       ${dbEncryption}"
+            echo "db encryption pass:  ${dbEncryptionPass}"
             echo "url:                 ${buildUrl}"
             echo "flav:                ${buildFlav}"
             echo "version              ${builVersion}"
@@ -474,6 +522,7 @@ xbuild()
 
         'configBuild')
             if [[  "${dbType}" == "mysql"  ]]; then
+                echo "Will drop DB: ${db} using user: ${dbUser} and password: ${dbPass}"
                 echo "drop database if exists ${db};" | mysql -u ${dbUser} -p${dbPass}
             fi
             cd ${rootPath}/${repoName}
@@ -540,31 +589,6 @@ EOL
 );
 EOL
 
-            cat > .gitignore <<EOL
-# OS and IDE
-*~
-.DS_Store
-.idea/
-.project
-.settings
-
-# SugarCRM
-*.log
-config_override.php
-
-cache/
-upload/
-
-include/javascript/yui3/
-include/javascript/yui/
-include/javascript/tiny_mce/
-
-custom/blowfish/
-custom/history/
-custom/modules/Connectors/metadata/connectors.php
-custom/modules/*/Ext/**
-custom/application/Ext/**
-EOL
         ;;
 
         'configOverride')
@@ -585,9 +609,14 @@ EOL
         'installSugar')
             local installHtml=$(curl -XGET "http://${buildUrl}/install.php?goto=SilentInstall&cli=true" 2>/dev/null)
 
-            if [[ ${installHtml} == *\<bottle\>Success\!\</bottle\>* ]]
-            then
+            if [[ ${installHtml} == *\<bottle\>Success\!\</bottle\>* ]]; then
                 echo 'Successfull'
+                if [ ${dbEncryption} == "true" ]; then
+                    cat >> config_override.php <<EOL
+\$sugar_config['dbconfig']['use_encryption'] = ${dbEncryption};
+\$sugar_config['dbconfig']['db_password'] = '${dbEncryptionPass}';
+EOL
+                fi
             else
                 echo "-> cat install.log"
                 cat ${rootPath}/${repoName}/install.log
@@ -610,7 +639,7 @@ EOL
         ;;
 
         'gitRepoInit')
-            git init && git add . && git commit -m 'Initial commit' > /dev/null
+            gitConfig initSugarBuild
         ;;
 
         *)
@@ -781,6 +810,79 @@ sysInfo()
 			sysInfo disk
             sysInfo foldersSize
 			sysInfo top10folders
+        ;;
+
+    esac
+
+    drawOptionDone
+}
+
+vagrantON()
+{
+    secho "# vagrantON: $@" 'menu'
+
+    case ${1} in
+
+        'clone')
+            setYamlVal "_vagrantON_path"
+            cd ${ymlVal}
+            setYamlVal "_vagrantON_repo"
+
+            if [ -d vagrantON ]; then
+                error "${PWD}/vagrantON exists"
+            fi
+            secho "Will clone ${ymlVal} into ${PWD}" 'menu'
+
+            git clone ${ymlVal}
+            cd vagrantON
+            git submodule init
+            git submodule update
+            cp _examples/config.yml ./
+            askToProceed "edit config.yml" true
+            if [[ ${OPT} == "y" ]]; then
+                nano config.yml
+            fi
+
+        ;;
+
+        *)
+            setYamlVal "_vagrantON_path"
+            cd ${ymlVal}/vagrantON
+            setYamlVal "_vagrantON_stack"
+            vagrant ${1} ${ymlVal}
+        ;;
+
+    esac
+
+    drawOptionDone
+}
+
+mysqlCLI()
+{
+    secho "${1}" menu
+    draw - "${#1}" menu
+    setYamlVal "_db_mysql_localRootPass"
+    cmd="echo \"${1}\" | mysql -h localhost -u root -p${ymlVal}"
+    eval ${cmd}
+}
+
+db()
+{
+    secho "# db: $@" 'menu'
+
+    case ${1} in
+
+        'mysqlSetRoot')
+            setYamlVal "_db_mysql_setRoot_host" "dbMysqlRootHost"
+            setYamlVal "_db_mysql_setRoot_user" "dbMysqlRootUser"
+            setYamlVal "_db_mysql_setRoot_pass" "dbMysqlRootPass"
+
+            mysqlCLI "SELECT User,Host FROM mysql.user; CREATE USER '${dbMysqlRootUser}'@'${dbMysqlRootHost}' IDENTIFIED BY '${dbMysqlRootPass}';"
+            mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlRootUser}'@'${dbMysqlRootHost}'; SHOW GRANTS FOR '${dbMysqlRootUser}'@'${dbMysqlRootHost}'; FLUSH PRIVILEGES;"
+        ;;
+
+        *)
+
         ;;
 
     esac
