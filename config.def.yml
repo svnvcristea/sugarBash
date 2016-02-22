@@ -52,8 +52,18 @@ option:
         name: patch
         func: "gitMango patch"
   7:
-    name: Import SQL Dump
-    func: "importSQLDump"
+    name: DB SQL
+    func: "menu option_7_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: Import SQL Dump
+        func: importSQLDump
+      2:
+        name: MySQL setRoot
+        func: dbSQL MySQLsetRoot
   8:
     name: vagrantON
     func: "menu option_8_opt"
