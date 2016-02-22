@@ -58,7 +58,7 @@ option:
     name: xbuild
     func: "xbuild"
   6:
-    name: Git Mango
+    name: "Git Mango"
     func: "menu option_6_opt"
     opt:
       0:
@@ -74,17 +74,26 @@ option:
         name: patch
         func: "gitMango patch"
   7:
-    name: DB
+    name: "DB MySQL"
     func: "menu option_7_opt"
     opt:
       0:
         name: Main menu
         func: menu option
       1:
-        name: MySQL setRoot
-        func: db mysqlSetRoot
+        name: show users
+        func: dbMySQL showUsers
       2:
-        name: MySQL Import Dump
+        name: user privileges
+        func: dbMySQL showUserPrivileges
+      3:
+        name: set root
+        func: dbMySQL setRoot
+      4:
+        name: DB size
+        func: dbMySQL dbSize
+      5:
+        name: import dump
         func: importSQLDump
   8:
     name: vagrantON
@@ -139,3 +148,23 @@ option:
       6:
         name: Top 10 sub-folders size
         func: sysInfo top10folders
+  10:
+    name: SugarDevEnv
+    func: "menu option_10_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: PHPUnit
+        func: "menu option_10_opt_1_opt"
+        opt:
+          0:
+            name: Back menu
+            func: menu option_10_opt
+          1:
+            name: install
+            func: PHPUnit install
+          2:
+            name: PHPUnit Sugar Customization Test Suite
+            func: PHPUnit runCustomizationTestSuite

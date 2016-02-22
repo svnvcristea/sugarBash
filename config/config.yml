@@ -59,3 +59,15 @@ vagrantON:
   repo: git@github.com:svnvcristea/vagrantON.git
   path: ~/git-repo
   stack: php54
+
+day:
+  on:
+    0: "von resume"
+    1: skype
+    2: hipchat
+    3: thunderbird
+    4: firefox
+    5: /usr/bin/google-chrome-stable
+  off:
+    0: "von suspend"
+    1: "bash $0 1"

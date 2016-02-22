@@ -53,7 +53,7 @@ setYamlVal()
 	ymlVal=${!1}
 
 	if [ ! -z "$2" ]; then
-	    eval ${2}=${!1}
+	    eval "${2}=${!1}"
 	fi
 }
 
@@ -109,11 +109,14 @@ secho()
         green)
 			code=32
         ;;
-        yellow|menu)
+        menu)
 			code=33
         ;;
         blue)
 			code=34
+        ;;
+        yellow)
+			code=93
         ;;
         *)
 			code=${2}
@@ -125,16 +128,16 @@ secho()
 
 sEncode()
 {
-    read -s -p "Provide [sudo] password for $USER: " OPT
+    read -s -p "Provide [${1}] password: " OPT
     ymlVal=$( echo ${OPT} | base64 )
-    echo -e "\nencode_sudo_pass: ${ymlVal}" >> $DIR/config/_private.yml
+    echo -e "\n${1}: ${ymlVal}" >> $DIR/config/_private.yml
 }
 
 sDecode()
 {
-    setYamlVal "_encode_sudo_pass"
+    setYamlVal "_${1}"
     if [ -z ${ymlVal} ]; then
-        sEncode
+        sEncode ${1}
     fi
     ymlVal=$( echo ${ymlVal} | base64 --decode )
 }
@@ -143,11 +146,16 @@ ssudo()
 {
     setYamlVal "_encode_sudo_use"
     if [ ${ymlVal} == "true" ]; then
-        sDecode
+        sDecode encode_sudo_pass
         echo ${ymlVal} | sudo -S $@
     else
         sudo -S $@
     fi
+}
+
+getBackupPass()
+{
+    sDecode "backup_pass_encoded"
 }
 
 #   FUNCTION:   draw        Echo Specific line
@@ -317,6 +325,7 @@ config_override.php
 
 cache/
 upload/
+_PSBook/
 
 include/javascript/yui3/
 include/javascript/yui/
@@ -328,7 +337,7 @@ custom/modules/Connectors/metadata/connectors.php
 custom/modules/*/Ext/**
 custom/application/Ext/**
 EOL
-			git init && git add . && git commit -m 'Initial commit'
+			git init && git add . && git commit -m 'Initial commit' &> /dev/null
         ;;
 
         *)
@@ -412,8 +421,8 @@ mountFstab()
 
 	while (( ${#ymlVal} > 0 ))
 	do
-	    secho "${cmd} ${ymlVal}"
-	    ssudo ${cmd} ${ymlVal}
+	    secho "${cmd} ${ymlVal}" yellow
+	    ssudo "${cmd} ${ymlVal}"
 	    count=$(( $count + 1 ))
 	    setYamlVal "_mount_fstab_${1}_${count}"
 	done
@@ -435,7 +444,7 @@ backup()
 	# ----------------------------------------------
 
 	if [ ! "$SUDO_UID" ]; then
-		error "Use: \nsudo bash $0 1"
+	    SUDO_UID=$(ssudo bash $0 sudoUid)
 	fi
 
 	# ----    aici trebuia sa verific daca exista comenzile
@@ -454,7 +463,9 @@ backup()
 		mkdir -p ${MOUNTPOINT} || ( echo "Unable to create mount point. Exiting..." exit 1; )
 	fi
 
-	${MOUNT} '//'${SERVER_IP}'/'${USERNAME} ${MOUNTPOINT} -o username=${USERNAME},domain=${DOMAIN},uid=${SUDO_UID}
+    getBackupPass
+	ssudo ${MOUNT} '//'${SERVER_IP}'/'${USERNAME} ${MOUNTPOINT} -o username=${USERNAME},domain=${DOMAIN},uid=${SUDO_UID},password=${ymlVal}
+
 	if [  "$?" -eq "0"  ]; then
 	    echo "Remote folder mounted in $MOUNTPOINT";
 	else 
@@ -467,9 +478,10 @@ backup()
 	else 
 		error "Error sync folders" ;
 	fi       
-	${UMOUNT} ${MOUNTPOINT} || ${UMOUNT} -l ${MOUNTPOINT} || echo "Umounting failed. Please run  $UMOUNT $MOUNTPOINT"
+	ssudo ${UMOUNT} ${MOUNTPOINT} || ${UMOUNT} -l ${MOUNTPOINT} || echo "Umounting failed. Please run  $UMOUNT $MOUNTPOINT"
 
     drawOptionDone
+    exit 1
 }
 
 askToProceed()
@@ -624,7 +636,8 @@ xbuild()
 
         'configBuild')
             if [[  "${dbType}" == "mysql"  ]]; then
-                echo "drop database if exists ${db};" | mysql -u ${dbUser} -p${dbPass}
+                dbMySQL setRoot
+                mysqlCLI "drop database if exists ${db};"
             fi
             cd ${rootPath}/${repoName}
             cat > config_si.php <<EOL
@@ -743,6 +756,11 @@ EOL
             gitConfig initSugarBuild
         ;;
 
+        'PSBook')
+            wget https://github.com/svnvcristea/PSBook/archive/master.tar.gz -O - | tar xz
+            mv PSBook-master _PSBook
+        ;;
+
         *)
             xbuild setParameters
             xbuild prepare
@@ -754,6 +772,7 @@ EOL
             xbuild configOverride
             xbuild installSugar
             xbuild gitRepoInit
+            xbuild PSBook
         ;;
 
     esac
@@ -952,31 +971,114 @@ vagrantON()
     drawOptionDone
 }
 
-mysqlCLI()
+setMysqlConfigEditor()
 {
-    secho "${1}" menu
-    draw - "${#1}" menu
+
+    checkWhich mysql_config_editor
+	if [  "$?" -ne "0"  ]; then
+	    mysql_config_editor -V
+        secho "You have to install mysql_config_editor" red
+        secho "SuSE: sudo zypper install mysql-community-server-client" green
+        secho "Mint: sudo apt-get install mysql-client-5.6" green
+        error 'mysql_config_editor is required !'
+	fi
+
     setYamlVal "_db_mysql_connect_host" "dbMysqlRootHost"
     setYamlVal "_db_mysql_connect_user" "dbMysqlRootUser"
     setYamlVal "_db_mysql_connect_pass" "dbMysqlRootPass"
 
-    cmd="echo \"${1}\" | mysql -h ${dbMysqlRootHost} -u ${dbMysqlRootUser} -p${dbMysqlRootPass}"
-    eval ${cmd}
+    local loginPath="$(echo 'quit' | mysql --login-path=sugarBash 2>&1)"
+    if [[ ${loginPath} =~ ^ERROR.* ]]; then
+        secho "${loginPath}" red
+        mysql_config_editor remove --login-path=sugarBash
+    fi
+
+    loginPath="$(mysql_config_editor print --login-path=sugarBash)"
+    if [ -z "$loginPath" ]; then
+	    secho "Provide the mysql connect password of ${dbMysqlRootUser}@${dbMysqlRootHost}"
+        mysql_config_editor set --login-path=sugarBash --host=${dbMysqlRootHost} --user=${dbMysqlRootUser} --password
+        mysql_config_editor print --login-path=sugarBash
+	fi
 }
 
-db()
+mysqlCLI()
 {
-    secho "# db: $@" 'menu'
+    secho "${1}" menu
+    draw - "${#1}" menu
+    echo -e "\033[93m";
+    cmd="echo \"${1}\" | mysql --login-path=sugarBash"
+    eval ${cmd}
+    echo -e "\033[0m"
+}
+
+dbMySQL()
+{
+    secho "# DB MySQL: $@" 'menu'
 
     case ${1} in
 
-        'mysqlSetRoot')
+        'showUsers')
+            mysqlCLI "SELECT User,Host FROM mysql.user;"
+        ;;
+
+        'showUserPrivileges')
+            read -p "user: " dbMysqlUser
+            read -p "host: " dbMysqlHost
+            mysqlCLI "SHOW GRANTS FOR '${dbMysqlUser}'@'${dbMysqlHost}';"
+        ;;
+
+        'setRoot')
             setYamlVal "_db_mysql_setRoot_host" "dbMysqlSetRootHost"
             setYamlVal "_db_mysql_setRoot_user" "dbMysqlSetRootUser"
             setYamlVal "_db_mysql_setRoot_pass" "dbMysqlSetRootPass"
 
-            mysqlCLI "SELECT User,Host FROM mysql.user; CREATE USER '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}' IDENTIFIED BY '${dbMysqlSetRootPass}';"
-            mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; FLUSH PRIVILEGES;"
+            rootUserError=$(mysqlCLI "SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}';" | grep "Grants for")
+            if [ "${#rootUserError}" == 0 ]; then
+                setMysqlConfigEditor
+                mysqlCLI "CREATE USER '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}' IDENTIFIED BY '${dbMysqlSetRootPass}';"
+                mysqlCLI "GRANT ALL ON *.* TO '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}'; FLUSH PRIVILEGES;"
+            else
+                mysqlCLI "SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}';"
+            fi
+        ;;
+
+        'dbSize')
+            local query="SELECT table_schema as DB, Round(Sum(data_length + index_length) / 1024 / 1024, 2) as MB"
+            query+=" FROM information_schema.tables GROUP BY table_schema HAVING DB NOT IN ('information_schema', 'performance_schema');"
+            mysqlCLI "${query}"
+        ;;
+
+        *)
+
+        ;;
+
+    esac
+
+    drawOptionDone
+}
+
+PHPUnit()
+{
+    secho "# PHPUnit: $@" 'menu'
+
+    case ${1} in
+
+        'install')
+            unixInstall phpunit
+        ;;
+
+        'install_last')
+            wget https://phar.phpunit.de/phpunit.phar -O phpunit.phar
+            chmod +x phpunit.phar
+            ssudo mv phpunit.phar /usr/local/bin/phpunit
+            phpunit --version
+        ;;
+
+        'runCustomizationTestSuite')
+            xbuild setParameters
+            secho "# SugarCRM Instance: ${rootPath}/${repoName} " 'menu'
+            cd ${rootPath}/${repoName}/tests
+            phpunit --testsuite "Sugar Customization Test Suite"
         ;;
 
         *)
