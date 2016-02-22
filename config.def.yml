@@ -111,15 +111,28 @@ xbuild:
   db:
     user: root
     password: root
+    host: localhost
+    type: mysql
   rootPath: /srv/www/htdocs
   repo:
     0:
+      name: sugar-qa
+      url: qa.sugar.dev
+      path: /srv/git-repo/mango
+      flav: ent
+      version: 7.6.1.0
+      db:
+        user: system
+        password: manager
+        host: localhost
+        type: oci8
+    1:
       name: sugar
       url: sugar.dev
       path: /srv/www/git-repo/mango
       flav: ent
       version: 7.5.1.0
-    1:
+    2:
       name: sugar2
       url: sugar2.dev
       path: /srv/www/git-repo/mango2
