@@ -48,7 +48,7 @@ parse_yaml()
    }'
 }
 
-setYamlVal()
+setYmlVal()
 {
 	ymlVal=${!1}
 
@@ -60,7 +60,7 @@ setYamlVal()
 renderArray()
 {
     local count=0
-	setYamlVal "_$1_${count}_name"
+	setYmlVal "_$1_${count}_name"
 
 	while (( ${#ymlVal} > 0 ))
 	do
@@ -70,7 +70,7 @@ renderArray()
 	        echo ${count} - ${ymlVal}
         fi
 	    count=$(( $count + 1 ))
-	    setYamlVal "_$1_${count}_name"
+	    setYmlVal "_$1_${count}_name"
 	done
 
 	draw - '' 'menu'
@@ -80,7 +80,7 @@ renderOptKeys()
 {
 
     local key="_$1_keys"
-	setYamlVal $key
+	setYmlVal $key
 
 	eval keys="(${ymlVal})"
 
@@ -135,7 +135,7 @@ sEncode()
 
 sDecode()
 {
-    setYamlVal "_${1}"
+    setYmlVal "_${1}"
     if [ -z ${ymlVal} ]; then
         sEncode ${1}
     fi
@@ -144,7 +144,7 @@ sDecode()
 
 ssudo()
 {
-    setYamlVal "_encode_sudo_use"
+    setYmlVal "_encode_sudo_use"
     if [ ${ymlVal} == "true" ]; then
         sDecode encode_sudo_pass
         echo ${ymlVal} | sudo -S $@
@@ -196,7 +196,7 @@ showTitle()
 
 showOptions()
 {
-    setYamlVal "_${1/_opt/_name}"
+    setYmlVal "_${1/_opt/_name}"
     if [[ -z ${ymlVal} ]]; then
         ymlVal=${1}
     fi
@@ -219,7 +219,7 @@ menuKeys()
         read -p "Select your menu option: " OPT
         draw _ "" 'menu'
     do
-        setYamlVal "_${1}_${keys[$OPT]}"
+        setYmlVal "_${1}_${keys[$OPT]}"
         optKey=${keys[$OPT]}
         if [[ ! -z ${ymlVal} ]]; then
            break
@@ -240,7 +240,7 @@ menu()
             draw _ "" 'menu'
         fi
     do
-        setYamlVal "_${1}_${OPT}_func"
+        setYmlVal "_${1}_${OPT}_func"
         ${ymlVal}
     done
 }
@@ -257,7 +257,7 @@ vpn()
         ;;
 
         'connectSugar')
-            setYamlVal "_vpn_conf"
+            setYmlVal "_vpn_conf"
             touch $DIR/log/vpn.log
             ssudo vpnc ${ymlVal} >> $DIR/log/vpn.log
             vpn status
@@ -296,7 +296,7 @@ gitConfig()
 
             menuKeys "git_GitHub"
             local repo=${ymlVal}
-            setYamlVal "_git_path" 'gitRepoPath'
+            setYmlVal "_git_path" 'gitRepoPath'
             secho "#${optKey}: git clone ${repo} ${gitRepoPath}/${optKey}" 'menu'
 
             git clone ${repo} ${gitRepoPath}/${optKey}
@@ -354,7 +354,7 @@ gitMango()
     case ${1} in
 
         'clone')
-            setYamlVal "_git_clone_mango_origin"
+            setYmlVal "_git_clone_mango_origin"
             secho "Will clone ${ymlVal} into ${PWD}" 'menu'
             read -p "Give Mango prefix: " OPT
             if [ -z ${OPT} ]; then
@@ -365,7 +365,7 @@ gitMango()
             cd ${OPT}-mango
             git status
             git remote -v
-            setYamlVal "_git_clone_mango_upstream"
+            setYmlVal "_git_clone_mango_upstream"
             git remote add upstream ${ymlVal}
             git remote -v
             gitMango postCheckout
@@ -414,7 +414,7 @@ mountFstab()
 
     local cmd="mount"
 	local count=0
-	setYamlVal "_mount_fstab_${1}_${count}"
+	setYmlVal "_mount_fstab_${1/-/_}_${count}"
 	if [[ $2 == "umount" ]]; then
 	    cmd="umount"
 	fi
@@ -424,7 +424,7 @@ mountFstab()
 	    secho "${cmd} ${ymlVal}" yellow
 	    ssudo "${cmd} ${ymlVal}"
 	    count=$(( $count + 1 ))
-	    setYamlVal "_mount_fstab_${1}_${count}"
+	    setYmlVal "_mount_fstab_${1}_${count}"
 	done
 
     drawOptionDone
@@ -432,15 +432,15 @@ mountFstab()
 
 backup()
 {
-    setYamlVal "_backup_path" "PATH"
-	setYamlVal "_backup_serverip" "SERVER_IP"
-	setYamlVal "_backup_mountpoint" "MOUNTPOINT"
+    setYmlVal "_backup_path" "PATH"
+	setYmlVal "_backup_serverip" "SERVER_IP"
+	setYmlVal "_backup_mountpoint" "MOUNTPOINT"
 	# comenzi 
-	setYamlVal "_backup_command_mount" "MOUNT"
-	setYamlVal "_backup_command_umount" "UMOUNT"
-	setYamlVal "_backup_command_rsync" "RSYNC"
-	setYamlVal "_backup_command_domain" "DOMAIN"
-	setYamlVal "_backup_command_username" "USERNAME"
+	setYmlVal "_backup_command_mount" "MOUNT"
+	setYmlVal "_backup_command_umount" "UMOUNT"
+	setYmlVal "_backup_command_rsync" "RSYNC"
+	setYmlVal "_backup_command_domain" "DOMAIN"
+	setYmlVal "_backup_command_username" "USERNAME"
 	# ----------------------------------------------
 
 	if [ ! "$SUDO_UID" ]; then
@@ -535,50 +535,50 @@ xbuild()
             else
                 RID=$2
             fi
-            setYamlVal "_xbuild_repo_${RID}_name" "repoName"
-            setYamlVal "_xbuild_repo_${RID}_path" "repoPath"
-            setYamlVal "_xbuild_repo_${RID}_rootPath" "rootPath"
-            setYamlVal "_xbuild_repo_${RID}_url" "buildUrl"
-            setYamlVal "_xbuild_repo_${RID}_name" "db"
-            setYamlVal "_xbuild_repo_${RID}_db_user" "dbUser"
-            setYamlVal "_xbuild_repo_${RID}_db_password" "dbPass"
-            setYamlVal "_xbuild_repo_${RID}_db_host" "dbHost"
-            setYamlVal "_xbuild_repo_${RID}_db_type" "dbType"
-            setYamlVal "_xbuild_repo_${RID}_db_demoData" "dbDemoData"
-            setYamlVal "_xbuild_repo_${RID}_db_encryption" "dbEncryption"
-            setYamlVal "_xbuild_repo_${RID}_db_encryptionPass" "dbEncryptionPass"
-            setYamlVal "_xbuild_repo_${RID}_version" "builVersion"
-            setYamlVal "_xbuild_repo_${RID}_flav" "buildFlav"
-            setYamlVal "_xbuild_repo_${RID}_license" "license"
+            setYmlVal "_xbuild_repo_${RID}_name" "repoName"
+            setYmlVal "_xbuild_repo_${RID}_path" "repoPath"
+            setYmlVal "_xbuild_repo_${RID}_rootPath" "rootPath"
+            setYmlVal "_xbuild_repo_${RID}_url" "buildUrl"
+            setYmlVal "_xbuild_repo_${RID}_name" "db"
+            setYmlVal "_xbuild_repo_${RID}_db_user" "dbUser"
+            setYmlVal "_xbuild_repo_${RID}_db_password" "dbPass"
+            setYmlVal "_xbuild_repo_${RID}_db_host" "dbHost"
+            setYmlVal "_xbuild_repo_${RID}_db_type" "dbType"
+            setYmlVal "_xbuild_repo_${RID}_db_demoData" "dbDemoData"
+            setYmlVal "_xbuild_repo_${RID}_db_encryption" "dbEncryption"
+            setYmlVal "_xbuild_repo_${RID}_db_encryptionPass" "dbEncryptionPass"
+            setYmlVal "_xbuild_repo_${RID}_version" "builVersion"
+            setYmlVal "_xbuild_repo_${RID}_flav" "buildFlav"
+            setYmlVal "_xbuild_repo_${RID}_license" "license"
             if [ -z ${rootPath} ]; then
-                setYamlVal "_xbuild_rootPath" "rootPath"
+                setYmlVal "_xbuild_rootPath" "rootPath"
             fi
             if [ -z ${builVersion} ]; then
-                setYamlVal "_xbuild_version" "builVersion"
+                setYmlVal "_xbuild_version" "builVersion"
             fi
             if [ -z ${buildFlav} ]; then
-                setYamlVal "_xbuild_flav" "buildFlav"
+                setYmlVal "_xbuild_flav" "buildFlav"
             fi
             if [ -z ${license} ]; then
-                setYamlVal "_xbuild_license" "license"
+                setYmlVal "_xbuild_license" "license"
             fi
             if [ -z ${dbUser} ]; then
-                setYamlVal "_xbuild_db_user" "dbUser"
+                setYmlVal "_xbuild_db_user" "dbUser"
             fi
             if [ -z ${dbPass} ]; then
-                setYamlVal "_xbuild_db_password" "dbPass"
+                setYmlVal "_xbuild_db_password" "dbPass"
             fi
             if [ -z ${dbHost} ]; then
-                setYamlVal "_xbuild_db_host" "dbHost"
+                setYmlVal "_xbuild_db_host" "dbHost"
             fi
             if [ -z ${dbType} ]; then
-                setYamlVal "_xbuild_db_type" "dbType"
+                setYmlVal "_xbuild_db_type" "dbType"
             fi
             if [ -z ${dbType} ]; then
-                setYamlVal "_xbuild_db_demoData" "dbDemoData"
+                setYmlVal "_xbuild_db_demoData" "dbDemoData"
             fi
             if [ -z ${dbEncryption} ]; then
-                setYamlVal "_xbuild_db_encryption" "dbEncryption"
+                setYmlVal "_xbuild_db_encryption" "dbEncryption"
             fi
             db=${db//[^[:alnum:]]/}
         ;;
@@ -787,49 +787,49 @@ queryDBContent()
 {
     query="INSERT INTO email_addresses (id,email_address,email_address_caps,invalid_email,opt_out,date_created,date_modified,deleted) VALUES (";
     local count=0
-    setYamlVal "_xbuild_dbContent_email_addresses_${count}_id"
+    setYmlVal "_xbuild_dbContent_email_addresses_${count}_id"
 
     while (( ${#ymlVal} > 0 ))
 	do
 	    key="_xbuild_dbContent_email_addresses_"
 	    query=${query}" '${ymlVal}'"
-	    setYamlVal "${key}${count}_email_address";      query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_email_address_caps"; query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_invalid_email";	    query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_opt_out";    	    query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_opt_out";    	    query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_date_created";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
-        setYamlVal "${key}${count}_date_modified";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
-        setYamlVal "${key}${count}_deleted";    	    query=${query}",'${ymlVal}'"
+	    setYmlVal "${key}${count}_email_address";      query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_email_address_caps"; query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_invalid_email";	    query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_opt_out";    	    query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_opt_out";    	    query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_date_created";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
+        setYmlVal "${key}${count}_date_modified";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
+        setYmlVal "${key}${count}_deleted";    	    query=${query}",'${ymlVal}'"
         query=${query}"); "
 
 
 	    count=$(( $count + 1 ))
-	    setYamlVal "_xbuild_dbContent_email_addresses_${count}_id"
+	    setYmlVal "_xbuild_dbContent_email_addresses_${count}_id"
 	done
 
     query==${query}"INSERT INTO email_addr_bean_rel (id,email_address_id,bean_id,bean_module,primary_address,reply_to_address,date_created,date_modified,deleted) VALUES ("
     local count=0
-    setYamlVal "_xbuild_dbContent_email_addresses_${count}_id"
+    setYmlVal "_xbuild_dbContent_email_addresses_${count}_id"
 
     while (( ${#ymlVal} > 0 ))
 	do
 	    key="_xbuild_dbContent_email_addr_bean_rel_"
 	    query=${query}" '${ymlVal}'"
-	    setYamlVal "${key}${count}_email_address";      query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_email_address_id";   query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_bean_id";            query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_bean_module";	    query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_primary_address";    query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_reply_to_address";   query=${query}",'${ymlVal}'"
-        setYamlVal "${key}${count}_date_created";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
-        setYamlVal "${key}${count}_date_modified";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
-        setYamlVal "${key}${count}_deleted";    	    query=${query}",'${ymlVal}'"
+	    setYmlVal "${key}${count}_email_address";      query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_email_address_id";   query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_bean_id";            query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_bean_module";	    query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_primary_address";    query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_reply_to_address";   query=${query}",'${ymlVal}'"
+        setYmlVal "${key}${count}_date_created";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
+        setYmlVal "${key}${count}_date_modified";    	query=${query}",STR_TO_DATE('${ymlVal}','%Y-%m-%d %H:%i:%s')"
+        setYmlVal "${key}${count}_deleted";    	    query=${query}",'${ymlVal}'"
         query=${query}"); "
 
 
 	    count=$(( $count + 1 ))
-	    setYamlVal "_xbuild_dbContent_email_addresses_${count}_id"
+	    setYmlVal "_xbuild_dbContent_email_addresses_${count}_id"
 	done
 }
 
@@ -840,9 +840,9 @@ importSQLDump()
     local dbName=$1
     local sqlDumpFile=$2
 
-    setYamlVal "_db_mysql_connect_host" "dbHost";
-    setYamlVal "_db_mysql_connect_user" "dbUser";
-    setYamlVal "_db_mysql_connect_pass" "dbPass";
+    setYmlVal "_db_mysql_connect_host" "dbHost";
+    setYmlVal "_db_mysql_connect_user" "dbUser";
+    setYmlVal "_db_mysql_connect_pass" "dbPass";
 
     if [ -z ${dbName} ]; then
         read -p "Give DB name: " dbName
@@ -948,9 +948,9 @@ vagrantON()
     case ${1} in
 
         'clone')
-            setYamlVal "_vagrantON_path"
+            setYmlVal "_vagrantON_path"
             cd ${ymlVal}
-            setYamlVal "_vagrantON_repo"
+            setYmlVal "_vagrantON_repo"
 
             if [ -d vagrantON ]; then
                 error "${PWD}/vagrantON exists"
@@ -963,9 +963,9 @@ vagrantON()
         ;;
 
         *)
-            setYamlVal "_vagrantON_path"
+            setYmlVal "_vagrantON_path"
             cd ${ymlVal}/vagrantON
-            setYamlVal "_vagrantON_stack"
+            setYmlVal "_vagrantON_stack"
             vagrant ${1} ${ymlVal}
         ;;
 
@@ -986,9 +986,9 @@ setMysqlConfigEditor()
         error 'mysql_config_editor is required !'
 	fi
 
-    setYamlVal "_db_mysql_connect_host" "dbMysqlRootHost"
-    setYamlVal "_db_mysql_connect_user" "dbMysqlRootUser"
-    setYamlVal "_db_mysql_connect_pass" "dbMysqlRootPass"
+    setYmlVal "_db_mysql_connect_host" "dbMysqlRootHost"
+    setYmlVal "_db_mysql_connect_user" "dbMysqlRootUser"
+    setYmlVal "_db_mysql_connect_pass" "dbMysqlRootPass"
 
     local loginPath="$(echo 'quit' | mysql --login-path=sugarBash 2>&1)"
     if [[ ${loginPath} =~ ^ERROR.* ]]; then
@@ -1031,9 +1031,9 @@ dbMySQL()
         ;;
 
         'setRoot')
-            setYamlVal "_db_mysql_setRoot_host" "dbMysqlSetRootHost"
-            setYamlVal "_db_mysql_setRoot_user" "dbMysqlSetRootUser"
-            setYamlVal "_db_mysql_setRoot_pass" "dbMysqlSetRootPass"
+            setYmlVal "_db_mysql_setRoot_host" "dbMysqlSetRootHost"
+            setYmlVal "_db_mysql_setRoot_user" "dbMysqlSetRootUser"
+            setYmlVal "_db_mysql_setRoot_pass" "dbMysqlSetRootPass"
 
             rootUserError=$(mysqlCLI "SHOW GRANTS FOR '${dbMysqlSetRootUser}'@'${dbMysqlSetRootHost}';" | grep "Grants for")
             if [ "${#rootUserError}" == 0 ]; then

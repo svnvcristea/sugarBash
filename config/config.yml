@@ -31,6 +31,8 @@ mount:
       0: "192.168.56.101:/srv/www/htdocs"
       1: "192.168.56.101:/etc/apache2/vhosts.d"
     php54:
+      0: "192.168.56.15:/var/www/html"
+    php55_oracle12c:
       0: "192.168.56.14:/var/www/html"
 
 backup:
@@ -59,6 +61,11 @@ vagrantON:
   repo: git@github.com:svnvcristea/vagrantON.git
   path: ~/git-repo
   stack: php54
+
+stacksON:
+  repo: git@github.com:sugarcrm/stacks.git
+  path: ~/git-repo/mango/sugarcrm/vendor/sugarcrm/stacks/vagrant-on
+  stack: oracle12c
 
 day:
   on:
