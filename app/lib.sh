@@ -699,13 +699,14 @@ EOL
     'setup_db_database_name' => '0.0.0.0/orcl',
 #    'web_user' => 'vagrant',
 #    'web_group' => 'apache',
-    'setup_fts_skip' => 'true',
+#    'setup_fts_skip' => 'true',
 EOL
            fi
            cat >> config_si.php <<EOL
 );
 EOL
-
+            dbOracle setRoot
+            sqlplus "drop database if exists ${db};"
         ;;
 
         'configOverride')
@@ -760,7 +761,7 @@ EOL
         ;;
 
         'PSBook')
-            wget https://github.com/svnvcristea/PSBook/archive/master.tar.gz -O - | tar xz
+            wget https://github.com/sugarcrm-ps/PSBook/archive/master.tar.gz -O - | tar xz
             mv PSBook-master _PSBook
         ;;
 
@@ -1049,6 +1050,57 @@ dbMySQL()
             local query="SELECT table_schema as DB, Round(Sum(data_length + index_length) / 1024 / 1024, 2) as MB"
             query+=" FROM information_schema.tables GROUP BY table_schema HAVING DB NOT IN ('information_schema', 'performance_schema');"
             mysqlCLI "${query}"
+        ;;
+
+        *)
+
+        ;;
+
+    esac
+
+    drawOptionDone
+}
+
+sqlPlusCLI()
+{
+    local sqlplus='/usr/lib/oracle/12.1/client64/bin/sqlplus'
+    local orcl='system/manager@0.0.0.0/orcl'
+
+    secho "${1}" menu
+    draw - "${#1}" menu
+    echo -e "\033[93m";
+    echo ${1} | ${sqlplus} ${orcl}
+    echo -e "\033[0m"
+}
+
+dbOracle()
+{
+    secho "# DB dbOracle: $@" 'menu'
+    local query=""
+
+    case ${1} in
+        'showUsers')
+            sqlPlusCLI 'SELECT USERNAME FROM ALL_USERS;'
+        ;;
+        'createUser')
+            query+="CREATE TABLESPACE SUGARCRM_CS;"
+#            query+=" CREATE USER SUGARCRM_CS IDENTIFIED BY pspass DEFAULT TABLESPACE SUGARCRM_CS;"
+            sqlPlusCLI ${query}
+        ;;
+        'passLifetime')
+            sqlPlusCLI 'ALTER PROFILE SYSTEM LIMIT PASSWORD_LIFE_TIME UNLIMITED;'
+        ;;
+        'setRoot')
+
+            setYmlVal "_db_oracle_setRoot_host" "dbOracleSetRootHost"
+            setYmlVal "_db_oracle_setRoot_user" "dbOracleSetRootUser"
+            setYmlVal "_db_oracle_setRoot_pass" "dbOracleSetRootPass"
+
+#            query+="DROP USER ${dbOracleSetRootUser} CASCADE; "
+            query+="CREATE USER ${dbOracleSetRootUser} IDENTIFIED BY ${dbOracleSetRootUser}; "
+            query+="GRANT CONNECT, RESOURCE TO ${dbOracleSetRootUser};"
+#            echo $query
+            sqlPlusCLI "${query}"
         ;;
 
         *)

@@ -118,3 +118,8 @@ sudoUid()
 {
     echo $SUDO_UID
 }
+
+oci()
+{
+    dbOracle $@
+}

@@ -56,6 +56,11 @@ db:
       host: %
       user: root
       pass: pspass
+  oracle:
+    setRoot:
+      host: 0.0.0.0
+      user: system
+      pass: manager
 
 vagrantON:
   repo: git@github.com:svnvcristea/vagrantON.git
@@ -64,7 +69,7 @@ vagrantON:
 
 stacksON:
   repo: git@github.com:sugarcrm/stacks.git
-  path: ~/git-repo/mango/sugarcrm/vendor/sugarcrm/stacks/vagrant-on
+  path: ~/git-repo/stacks/vagrant-on
   stack: oracle12c
 
 day:
