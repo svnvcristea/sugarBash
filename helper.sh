@@ -34,13 +34,19 @@ boot()
     for conf in $(find "$DIR/config" -name '*.yml' -or -name '*.yaml')
     do
         # read .yml file
-        eval "$(parse_yaml ${conf} '_')"
+        if [[ "${conf}" != *"_private.yml"  ]]; then
+            eval "$(parse_yaml ${conf} '_')"
+        fi
     done
+
+    if [ -f $DIR/config/_private.yml ]; then
+        eval "$(parse_yaml $DIR/config/_private.yml '_')"
+    fi
 
     subCmd $@
     draw _ 24 'menu'
     helperAlias
-    menu "option" $1
+    menu "option" $1 $2
 }
 
 # parse the options

@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+1.4.0
+-----
+ * quick patching on option 11
+ * _private.yml parsed last;
+ * normalize setYmlVal;
+ * stacksON as son
+ * PSBook moved on sugarcrm-ps/PSBook
+ * oracle12c beta SQL support
+
 1.3.0
 -----
 

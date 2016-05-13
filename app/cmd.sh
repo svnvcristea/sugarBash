@@ -19,7 +19,30 @@ von()
 {
     local stack=${2}
     if [ -z ${stack} ]; then
-        setYamlVal "_vagrantON_stack"
+        setYmlVal "_vagrantON_stack"
+        stack=${ymlVal}
+    fi
+
+    if [ $1 == "halt" ] || [ $1 == "suspend" ]; then
+        mountFstab ${stack} umount &> /dev/null
+    elif [ $1 == "up" ] || [ $1 == "resume" ]; then
+        vpn connectSugar
+    fi
+
+    setYmlVal "_vagrantON_path"
+    cd ${ymlVal}/vagrantON
+    vagrant $1 ${stack}
+
+    if [ $1 == "up" ] || [ $1 == "resume" ]; then
+       mountFstab ${stack}
+    fi
+}
+
+son()
+{
+    local stack=${2}
+    if [ -z ${stack} ]; then
+        setYmlVal "_stacksON_stack"
         stack=${ymlVal}
     fi
 
@@ -30,9 +53,9 @@ von()
         vpn connectSugar
     fi
 
-    setYamlVal "_vagrantON_path"
-    cd ${ymlVal}/vagrantON
-    vagrant $1 $2
+    setYmlVal "_stacksON_path"
+    cd ${ymlVal}
+    vagrant $1 ${stack}
 
     if [ $1 == "up" ] || [ $1 == "resume" ]; then
        mountFstab ${stack}
@@ -49,12 +72,12 @@ day()
             echo ${now} > ${logFile}
             echo "# Have a nice working day!" >> ${logFile}
             echo "==========================" >> ${logFile}
-            setYamlVal "_day_on_${count}"
+            setYmlVal "_day_on_${count}"
             while (( ${#ymlVal} > 0 ))
             do
                 ${ymlVal} &>> ${logFile} &
                 count=$(( $count + 1 ))
-                setYamlVal "_day_on_${count}"
+                setYmlVal "_day_on_${count}"
             done
         ;;
 
@@ -63,12 +86,12 @@ day()
             secho "Bye bye... !" "green"
             echo "Day OFF:  ${now}" >> ${logFile}
             wh >> ${logFile}
-            setYamlVal "_day_off_${count}"
+            setYmlVal "_day_off_${count}"
             while (( ${#ymlVal} > 0 ))
             do
                 ${ymlVal} &>> ${logFile}
                 count=$(( $count + 1 ))
-                setYamlVal "_day_off_${count}"
+                setYmlVal "_day_off_${count}"
             done
             ssudo shutdown -h now
             echo "# Bye bye... !" >> ${logFile}
@@ -94,4 +117,9 @@ wh(){
 sudoUid()
 {
     echo $SUDO_UID
+}
+
+oci()
+{
+    dbOracle $@
 }

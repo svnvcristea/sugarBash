@@ -168,3 +168,22 @@ option:
           2:
             name: PHPUnit Sugar Customization Test Suite
             func: PHPUnit runCustomizationTestSuite
+  11:
+    name: "Git Mango Patch"
+    func: "gitMango patch $2"
+  12:
+    name: "DB Oracle"
+    func: "menu option_12_opt"
+    opt:
+      0:
+        name: Main menu
+        func: menu option
+      1:
+        name: changePass
+        func: dbOracle changePass
+      2:
+        name: passLifetime
+        func: dbOracle passLifetime
+      3:
+        name: setRoot
+        func: dbOracle setRoot
