@@ -706,7 +706,7 @@ EOL
 );
 EOL
             dbOracle setRoot
-            sqlplus "drop database if exists ${db};"
+            sqlplus "DROP DATABASE IF EXISTS ${db};"
         ;;
 
         'configOverride')
@@ -1069,7 +1069,12 @@ sqlPlusCLI()
     secho "${1}" menu
     draw - "${#1}" menu
     echo -e "\033[93m";
-    echo ${1} | ${sqlplus} ${orcl}
+    if [ "${1}" == 'password' ]; then
+        echo 'Type `password`'
+        ${sqlplus} ${orcl}
+    else
+        echo ${1} | ${sqlplus} ${orcl}
+    fi
     echo -e "\033[0m"
 }
 
@@ -1080,12 +1085,15 @@ dbOracle()
 
     case ${1} in
         'showUsers')
-            sqlPlusCLI 'SELECT USERNAME FROM ALL_USERS;'
+            sqlPlusCLI "SELECT USERNAME, ACCOUNT_STATUS, EXPIRY_DATE FROM dba_users WHERE default_tablespace not in ('SYSTEM','SYSAUX');"
         ;;
         'createUser')
             query+="CREATE TABLESPACE SUGARCRM_CS;"
 #            query+=" CREATE USER SUGARCRM_CS IDENTIFIED BY pspass DEFAULT TABLESPACE SUGARCRM_CS;"
             sqlPlusCLI ${query}
+        ;;
+        'changePass')
+            sqlPlusCLI 'password'
         ;;
         'passLifetime')
             sqlPlusCLI 'ALTER PROFILE SYSTEM LIMIT PASSWORD_LIFE_TIME UNLIMITED;'
@@ -1096,10 +1104,11 @@ dbOracle()
             setYmlVal "_db_oracle_setRoot_user" "dbOracleSetRootUser"
             setYmlVal "_db_oracle_setRoot_pass" "dbOracleSetRootPass"
 
-#            query+="DROP USER ${dbOracleSetRootUser} CASCADE; "
-            query+="CREATE USER ${dbOracleSetRootUser} IDENTIFIED BY ${dbOracleSetRootUser}; "
-            query+="GRANT CONNECT, RESOURCE TO ${dbOracleSetRootUser};"
-#            echo $query
+            query+="CREATE USER ${dbOracleSetRootUser} IDENTIFIED BY ${dbOracleSetRootUser} "
+            query+="DEFAULT TABLESPACE users TEMPORARY TABLESPACE temp QUOTA UNLIMITED ON users; "
+            query+="GRANT CONNECT, RESOURCE, DBA, CREATE DATABASE LINK, CREATE PUBLIC SYNONYM, CREATE SYNONYM, "
+            query+="CREATE TYPE, CREATE MATERIALIZED VIEW, CREATE ROLE, CREATE TABLE, CREATE VIEW, CREATE PROCEDURE, "
+            query+="CREATE SEQUENCE, CREATE TRIGGER TO ${dbOracleSetRootUser};"
             sqlPlusCLI "${query}"
         ;;
 

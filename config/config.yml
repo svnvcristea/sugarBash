@@ -76,7 +76,7 @@ day:
   on:
     0: "von resume"
     1: skype
-    2: hipchat
+    2: hipchat4
     3: thunderbird
     4: firefox
     5: /usr/bin/google-chrome-stable
