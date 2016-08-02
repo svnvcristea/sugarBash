@@ -179,11 +179,14 @@ option:
         name: Main menu
         func: menu option
       1:
+        name: showUsers
+        func: dbOracle showUsers
+      2:
         name: changePass
         func: dbOracle changePass
-      2:
-        name: passLifetime
-        func: dbOracle passLifetime
-      3:
-        name: setRoot
-        func: dbOracle setRoot
+#      3:
+#        name: passLifetime
+#        func: dbOracle passLifetime
+#      4:
+#        name: setRoot
+#        func: dbOracle setRoot

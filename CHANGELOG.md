@@ -1,8 +1,15 @@
 CHANGELOG
 =========
 
+
+1.4.1
+-----
+
+ * oracle12c show users and change password
+
 1.4.0
 -----
+
  * quick patching on option 11
  * _private.yml parsed last;
  * normalize setYmlVal;
