@@ -55,6 +55,10 @@ SugarBash Helper: option
      1 - PHPUnit
          1 - install
          2 - PHPUnit Sugar Customization Test Suite
+11 - Git Mango Patch
+12 - DB Oracle
+     1 - showUsers
+     2 - changePass
 ------------------------
 Select your menu option:
 ```
