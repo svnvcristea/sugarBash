@@ -886,7 +886,7 @@ unixInstall()
         if [  "$?" -ne "0"  ]; then
             cmd="zypper"; checkWhich ${cmd}
             if [  "$?" -ne "0"  ]; then
-                error "Unable to determ Linux install command"
+                error "Unable to determine Linux install command"
             fi
         fi
 	fi
