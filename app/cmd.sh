@@ -75,7 +75,19 @@ day()
             setYmlVal "_day_on_${count}"
             while (( ${#ymlVal} > 0 ))
             do
-                ${ymlVal} &>> ${logFile} &
+                echo "# dayON: ${ymlVal}" >> ${logFile}
+                local logFileApp=$logPath/$(date '+%Y-%m-%d')_day_on_
+                case "${ymlVal}" in
+                    *"phpstorm.sh") logFileApp="${logFileApp}phpstorm.log";;
+                    *"thunderbird"*) logFileApp="${logFileApp}thunderbird.log";;
+                    *"hipchat"*) logFileApp="${logFileApp}hipchat.log";;
+                    *"skype"*) logFileApp="${logFileApp}skype.log";;
+                    *"docker"*) logFileApp="${logFileApp}docker.log";;
+                    *"son"*) logFileApp="${logFileApp}vagrantON.log";;
+                    *) logFileApp="${logFileApp}app.log" ;;
+                esac
+                touch ${logFileApp}
+                ${ymlVal} &>> ${logFileApp} &
                 count=$(( $count + 1 ))
                 setYmlVal "_day_on_${count}"
             done
@@ -87,14 +99,17 @@ day()
             echo "Day OFF:  ${now}" >> ${logFile}
             wh >> ${logFile}
             setYmlVal "_day_off_${count}"
+            local logFileApp=$logPath/$(date '+%Y-%m-%d')_day_off_app.log
+            touch ${logFileApp}
             while (( ${#ymlVal} > 0 ))
             do
-                ${ymlVal} &>> ${logFile}
+                echo "# dayOFF: ${ymlVal}" >> ${logFile}
+                ${ymlVal} &>> ${logFileApp}
                 count=$(( $count + 1 ))
                 setYmlVal "_day_off_${count}"
             done
+            echo "# Bye bye... !" >> ${logFile} &
             ssudo shutdown -h now
-            echo "# Bye bye... !" >> ${logFile}
         ;;
 
         *)

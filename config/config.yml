@@ -74,12 +74,12 @@ stacksON:
 
 day:
   on:
-    0: "von resume"
+    0: "son up"
     1: skype
     2: hipchat4
     3: thunderbird
     4: firefox
     5: /usr/bin/google-chrome-stable
   off:
-    0: "von suspend"
+    0: "son halt"
     1: "bash $0 1"
