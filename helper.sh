@@ -9,7 +9,9 @@
 
 DIR="${BASH_SOURCE%/*}"
 if [ ! -d "$DIR" ]; then DIR="$PWD"; fi
-logFile=$DIR/log/day_$(date '+%Y-%m-%d').log
+logPath=$DIR/log/$(date '+%Y_%m')
+mkdir -p ${logPath}
+logFile=$logPath/$(date '+%Y-%m-%d')_day_on.log
 . "$DIR/app/lib.sh"
 . "$DIR/app/cmd.sh"
 

@@ -1,15 +1,16 @@
 CHANGELOG
 =========
 
+1.4.2
+-----
+ * improve logging by day and app on day ON/OFF
 
 1.4.1
 -----
-
  * oracle12c show users and change password
 
 1.4.0
 -----
-
  * quick patching on option 11
  * _private.yml parsed last;
  * normalize setYmlVal;
@@ -19,7 +20,6 @@ CHANGELOG
 
 1.3.0
 -----
-
  * refactor mysql cli trough mysql_config_editor
  * mySQL show users
  * mySQL show user privileges
@@ -33,7 +33,6 @@ CHANGELOG
 
 1.2.0
 -----
-
  * git clone GitHub repo
  * VPN status
  * use encoded sudo password
@@ -44,7 +43,6 @@ CHANGELOG
 
 1.1.0
 -----
-
  * vagrantON integration
  * MySQL root password
  * mount folders grouped by VM names
@@ -59,7 +57,6 @@ CHANGELOG
 
 1.0.0
 -----
-
  * backup
  * mount
  * VPN
