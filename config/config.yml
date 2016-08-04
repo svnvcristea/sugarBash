@@ -13,14 +13,13 @@ git:
       origin:   git@github.com:svnvcristea/Mango.git
       upstream: git@github.com:ps-dev-lapp/Mango.git
   GitHub:
-    keys: "mango sugarBash SugarCRMCodeSniffer stacks stackDeployer vagrantON toolshed"
+    keys: "mango sugarBash SugarCRMCodeSniffer stacks stackDeployer nusim"
     mango: git@github.com:svnvcristea/Mango.git
     sugarBash: git@github.com:svnvcristea/sugarBash.git
     SugarCRMCodeSniffer: git@github.com:svnvcristea/SugarCRMCodeSniffer.git
-    stacks: git@github.com:svnvcristea/stacks.git
+    stacks: git@github.com:sugarcrm/stacks.git
     stackDeployer: git@github.com:svnvcristea/stack-deployer.git
-    vagrantON: git@github.com:svnvcristea/vagrantON.git
-    toolshed: git@github.com:sugarcrm/toolshed.git
+    nusim: git@github.com:sugarcrm-ps/nusim.git
 
 vpn:
   conf: /etc/vpnc/sugarvpn.conf
@@ -62,10 +61,8 @@ db:
       user: system
       pass: manager
 
-vagrantON:
-  repo: git@github.com:svnvcristea/vagrantON.git
-  path: ~/git-repo
-  stack: php54
+nusim:
+  tmppath: /tmp/nusim/install-clone
 
 stacksON:
   repo: git@github.com:sugarcrm/stacks.git

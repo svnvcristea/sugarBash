@@ -14,6 +14,7 @@ mkdir -p ${logPath}
 logFile=$logPath/$(date '+%Y-%m-%d')_day_on.log
 . "$DIR/app/lib.sh"
 . "$DIR/app/cmd.sh"
+. "$DIR/app/nusim.sh"
 
 usage() {
     cat <<EOM

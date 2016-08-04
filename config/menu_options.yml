@@ -43,92 +43,120 @@ option:
     func: "menu option_4_opt"
     opt:
       0:
-        name: Main menu
+        name: Main Menu
         func: menu option
       1:
-        name: Config email and username
+        name: Config Global
         func: "gitConfig global"
       2:
-        name: GitHub Clone
+        name: Clone Github
         func: "gitConfig clone"
       3:
-        name: SugarCRM Build init
+        name: Init SugarCRM Build
         func: "gitConfig initSugarBuild"
+      4:
+        name: Mango
+        func: "menu option_4_opt_4_opt"
+        opt:
+          0:
+            name: Main Menu
+            func: menu option
+          1:
+            name: clone
+            func: "gitMango clone"
+          2:
+            name: post checkout
+            func: "gitMango postCheckout"
+          3:
+            name: patch
+            func: "gitMango patch"
   5:
     name: xbuild
     func: "xbuild"
   6:
-    name: "Git Mango"
+    name: "nusim"
     func: "menu option_6_opt"
     opt:
       0:
-        name: Main menu
+        name: Main Menu
         func: menu option
       1:
-        name: clone
-        func: "gitMango clone"
+        name: Check
+        func: "newsim check"
       2:
-        name: post checkout
-        func: "gitMango postCheckout"
+        name: Install
+        func: "newsim install"
       3:
-        name: patch
-        func: "gitMango patch"
+        name: Full Test
+        func: "newsim fullTest"
   7:
-    name: "DB MySQL"
+    name: "DB"
     func: "menu option_7_opt"
     opt:
       0:
-        name: Main menu
+        name: Main Menu
         func: menu option
       1:
-        name: show users
-        func: dbMySQL showUsers
+        name: MySQL
+        func: "menu option_7_opt_1_opt"
+        opt:
+          0:
+            name: Main Menu
+            func: menu option_7_opt
+          1:
+            name: show users
+            func: dbMySQL showUsers
+          2:
+            name: user privileges
+            func: dbMySQL showUserPrivileges
+          3:
+            name: set root
+            func: dbMySQL setRoot
+          4:
+            name: DB size
+            func: dbMySQL dbSize
+          5:
+            name: import dump
+            func: importSQLDump
       2:
-        name: user privileges
-        func: dbMySQL showUserPrivileges
-      3:
-        name: set root
-        func: dbMySQL setRoot
-      4:
-        name: DB size
-        func: dbMySQL dbSize
-      5:
-        name: import dump
-        func: importSQLDump
+        name: ORACLE
+        func: "menu option_7_opt_2_opt"
+        opt:
+          0:
+            name: Main Menu
+            func: menu option
+          1:
+            name: showUsers
+            func: dbOracle showUsers
+          2:
+            name: changePass
+            func: dbOracle changePass
   8:
-    name: vagrantON
+    name: Sugar DevEnv
     func: "menu option_8_opt"
     opt:
       0:
-        name: Main menu
+        name: Main Menu
         func: menu option
       1:
-        name: clone
-        func: vagrantON clone
-      2:
-        name: status
-        func: vagrantON status
-      3:
-        name: up
-        func: vagrantON up
-      4:
-        name: ssh
-        func: vagrantON ssh
-      5:
-        name: resume
-        func: vagrantON resume
-      6:
-        name: suspend
-        func: vagrantON suspend
-      7:
-        name: destroy
-        func: vagrantON destroy
+        name: PHPUnit
+        func: "menu option_8_opt_1_opt"
+        opt:
+          0:
+            name: Back menu
+            func: menu option_8_opt
+          1:
+            name: install
+            func: PHPUnit install
+          2:
+            name: PHPUnit Sugar Customization Test Suite
+            func: PHPUnit runCustomizationTestSuite
   9:
     name: System Info
     func: "menu option_9_opt"
     opt:
       0:
-        name: Main menu
+        name: Main Menu
         func: menu option
       1:
         name: Full info
@@ -149,44 +177,5 @@ option:
         name: Top 10 sub-folders size
         func: sysInfo top10folders
   10:
-    name: SugarDevEnv
-    func: "menu option_10_opt"
-    opt:
-      0:
-        name: Main menu
-        func: menu option
-      1:
-        name: PHPUnit
-        func: "menu option_10_opt_1_opt"
-        opt:
-          0:
-            name: Back menu
-            func: menu option_10_opt
-          1:
-            name: install
-            func: PHPUnit install
-          2:
-            name: PHPUnit Sugar Customization Test Suite
-            func: PHPUnit runCustomizationTestSuite
-  11:
-    name: "Git Mango Patch"
+    name: "Shortcut - gitMango patch"
     func: "gitMango patch $2"
-  12:
-    name: "DB Oracle"
-    func: "menu option_12_opt"
-    opt:
-      0:
-        name: Main menu
-        func: menu option
-      1:
-        name: showUsers
-        func: dbOracle showUsers
-      2:
-        name: changePass
-        func: dbOracle changePass
-#      3:
-#        name: passLifetime
-#        func: dbOracle passLifetime
-#      4:
-#        name: setRoot
-#        func: dbOracle setRoot
