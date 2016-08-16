@@ -87,8 +87,15 @@ option:
         name: Install
         func: "newsim install"
       3:
-        name: Full Test
-        func: "newsim fullTest"
+        name: Use
+        func: "menu option_6_opt_3_opt"
+        opt:
+          0:
+            name: Nusim Menu
+            func: menu option_6_opt
+          1:
+            name: install Turbinado instance
+            func: "newsim installInstance"
   7:
     name: "DB"
     func: "menu option_7_opt"

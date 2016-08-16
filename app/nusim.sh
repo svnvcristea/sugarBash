@@ -34,8 +34,29 @@ newsim()
             nusim -V
         ;;
 
+        'installInstance')
+            setYmlVal "_nusim_sugar_db_key" 'dbKey'
+            local cmd="nusim install:developer -e dev --license-key ${_nusim_sugar_license} --repo-path ${_nusim_sugar_mango}"
+            cmd="${cmd} --instance ${_nusim_sugar_name} --sugar-version ${_nusim_sugar_version} --sugar-flavor=${_nusim_sugar_flavor}"
+            cmd="${cmd} --admin-user-name ${_nusim_sugar_admin_user} --admin-password ${_nusim_sugar_admin_pass}"
+
+            if [ ${dbKey} == 'oracle' ]; then
+                cmd="${cmd} --db-type ${_db_oracle_type} --db-user ${_db_oracle_connect_user} --db-pass ${_db_oracle_connect_pass}"
+                cmd="${cmd} --db-host ${_db_oracle_connect_host} --db-port ${_db_oracle_port} --db-name ${_db_oracle_setRoot_host}/orcl"
+            else
+                cmd="${cmd} --db-type ${_db_mysql_type} --db-user ${_db_mysql_connect_user} --db-pass ${_db_mysql_connect_pass}"
+                cmd="${cmd} --db-host ${_db_mysql_connect_host} --db-port ${_db_mysql_port} --db-name turbinado"
+            fi
+            secho "${cmd}" 'menu'
+            ${cmd} &
+            ssudo 'tail -f /tmp/nusim/nusim.log'
+            local localIpCmd="ip -f inet addr show eth1 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*'"
+            local ipVal=$(eval "${localIpCmd}")
+            secho "http://${ipVal}/${_nusim_sugar_name}/${_nusim_sugar_flavor}" 'green'
+        ;;
+
         'fullTest')
-            nusim
+            secho 'ToDO!' 'red'
         ;;
 
         *)

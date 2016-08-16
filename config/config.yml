@@ -47,6 +47,8 @@ backup:
 
 db:
   mysql:
+    type: mysql
+    port: 13306
     connect:
       host: localhost
       user: root
@@ -56,6 +58,12 @@ db:
       user: root
       pass: pspass
   oracle:
+    type: oci8
+    port: 1521
+    connect:
+      host: localhost
+      user: system
+      pass: manager
     setRoot:
       host: 0.0.0.0
       user: system
@@ -63,6 +71,17 @@ db:
 
 nusim:
   tmppath: /tmp/nusim/install-clone
+  sugar:
+    mango: /home/vagrant/git-repo/Mango
+    name: Turbinado
+    version: 7.7.0.0
+    flavor: ult
+    admin:
+      user: admin
+      pass: asdf
+    db:
+      key: oracle
+    license: replace-me!
 
 stacksON:
   repo: git@github.com:sugarcrm/stacks.git

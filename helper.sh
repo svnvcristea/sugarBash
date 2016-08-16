@@ -13,6 +13,7 @@ logPath=$DIR/log/$(date '+%Y_%m')
 mkdir -p ${logPath}
 logFile=$logPath/$(date '+%Y-%m-%d')_day_on.log
 . "$DIR/app/lib.sh"
+. "$DIR/app/app.sh"
 . "$DIR/app/cmd.sh"
 . "$DIR/app/nusim.sh"
 
