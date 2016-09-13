@@ -20,6 +20,47 @@ checkWhich()
     return $?
 }
 
+unixInstall()
+{
+    secho "# unixInstall: $@" 'menu'
+
+	case ${1} in
+        'composer')
+            checkWhich ${cmd}
+            if [  "$?" -ne "0"  ]; then
+                secho "Install ${1}" 'menu'
+                sudo php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+                sudo php -r "if (hash_file('SHA384', 'composer-setup.php') === 'e115a8dc7871f15d853148a7fbac7da27d6c0030b848d9b3dc09e2a0388afed865e6a3d6b3c0fad45c48e2b5fc1196ae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+                sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+                sudo php -r "unlink('composer-setup.php');"
+            else
+                secho "${1} exists" 'green'
+            fi
+        ;;
+
+        *)
+            local cmd="apt-get";
+            checkWhich ${cmd}
+            if [  "$?" -ne "0"  ]; then
+                cmd="yum"; checkWhich ${cmd}
+                if [  "$?" -ne "0"  ]; then
+                    cmd="zypper"; checkWhich ${cmd}
+                    if [  "$?" -ne "0"  ]; then
+                        error "Unable to determine Linux install command"
+                    fi
+                fi
+            else
+                secho "${1} exists" 'green'
+            fi
+			secho "Executing: 'sudo ${cmd} install $1'" 'menu'
+	        ssudo ${cmd} -y install $1
+        ;;
+
+    esac
+
+	drawOptionDone
+}
+
 helperAlias()
 {
     local aliasHelper="alias helper='bash ${DIR}/helper.sh'"
@@ -243,4 +284,49 @@ menu()
         setYmlVal "_${1}_${OPT}_func"
         ${ymlVal}
     done
+}
+
+gitCloneOrUpdate()
+{
+    local repo=${1}
+    local path=${2}
+    local name=${3}
+    local branch='master'
+
+    if [ ! -z "$4" ]; then
+        branch=${4}
+    fi
+    secho "gitCloneOrUpdate ${repo} ${path}/${name} ${branch}" 'menu'
+
+    if [ -d "${path}/${name}" ]; then
+        cd ${path}/${name}
+        gitStatus=$(git status)
+        secho "${gitStatus}"
+        if [[ ${gitStatus} == *"On branch"* ]]; then
+            git fetch
+            git reset --hard origin/${branch}
+            git submodule update
+            if [ -f composer.json ]; then
+                composer install
+            fi
+        else
+            cd ..
+            rm -rf ${name}
+        fi
+    fi
+
+    if [ ! -d "${path}/${name}" ]; then
+        mkdir -p ${path}/${name}
+        gitClone ${repo} ${path}/${name} ${branch}
+    fi
+}
+
+gitClone()
+{
+    secho "# git clone ${1} ${2} -b ${3}" 'menu'
+    cd ${2}
+    git clone -b ${3} --recursive --depth 1 ${1} ${2}
+    if [ -f composer.json ]; then
+        composer install
+    fi
 }

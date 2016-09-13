@@ -639,24 +639,6 @@ importSQLDump()
     drawOptionDone
 }
 
-unixInstall()
-{
-    local cmd="apt-get";
-    checkWhich ${cmd}
-	if [  "$?" -ne "0"  ]; then
-		cmd="yum"; checkWhich ${cmd}
-        if [  "$?" -ne "0"  ]; then
-            cmd="zypper"; checkWhich ${cmd}
-            if [  "$?" -ne "0"  ]; then
-                error "Unable to determine Linux install command"
-            fi
-        fi
-	fi
-    echo "Executing: 'sudo ${cmd} install $1'"
-	ssudo ${cmd} -y install $1
-	drawOptionDone
-}
-
 sysInfo()
 {
     secho "# sysInfo: $@" 'menu'
@@ -690,6 +672,18 @@ sysInfo()
 
         'top10folders')
 			ssudo find ./ -type d -print0 | xargs -0 du | sort -n | tail -10 | cut -f2 | xargs -I{} du -sh {}
+        ;;
+
+        'vbox')
+            secho "* vbox:" 'menu'
+            lsmod | grep -i vbox
+            secho "* vboxguest version:" 'menu'
+            lsmod | grep -io vboxguest | xargs modinfo | grep -iw version
+            secho "* vboxguest info:" 'menu'
+            modinfo vboxguest
+
+            # modprobe vboxguest
+            # rcvboxadd setup
         ;;
 
         *)

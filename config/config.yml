@@ -20,6 +20,9 @@ git:
     stacks: git@github.com:sugarcrm/stacks.git
     stackDeployer: git@github.com:svnvcristea/stack-deployer.git
     nusim: git@github.com:sugarcrm-ps/nusim.git
+    nomad: git@github.com:sugarcrm/nomad.git
+    refinery: git@github.com:sugarcrm/refinery.git
+    translations: git@github.com:sugarcrm/translations.git
 
 vpn:
   conf: /etc/vpnc/sugarvpn.conf
@@ -70,7 +73,7 @@ db:
       pass: manager
 
 nusim:
-  tmppath: /tmp/nusim/install-clone
+  tmppath: /tmp/nusim
   sugar:
     mango: /home/vagrant/git-repo/Mango
     name: Turbinado
@@ -82,6 +85,14 @@ nusim:
     db:
       key: oracle
     license: replace-me!
+  build:
+    number: 00
+    with:
+      nomad: true
+    branch:
+      nomad: v3_0
+      translations: 7_7
+      refinery: master
 
 stacksON:
   repo: git@github.com:sugarcrm/stacks.git
