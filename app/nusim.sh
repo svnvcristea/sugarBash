@@ -83,17 +83,12 @@ newsim()
                 cmd="echo \"${cmd}\" | sudo su -"
             fi
 
-            secho "${cmd}" 'menu'
-            ${cmd} &
-            local cmdPID=$!
-
-            cmd="tail -f --pid $cmdPID /tmp/nusim/nusim.log"
-            secho "${cmd}" 'menu'
-            ${cmd} &
+            nusim -V
+            tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
 
             sleepUnit=3
             sleepCount=0
-            while [ -z "$(docker ps -a | grep build_core_install_)" -a $sleepCount -lt 60 ]; do
+            while [ -z "$(docker ps -a | grep build_core_install_)" -a $sleepCount -lt 300 ]; do
                 sleep $sleepUnit
                 let sleepCount=sleepCount+sleepUnit
             done
@@ -112,40 +107,56 @@ newsim()
 
             cp ${_nusim_tmppath}/repo/refinery/build/* ${_nusim_tmppath}/builds/refinery/${_nusim_build_number}
             secho "ls -la ${_nusim_tmppath}/builds/refinery/${_nusim_build_number}" 'menu'
-            ls -la ${_nusim_tmppath}/builds/${_nusim_build_number}/refinery
+            ls -la ${_nusim_tmppath}/builds/refinery/${_nusim_build_number}
+
+            cd ${_nusim_tmppath}/builds/${_nusim_build_number}
+            zip -rq ${_nusim_build_number}.zip ./
+            mkdir -p ${_nusim_tmppath}/builds/zip
+            mv ${_nusim_build_number}.zip ${_nusim_tmppath}/builds/zip
 
             secho "/** Finished Create Install Pack **/" 'menu'
         ;;
 
-        'createUpgradePack')
-            --translations-path=/home/vagrant/git-repo/translations --nomad-path=/home/vagrant/git-repo/nomad --refinery-path=/home/vagrant/git-repo/refinery
-            --baseline-path=/var/www/html/SugarEntSvnvcristeaDevelop
+        'deployInstallPack')
+            local cmd="nusim package:deploy:ps:install -e dev"
+#            local installPack=$(ls ${_nusim_tmppath}/builds/refinery/${_nusim_build_number} | grep -oP "^[Sa-z]*.[\.|0-9]*.zip$")
 
-            local cmd="nusim package:create:ps:upgrade -e dev --mango-path ${_nusim_sugar_mango}"
-            cmd="${cmd} --sugar-version ${_nusim_sugar_version} --sugar-flavor ${_nusim_sugar_flavor}"
-            cmd="${cmd} --sugar-version ${_nusim_sugar_version} --sugar-flavor ${_nusim_sugar_flavor}"
+            cmd="${cmd} --package-zip ${_nusim_tmppath}/builds/zip/${_nusim_build_number}.zip"
+            cmd="${cmd} --relative-path ${_nusim_build_number}${_nusim_sugar_name}"
+
+            if [ ${_nusim_sugar_db_key} == 'oracle' ]; then
+                cmd="${cmd} --db-type ${_db_oracle_type} --db-user ${_db_oracle_connect_user} --db-pass ${_db_oracle_connect_pass}"
+                cmd="${cmd} --db-host ${_db_oracle_connect_host} --db-port ${_db_oracle_port} --db-name ${_db_oracle_setRoot_host}/orcl"
+            else
+                cmd="${cmd} --db-type ${_db_mysql_type} --db-user ${_db_mysql_connect_user} --db-pass ${_db_mysql_connect_pass}"
+                cmd="${cmd} --db-host ${_db_mysql_connect_host} --db-port ${_db_mysql_port} --db-name turbinado_${_nusim_build_number}"
+            fi
+            cmd="${cmd} --license-key ${_nusim_sugar_license}"
+
+            if [ "$ME" == 'vagrant' ]; then
+                cmd="echo \"${cmd}\" | sudo su -"
+            fi
+
+            nusim -V
+            tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
+            wait $cmdPID
+        ;;
+
+        'deployUpgradePack')
+            local cmd="nusim package:deploy:ps:upgrade -e dev --relative-path ${_nusim_build_number}${_nusim_sugar_name}"
+            cmd="${cmd} --package-zip ${_nusim_tmppath}/builds/zip/${_nusim_build_upgrade_to}.zip"
+
+            if [ "$ME" == 'vagrant' ]; then
+                cmd="echo \"${cmd}\" | sudo su -"
+            fi
+
+            nusim -V
+            tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
+            wait $cmdPID
         ;;
 
         'fullTest')
             secho 'ToDO!' 'red'
-        ;;
-
-        *)
-			break
-        ;;
-    esac
-
-    drawOptionDone
-}
-
-ci()
-{
-    secho "# CI: $@" 'menu'
-
-    case ${1} in
-        'createInstallPack')
-            cd /home/vagrant/AutoUtils/PS/Build_scripts
-            ./cs_build.rb --branch=r22 --version=7.7.1.0 --flavor=ult --build_num=r22-0 --upgrade --baseline_path=/tmp/Baseline_path --base_branch=production --build_path=/tmp/Nusim_upgrade_builds/r22-6 --email_recipients=
         ;;
 
         *)

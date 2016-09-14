@@ -138,3 +138,8 @@ oci()
 {
     dbOracle $@
 }
+
+nanoconf()
+{
+    nano $DIR/config/_private.yml
+}

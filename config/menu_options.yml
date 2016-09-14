@@ -99,6 +99,15 @@ option:
           2:
             name: create install pack
             func: "newsim createInstallPack"
+          3:
+            name: deploy install pack
+            func: "newsim deployInstallPack"
+          4:
+            name: create upgrade pack
+            func: "newsim createUpgradePack"
+          5:
+            name: deploy upgrade pack
+            func: "newsim deployUpgradePack"
   7:
     name: "DB"
     func: "menu option_7_opt"
@@ -189,16 +198,6 @@ option:
       7:
         name: Virtual Box info
         func: sysInfo vbox
-  10:
-    name: CI Simulator
-    func: "menu option_10_opt"
-    opt:
-      0:
-        name: Main Menu
-        func: menu option
-      1:
-        name: Create Build
-        func: ci createInstallPack
   11:
     name: "Shortcut - gitMango patch"
     func: "gitMango patch $2"

@@ -87,6 +87,8 @@ nusim:
     license: replace-me!
   build:
     number: 00
+    upgrade:
+      to: up-r00-01
     with:
       nomad: true
     branch:

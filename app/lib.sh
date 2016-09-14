@@ -330,3 +330,15 @@ gitClone()
         composer install
     fi
 }
+
+tailPidCmd()
+{
+    secho "${1}" 'menu'
+    ${1} &
+    cmdPID=$!
+    secho "$cmdPID" 'blue'
+
+    cmd="tail -f --pid $cmdPID ${2}"
+    secho "${cmd}" 'menu'
+    ${cmd} &
+}
