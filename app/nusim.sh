@@ -63,10 +63,10 @@ newsim()
         'createInstallPack')
             local dockerImageName="build_core_install_${_nusim_build_number}"
             if [ "${_nusim_build_with_nomad}" == 'true' ]; then
-                gitCloneOrUpdate ${_git_GitHub_nomad} ${_nusim_tmppath}/repo nomad ${_nusim_build_branch_nomad}
+                gitCloneOrUpdate ${_git_GitHub_nomad} ${_nusim_tmppath}/repo nomad ${_nusim_build_branch_nomad} ${_nusim_build_checkout_nomad}
             fi
-            gitCloneOrUpdate ${_git_GitHub_translations} ${_nusim_tmppath}/repo translations ${_nusim_build_branch_translations}
-            gitCloneOrUpdate ${_git_GitHub_refinery} ${_nusim_tmppath}/repo refinery ${_nusim_build_branch_refinery}
+            gitCloneOrUpdate ${_git_GitHub_translations} ${_nusim_tmppath}/repo translations ${_nusim_build_branch_translations} ${_nusim_build_checkout_translations}
+            gitCloneOrUpdate ${_git_GitHub_refinery} ${_nusim_tmppath}/repo refinery ${_nusim_build_branch_refinery} ${_nusim_build_checkout_translations}
 
             mkdir -p ${_nusim_tmppath}/builds/refinery/${_nusim_build_number}
 
@@ -86,8 +86,8 @@ newsim()
             nusim -V
             tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
 
-            sleepUnit=3
-            sleepCount=0
+            local sleepUnit=3
+            local sleepCount=0
             while [ -z "$(docker ps -a | grep build_core_install_)" -a $sleepCount -lt 300 ]; do
                 sleep $sleepUnit
                 let sleepCount=sleepCount+sleepUnit
@@ -115,6 +115,47 @@ newsim()
             mv ${_nusim_build_number}.zip ${_nusim_tmppath}/builds/zip
 
             secho "/** Finished Create Install Pack **/" 'menu'
+        ;;
+
+        'createUpgradePack')
+            local dockerImageName="build_core_install_${_nusim_build_upgrade_number}"
+            local cmd="nusim package:create:ps:upgrade -e dev --mango-path ${_nusim_sugar_mango}"
+            cmd="${cmd} --baseline-path /var/www/html/${_nusim_build_number}${_nusim_sugar_name}"
+            if [ "${_nusim_build_with_nomad}" == 'true' ]; then
+                cmd="${cmd} --nomad-path=${_nusim_tmppath}/repo/nomad"
+            fi
+            cmd="${cmd} --translations-path ${_nusim_tmppath}/repo/translations"
+            cmd="${cmd} --refinery-path ${_nusim_tmppath}/repo/refinery"
+            cmd="${cmd} --build-path ${_nusim_tmppath}/builds/${_nusim_build_upgrade_number}"
+            cmd="${cmd} --build-number ${_nusim_build_upgrade_number}"
+            cmd="${cmd} --sugar-version ${_nusim_sugar_version} --sugar-flavor ${_nusim_sugar_flavor}"
+            if [ "$ME" == 'vagrant' ]; then
+                cmd="echo \"${cmd}\" | sudo su -"
+            fi
+
+            nusim -V
+            tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
+
+            local sleepUnit=3
+            local sleepCount=0
+            while [ -z "$(docker ps -a | grep build_core_install_)" -a $sleepCount -lt 300 ]; do
+                sleep $sleepUnit
+                let sleepCount=sleepCount+sleepUnit
+            done
+
+            cmd="docker logs -f ${dockerImageName}"
+            if [ "$ME" == 'vagrant' ]; then
+                secho "echo '${cmd} &' | sudo su -" 'menu'
+                echo "${cmd}" | sudo su -
+            else
+                secho "${cmd}" 'menu'
+                ${cmd}
+            fi
+
+            wait $cmdPID
+            secho "nusim command finished" 'menu'
+
+            secho "/** Finished Create Upgrade Pack **/" 'menu'
         ;;
 
         'deployInstallPack')

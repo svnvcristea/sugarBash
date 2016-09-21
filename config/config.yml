@@ -86,15 +86,20 @@ nusim:
       key: oracle
     license: replace-me!
   build:
-    number: 00
+    number: cs00
     upgrade:
-      to: up-r00-01
+      number: csr2246
+      to: csr0001
     with:
       nomad: true
     branch:
       nomad: v3_0
       translations: 7_7
       refinery: master
+    checkout:
+      nomad: 882c5667800d6d5f90c081abca3ea863dead0cb0
+      translations: 94eebf2483e97662fb04a79c88c97b9f9bc7833b
+      refinery: f23ddc7ebf4ad2b9ab786209761e3ac648fe725b
 
 stacksON:
   repo: git@github.com:sugarcrm/stacks.git

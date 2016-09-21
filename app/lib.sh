@@ -301,10 +301,14 @@ gitCloneOrUpdate()
     if [ -d "${path}/${name}" ]; then
         cd ${path}/${name}
         gitStatus=$(git status)
-        secho "${gitStatus}"
+        secho "${gitStatus}" 'menu'
         if [[ ${gitStatus} == *"On branch"* ]]; then
             git fetch
             git reset --hard origin/${branch}
+            if [ ! -z "$5" ]; then
+                secho "git checkout -f ${5}" 'menu'
+                git checkout -f ${5}
+            fi
             git submodule update
             if [ -f composer.json ]; then
                 composer install
@@ -338,7 +342,7 @@ tailPidCmd()
     cmdPID=$!
     secho "$cmdPID" 'blue'
 
-    cmd="tail -f --pid $cmdPID ${2}"
+    cmd="tail -f -n 2 --pid $cmdPID ${2}"
     secho "${cmd}" 'menu'
     ${cmd} &
 }
