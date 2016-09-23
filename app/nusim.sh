@@ -10,6 +10,8 @@
 newsim()
 {
     secho "# nusim: $@" 'menu'
+    startTime=$(date '+%Y-%m-%d %H:%M');
+    secho "${startTime}" 'blue'
 
     case ${1} in
         'check')
@@ -66,9 +68,7 @@ newsim()
                 gitCloneOrUpdate ${_git_GitHub_nomad} ${_nusim_tmppath}/repo nomad ${_nusim_build_branch_nomad} ${_nusim_build_checkout_nomad}
             fi
             gitCloneOrUpdate ${_git_GitHub_translations} ${_nusim_tmppath}/repo translations ${_nusim_build_branch_translations} ${_nusim_build_checkout_translations}
-            gitCloneOrUpdate ${_git_GitHub_refinery} ${_nusim_tmppath}/repo refinery ${_nusim_build_branch_refinery} ${_nusim_build_checkout_translations}
-
-            mkdir -p ${_nusim_tmppath}/builds/refinery/${_nusim_build_number}
+            gitCloneOrUpdate ${_git_GitHub_refinery} ${_nusim_tmppath}/repo refinery ${_nusim_build_branch_refinery} ${_nusim_build_checkout_refinery}
 
             local cmd="nusim package:create:ps:install -e dev --mango-path ${_nusim_sugar_mango}"
             if [ "${_nusim_build_with_nomad}" == 'true' ]; then
@@ -103,24 +103,29 @@ newsim()
             fi
 
             wait $cmdPID
+            sleep $sleepUnit
             secho "nusim command finished" 'menu'
 
-            cp ${_nusim_tmppath}/repo/refinery/build/* ${_nusim_tmppath}/builds/refinery/${_nusim_build_number}
-            secho "ls -la ${_nusim_tmppath}/builds/refinery/${_nusim_build_number}" 'menu'
-            ls -la ${_nusim_tmppath}/builds/refinery/${_nusim_build_number}
-
-            cd ${_nusim_tmppath}/builds/${_nusim_build_number}
-            zip -rq ${_nusim_build_number}.zip ./
-            mkdir -p ${_nusim_tmppath}/builds/zip
-            mv ${_nusim_build_number}.zip ${_nusim_tmppath}/builds/zip
+            nusimZipBuild ${_nusim_build_number}
+            nusimCpFullBuild ${_nusim_build_number}
 
             secho "/** Finished Create Install Pack **/" 'menu'
         ;;
 
         'createUpgradePack')
             local dockerImageName="build_core_install_${_nusim_build_upgrade_number}"
-            local cmd="nusim package:create:ps:upgrade -e dev --mango-path ${_nusim_sugar_mango}"
-            cmd="${cmd} --baseline-path /var/www/html/${_nusim_build_number}${_nusim_sugar_name}"
+            local mangoLatestChanges=${_nusim_sugar_mango}
+            local pathToBaseBuildPack="${_nusim_tmppath}/builds/${_nusim_build_number}"
+
+            if [ "${_nusim_build_with_nomad}" == 'true' ]; then
+                gitCloneOrUpdate ${_git_GitHub_nomad} ${_nusim_tmppath}/repo nomad ${_nusim_build_branch_nomad} ${_nusim_build_checkout_nomad}
+            fi
+            gitCloneOrUpdate ${_git_GitHub_translations} ${_nusim_tmppath}/repo translations ${_nusim_build_branch_translations} ${_nusim_build_checkout_translations}
+            gitCloneOrUpdate ${_git_GitHub_refinery} ${_nusim_tmppath}/repo refinery ${_nusim_build_branch_refinery} ${_nusim_build_checkout_refinery}
+
+            local cmd="nusim package:create:ps:upgrade -e dev"
+            cmd="${cmd} --mango-path ${mangoLatestChanges}"
+            cmd="${cmd} --baseline-path ${pathToBaseBuildPack}"
             if [ "${_nusim_build_with_nomad}" == 'true' ]; then
                 cmd="${cmd} --nomad-path=${_nusim_tmppath}/repo/nomad"
             fi
@@ -153,7 +158,11 @@ newsim()
             fi
 
             wait $cmdPID
+            sleep $sleepUnit
             secho "nusim command finished" 'menu'
+
+            nusimZipBuild ${_nusim_build_upgrade_number}
+            nusimCpFullBuild ${_nusim_build_upgrade_number}
 
             secho "/** Finished Create Upgrade Pack **/" 'menu'
         ;;
@@ -181,6 +190,7 @@ newsim()
             nusim -V
             tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
             wait $cmdPID
+            secho "nusim command finished" 'menu'
         ;;
 
         'deployUpgradePack')
@@ -205,5 +215,21 @@ newsim()
         ;;
     esac
 
+    timeSpentSince "$startTime"
     drawOptionDone
+}
+
+nusimZipBuild() {
+    cd ${_nusim_tmppath}/builds/${1}
+    zip -rq ${1}.zip ./
+    mkdir -p ${_nusim_tmppath}/builds/zip
+    mv ${1}.zip ${_nusim_tmppath}/builds/zip
+    ls ${_nusim_tmppath}/builds/zip/${1}.zip
+}
+
+nusimCpFullBuild() {
+    mkdir -p ${_nusim_tmppath}/builds/refinery/${1}
+    cp ${_nusim_tmppath}/repo/refinery/build/* ${_nusim_tmppath}/builds/refinery/${1}
+    secho "ls -la ${_nusim_tmppath}/builds/refinery/${1}" 'menu'
+    ls -la ${_nusim_tmppath}/builds/refinery/${1}
 }

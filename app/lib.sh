@@ -301,8 +301,8 @@ gitCloneOrUpdate()
     if [ -d "${path}/${name}" ]; then
         cd ${path}/${name}
         gitStatus=$(git status)
-        secho "${gitStatus}" 'menu'
-        if [[ ${gitStatus} == *"On branch"* ]]; then
+        secho "${gitStatus}" 'green'
+        if [[ ${gitStatus} == *"branch"* ]]; then
             git fetch
             git reset --hard origin/${branch}
             if [ ! -z "$5" ]; then
@@ -313,8 +313,12 @@ gitCloneOrUpdate()
             if [ -f composer.json ]; then
                 composer install
             fi
+            git log -1
         else
             cd ..
+            secho "Will remove folder ${name}" red
+
+            ls -la ${name}
             rm -rf ${name}
         fi
     fi
@@ -327,9 +331,9 @@ gitCloneOrUpdate()
 
 gitClone()
 {
-    secho "# git clone ${1} ${2} -b ${3}" 'menu'
+    secho "git clone -b ${3} --recursive ${1} ${2}" 'menu'
     cd ${2}
-    git clone -b ${3} --recursive --depth 1 ${1} ${2}
+    git clone -b ${3} --recursive ${1} ${2}
     if [ -f composer.json ]; then
         composer install
     fi
@@ -345,4 +349,17 @@ tailPidCmd()
     cmd="tail -f -n 2 --pid $cmdPID ${2}"
     secho "${cmd}" 'menu'
     ${cmd} &
+}
+
+timeSpentSince()
+{
+    now=$(date '+%Y-%m-%d %H:%M')
+    secho "${now}" 'blue'
+    minElapsed=$(( ( $(date -ud "${now}" +'%s') - $(date -ud "${1}" +'%s') )/60 ))
+    hElapsed=$((${minElapsed}/60))
+    mElapsed=$((${minElapsed}%60))
+    if [[ "${#mElapsed}" == 1 ]]; then
+        mElapsed="0${mElapsed}"
+    fi
+    secho "${hElapsed}:${mElapsed}" 'blue'
 }
