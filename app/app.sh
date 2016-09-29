@@ -468,7 +468,7 @@ EOL
 );
 EOL
             dbOracle setRoot
-            sqlplus "DROP DATABASE IF EXISTS ${db};"
+            sqlPlusCLI "DROP DATABASE IF EXISTS ${db};"
         ;;
 
         'configOverride')
