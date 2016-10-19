@@ -468,7 +468,7 @@ EOL
 );
 EOL
             dbOracle setRoot
-            sqlPlusCLI "DROP DATABASE IF EXISTS ${db};"
+            sqlPlusCLI "DROP DATABASE IF EXISTS ${db}; DROP USER ${db} CASCADE;"
         ;;
 
         'configOverride')
@@ -820,18 +820,33 @@ dbMySQL()
 sqlPlusCLI()
 {
     local sqlplus='/usr/lib/oracle/12.1/client64/bin/sqlplus'
-    local orcl='system/manager@0.0.0.0/orcl'
+    local orcl="${_db_oracle_connect_user}/${_db_oracle_connect_pass}@0.0.0.0/orcl"
 
     secho "${1}" menu
     draw - "${#1}" menu
-    echo -e "\033[93m";
+#    echo -e "\033[93m";
     if [ "${1}" == 'password' ]; then
         echo 'Type `password`'
         ${sqlplus} ${orcl}
     else
-        echo ${1} | ${sqlplus} ${orcl}
+        echo "${1}" | ${sqlplus} ${orcl}
     fi
-    echo -e "\033[0m"
+#    echo -e "\033[0m"
+}
+
+sqlPlusDropUser()
+{
+    sqlPlusCLI "DROP ROLE ${1}; DROP USER ${1} CASCADE;"
+    sqlPlusCLI "DROP TABLESPACE ${1} INCLUDING CONTENTS AND DATAFILES CASCADE CONSTRAINTS;"
+}
+
+sqlPlusCreateUser()
+{
+    secho "Create oracle user: ${1} | pass: ${2}" menu
+    sqlPlusDropUser ${1}
+    sqlPlusCLI "CREATE TABLESPACE ${1};"
+    sqlPlusCLI "CREATE USER ${1} IDENTIFIED BY ${2} DEFAULT TABLESPACE ${1} TEMPORARY TABLESPACE temp QUOTA UNLIMITED ON ${1};"
+    sqlPlusCLI "GRANT CONNECT, RESOURCE, DBA, CREATE DATABASE LINK, CREATE PUBLIC SYNONYM, CREATE SYNONYM, CREATE TYPE, CREATE MATERIALIZED VIEW, CREATE ROLE, CREATE TABLE, CREATE VIEW, CREATE PROCEDURE, CREATE SEQUENCE, CREATE TRIGGER TO ${1};"
 }
 
 dbOracle()
@@ -841,12 +856,14 @@ dbOracle()
 
     case ${1} in
         'showUsers')
-            sqlPlusCLI "SELECT USERNAME, ACCOUNT_STATUS, EXPIRY_DATE FROM dba_users WHERE default_tablespace not in ('SYSTEM','SYSAUX');"
+            sqlPlusCLI "SELECT USERNAME, ACCOUNT_STATUS, EXPIRY_DATE FROM dba_users WHERE default_tablespace not in ('SYSAUX');"
+        ;;
+        'showTablespace')
+            sqlPlusCLI "SELECT TABLESPACE_NAME, STATUS, CONTENTS FROM USER_TABLESPACES;"
         ;;
         'createUser')
-            query+="CREATE TABLESPACE SUGARCRM_CS;"
-#            query+=" CREATE USER SUGARCRM_CS IDENTIFIED BY pspass DEFAULT TABLESPACE SUGARCRM_CS;"
-            sqlPlusCLI ${query}
+            local username="${_db_oracle_createuser_name}"
+            sqlPlusCreateUser "${_db_oracle_createuser_name}" "${_db_oracle_createuser_pass}"
         ;;
         'changePass')
             sqlPlusCLI 'password'

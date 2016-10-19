@@ -12,6 +12,7 @@ newsim()
     secho "# nusim: $@" 'menu'
     startTime=$(date '+%Y-%m-%d %H:%M');
     secho "${startTime}" 'blue'
+    sleepUnit=3
 
     case ${1} in
         'check')
@@ -86,7 +87,6 @@ newsim()
             nusim -V
             tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
 
-            local sleepUnit=3
             local sleepCount=0
             while [ -z "$(docker ps -a | grep build_core_install_)" -a $sleepCount -lt 300 ]; do
                 sleep $sleepUnit
@@ -141,7 +141,6 @@ newsim()
             nusim -V
             tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
 
-            local sleepUnit=3
             local sleepCount=0
             while [ -z "$(docker ps -a | grep build_core_install_)" -a $sleepCount -lt 300 ]; do
                 sleep $sleepUnit
@@ -173,13 +172,15 @@ newsim()
 
             cmd="${cmd} --package-zip ${_nusim_tmppath}/builds/zip/${_nusim_build_number}.zip"
             cmd="${cmd} --relative-path ${_nusim_build_number}${_nusim_sugar_name}"
+            cmd="${cmd} --db-user ${_nusim_sugar_db_user} --db-pass ${_nusim_sugar_db_pass}"
 
             if [ ${_nusim_sugar_db_key} == 'oracle' ]; then
-                cmd="${cmd} --db-type ${_db_oracle_type} --db-user ${_db_oracle_connect_user} --db-pass ${_db_oracle_connect_pass}"
-                cmd="${cmd} --db-host ${_db_oracle_connect_host} --db-port ${_db_oracle_port} --db-name ${_db_oracle_setRoot_host}/orcl"
+                sqlPlusCreateUser ${_nusim_sugar_db_user} ${_nusim_sugar_db_pass}
+                cmd="${cmd} --db-type ${_db_oracle_type} --db-name ${_db_oracle_setRoot_host}/orcl"
+                cmd="${cmd} --db-host ${_db_oracle_connect_host} --db-port ${_db_oracle_port}"
             else
-                cmd="${cmd} --db-type ${_db_mysql_type} --db-user ${_db_mysql_connect_user} --db-pass ${_db_mysql_connect_pass}"
-                cmd="${cmd} --db-host ${_db_mysql_connect_host} --db-port ${_db_mysql_port} --db-name turbinado_${_nusim_build_number}"
+                cmd="${cmd} --db-type ${_db_mysql_type} --db-name turbinado_${_nusim_build_number}"
+                cmd="${cmd} --db-host ${_db_mysql_connect_host} --db-port ${_db_mysql_port}"
             fi
             cmd="${cmd} --license-key ${_nusim_sugar_license}"
 
@@ -190,6 +191,7 @@ newsim()
             nusim -V
             tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
             wait $cmdPID
+            sleep $sleepUnit
             secho "nusim command finished" 'menu'
         ;;
 
@@ -204,6 +206,7 @@ newsim()
             nusim -V
             tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
             wait $cmdPID
+            sleep $sleepUnit
         ;;
 
         'fullTest')

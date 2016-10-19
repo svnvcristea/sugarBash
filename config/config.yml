@@ -71,6 +71,9 @@ db:
       host: 0.0.0.0
       user: system
       pass: manager
+    createuser:
+      name: csqa
+      pass: pspass
 
 nusim:
   tmppath: /tmp/nusim
@@ -84,6 +87,8 @@ nusim:
       pass: asdf
     db:
       key: oracle
+      user: cs00
+      pass: pspass
     license: replace-me!
   build:
     number: cs00
