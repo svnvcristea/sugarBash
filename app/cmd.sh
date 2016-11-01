@@ -48,7 +48,7 @@ son()
 
     if [ $1 == "halt" ] || [ $1 == "suspend" ]; then
         mountFstab ${stack} umount &> /dev/null
-        vpn kill
+#        vpn kill
     elif [ $1 == "up" ] || [ $1 == "resume" ]; then
         vpn connectSugar
     fi
@@ -137,4 +137,9 @@ sudoUid()
 oci()
 {
     dbOracle $@
+}
+
+nanoconf()
+{
+    nano $DIR/config/_private.yml
 }

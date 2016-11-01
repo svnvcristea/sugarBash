@@ -13,14 +13,16 @@ git:
       origin:   git@github.com:svnvcristea/Mango.git
       upstream: git@github.com:ps-dev-lapp/Mango.git
   GitHub:
-    keys: "mango sugarBash SugarCRMCodeSniffer stacks stackDeployer vagrantON toolshed"
+    keys: "mango sugarBash SugarCRMCodeSniffer stacks stackDeployer nusim"
     mango: git@github.com:svnvcristea/Mango.git
     sugarBash: git@github.com:svnvcristea/sugarBash.git
     SugarCRMCodeSniffer: git@github.com:svnvcristea/SugarCRMCodeSniffer.git
-    stacks: git@github.com:svnvcristea/stacks.git
+    stacks: git@github.com:sugarcrm/stacks.git
     stackDeployer: git@github.com:svnvcristea/stack-deployer.git
-    vagrantON: git@github.com:svnvcristea/vagrantON.git
-    toolshed: git@github.com:sugarcrm/toolshed.git
+    nusim: git@github.com:sugarcrm-ps/nusim.git
+    nomad: git@github.com:sugarcrm/nomad.git
+    refinery: git@github.com:sugarcrm/refinery.git
+    translations: git@github.com:sugarcrm/translations.git
 
 vpn:
   conf: /etc/vpnc/sugarvpn.conf
@@ -48,6 +50,8 @@ backup:
 
 db:
   mysql:
+    type: mysql
+    port: 13306
     connect:
       host: localhost
       user: root
@@ -57,15 +61,50 @@ db:
       user: root
       pass: pspass
   oracle:
+    type: oci8
+    port: 1521
+    connect:
+      host: localhost
+      user: system
+      pass: manager
     setRoot:
       host: 0.0.0.0
       user: system
       pass: manager
+    createuser:
+      name: csqa
+      pass: pspass
 
-vagrantON:
-  repo: git@github.com:svnvcristea/vagrantON.git
-  path: ~/git-repo
-  stack: php54
+nusim:
+  tmppath: /tmp/nusim
+  sugar:
+    mango: /home/vagrant/git-repo/Mango
+    name: Turbinado
+    version: 7.7.1.0
+    flavor: ult
+    admin:
+      user: admin
+      pass: asdf
+    db:
+      key: oracle
+      user: csp00
+      pass: pspass
+    license: replace-me!
+  build:
+    number: csp00n
+    upgrade:
+      number: csr2246
+      to: csr2247
+    with:
+      nomad: false
+    branch:
+      nomad: v3_0
+      translations: 7_7
+      refinery: master
+    checkout:
+      nomad: d9cdc6e
+      translations: d2c4a4a
+      refinery: 97b2240
 
 stacksON:
   repo: git@github.com:sugarcrm/stacks.git

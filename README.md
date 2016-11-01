@@ -19,31 +19,44 @@ SugarBash Helper: option
      2 - VPN Kill
      3 - VPN status
  4 - Git
-     1 - Config email and username
-     2 - GitHub Clone
-     3 - SugarCRM Build init
+     1 - Config Global
+     2 - Clone GitHub
+     3 - Init SugarCRM Build
+     4 - Mango
+         1 - clone
+         2 - post checkout
+         3 - patch
  5 - xbuild
      0 - sugar-qa
      1 - sugar
      2 - sugar2
- 6 - Git Mango
-     1 - clone
-     2 - post checkout
-     3 - patch
+ 6 - nusim
+     1 - Check
+     2 - Install
+     3 - Use
+         1 - install Turbinado instance
+         2 - create install pack
+         3 - deploy install pack
+         4 - create upgrade pack
+         5 - deploy upgrade pack
  7 - DB MySQL
-     1 - show users
-     2 - user privileges
-     3 - set root
-     4 - DB size
-     5 - import dump
- 8 - vagrantON
-     1 - clone
-     2 - status
-     3 - up
-     4 - ssh
-     5 - resume
-     6 - suspend
-     7 - destroy
+     1 - MySQL
+         1 - show users
+         2 - user privileges
+         3 - set root
+         4 - DB size
+         5 - import dump
+     2 - ORACLE
+         1 - showUsers
+         2 - changePass
+         3 - createUser
+         4 - showTablespace
+ 8 - Sugar DevEnv
+     1 - PHPUnit
+         1 - install
+         2 - PHPUnit
+             1 - install
+             2 - PHPUnit Sugar Customization Test Suite
  9 - System Info
      1 - Full info
      2 - OS
@@ -51,14 +64,7 @@ SugarBash Helper: option
      4 - Actual folder size
      5 - Actual folder write benchmark
      6 - Top 10 sub-folders size
-10 - SugarDevEnv
-     1 - PHPUnit
-         1 - install
-         2 - PHPUnit Sugar Customization Test Suite
-11 - Git Mango Patch
-12 - DB Oracle
-     1 - showUsers
-     2 - changePass
+     7 - Virtual Box info
 ------------------------
 Select your menu option:
 ```
