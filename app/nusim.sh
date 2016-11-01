@@ -71,6 +71,9 @@ newsim()
             gitCloneOrUpdate ${_git_GitHub_translations} ${_nusim_tmppath}/repo translations ${_nusim_build_branch_translations} ${_nusim_build_checkout_translations}
             gitCloneOrUpdate ${_git_GitHub_refinery} ${_nusim_tmppath}/repo refinery ${_nusim_build_branch_refinery} ${_nusim_build_checkout_refinery}
 
+            cd ${_nusim_sugar_mango}
+            gitMango postCheckout
+
             local cmd="nusim package:create:ps:install -e dev --mango-path ${_nusim_sugar_mango}"
             if [ "${_nusim_build_with_nomad}" == 'true' ]; then
                 cmd="${cmd} --nomad-path=${_nusim_tmppath}/repo/nomad"
@@ -114,7 +117,6 @@ newsim()
 
         'createUpgradePack')
             local dockerImageName="build_core_install_${_nusim_build_upgrade_number}"
-            local mangoLatestChanges=${_nusim_sugar_mango}
             local pathToBaseBuildPack="${_nusim_tmppath}/builds/${_nusim_build_number}"
 
             if [ "${_nusim_build_with_nomad}" == 'true' ]; then
@@ -123,8 +125,11 @@ newsim()
             gitCloneOrUpdate ${_git_GitHub_translations} ${_nusim_tmppath}/repo translations ${_nusim_build_branch_translations} ${_nusim_build_checkout_translations}
             gitCloneOrUpdate ${_git_GitHub_refinery} ${_nusim_tmppath}/repo refinery ${_nusim_build_branch_refinery} ${_nusim_build_checkout_refinery}
 
+            cd ${_nusim_sugar_mango}
+            gitMango postCheckout
+
             local cmd="nusim package:create:ps:upgrade -e dev"
-            cmd="${cmd} --mango-path ${mangoLatestChanges}"
+            cmd="${cmd} --mango-path ${_nusim_sugar_mango}"
             cmd="${cmd} --baseline-path ${pathToBaseBuildPack}"
             if [ "${_nusim_build_with_nomad}" == 'true' ]; then
                 cmd="${cmd} --nomad-path=${_nusim_tmppath}/repo/nomad"

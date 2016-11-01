@@ -80,23 +80,23 @@ nusim:
   sugar:
     mango: /home/vagrant/git-repo/Mango
     name: Turbinado
-    version: 7.7.0.0
+    version: 7.7.1.0
     flavor: ult
     admin:
       user: admin
       pass: asdf
     db:
       key: oracle
-      user: cs00
+      user: csp00
       pass: pspass
     license: replace-me!
   build:
-    number: cs00
+    number: csp00n
     upgrade:
       number: csr2246
-      to: csr0001
+      to: csr2247
     with:
-      nomad: true
+      nomad: false
     branch:
       nomad: v3_0
       translations: 7_7
@@ -104,7 +104,7 @@ nusim:
     checkout:
       nomad: d9cdc6e
       translations: d2c4a4a
-      refinery: ace708f
+      refinery: 97b2240
 
 stacksON:
   repo: git@github.com:sugarcrm/stacks.git

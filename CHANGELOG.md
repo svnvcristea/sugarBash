@@ -6,6 +6,7 @@ CHANGELOG
  * check installed nusim version
  * install nusim
  * nusim install Turbinado instance
+ * use nusim to create and deploy install and upgrade packages
 
 1.4.2
 -----

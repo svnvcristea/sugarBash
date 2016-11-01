@@ -33,7 +33,12 @@ SugarBash Helper: option
  6 - nusim
      1 - Check
      2 - Install
-     3 - Full Test
+     3 - Use
+         1 - install Turbinado instance
+         2 - create install pack
+         3 - deploy install pack
+         4 - create upgrade pack
+         5 - deploy upgrade pack
  7 - DB MySQL
      1 - MySQL
          1 - show users
@@ -44,10 +49,14 @@ SugarBash Helper: option
      2 - ORACLE
          1 - showUsers
          2 - changePass
+         3 - createUser
+         4 - showTablespace
  8 - Sugar DevEnv
      1 - PHPUnit
          1 - install
-         2 - PHPUnit Sugar Customization Test Suite
+         2 - PHPUnit
+             1 - install
+             2 - PHPUnit Sugar Customization Test Suite
  9 - System Info
      1 - Full info
      2 - OS
@@ -55,7 +64,7 @@ SugarBash Helper: option
      4 - Actual folder size
      5 - Actual folder write benchmark
      6 - Top 10 sub-folders size
-10 - Shortcut - gitMango patch
+     7 - Virtual Box info
 ------------------------
 Select your menu option:
 ```
