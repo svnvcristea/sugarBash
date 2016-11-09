@@ -342,6 +342,7 @@ gitClone()
 tailPidCmd()
 {
     secho "${1}" 'menu'
+    askToProceed
     ${1} &
     cmdPID=$!
     secho "$cmdPID" 'blue'

@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+1.5.1
+-----
+ * PSDEVOPS-76 Nusim #222 build excluding translation packs
+
 1.5.0
 -----
  * check installed nusim version

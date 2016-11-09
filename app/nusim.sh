@@ -83,6 +83,9 @@ newsim()
             cmd="${cmd} --build-path ${_nusim_tmppath}/builds/${_nusim_build_number}"
             cmd="${cmd} --build-number ${_nusim_build_number}"
             cmd="${cmd} --sugar-version ${_nusim_sugar_version} --sugar-flavor ${_nusim_sugar_flavor}"
+            if [ "${_nusim_build_with_translations}" == 'false' ]; then
+                cmd="${cmd} --no-latin"
+            fi
             if [ "$ME" == 'vagrant' ]; then
                 cmd="echo \"${cmd}\" | sudo su -"
             fi
