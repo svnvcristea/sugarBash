@@ -88,6 +88,8 @@ day()
                 esac
                 touch ${logFileApp}
                 ${ymlVal} &>> ${logFileApp} &
+                eval "PID${count}=$!"
+                echo "PID${count}: $!" >> ${logFileApp}
                 count=$(( $count + 1 ))
                 setYmlVal "_day_on_${count}"
             done

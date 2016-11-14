@@ -3,7 +3,7 @@ CHANGELOG
 
 1.5.1
 -----
- * PSDEVOPS-76 Nusim #222 build excluding translation packs
+ * PSDEVOPS-76 Nusim #222 build excluding translation packs (nusim 0.5.0)
 
 1.5.0
 -----

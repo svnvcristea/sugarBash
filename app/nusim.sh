@@ -64,7 +64,7 @@ newsim()
         ;;
 
         'createInstallPack')
-            local dockerImageName="build_core_install_${_nusim_build_number}"
+            local dockerImageName="build_core_${_nusim_build_number}"
             if [ "${_nusim_build_with_nomad}" == 'true' ]; then
                 gitCloneOrUpdate ${_git_GitHub_nomad} ${_nusim_tmppath}/repo nomad ${_nusim_build_branch_nomad} ${_nusim_build_checkout_nomad}
             fi
@@ -82,7 +82,9 @@ newsim()
             cmd="${cmd} --refinery-path ${_nusim_tmppath}/repo/refinery"
             cmd="${cmd} --build-path ${_nusim_tmppath}/builds/${_nusim_build_number}"
             cmd="${cmd} --build-number ${_nusim_build_number}"
-            cmd="${cmd} --sugar-version ${_nusim_sugar_version} --sugar-flavor ${_nusim_sugar_flavor}"
+            cmd="${cmd} --sugar-version ${_nusim_sugar_version}"
+            cmd="${cmd} --config-version ${_nusim_build_configversion}"
+            cmd="${cmd} --sugar-flavor ${_nusim_sugar_flavor}"
             if [ "${_nusim_build_with_translations}" == 'false' ]; then
                 cmd="${cmd} --no-latin"
             fi
@@ -94,7 +96,7 @@ newsim()
             tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
 
             local sleepCount=0
-            while [ -z "$(docker ps -a | grep build_core_install_)" -a $sleepCount -lt 300 ]; do
+            while [ -z "$(docker ps -a | grep build_core_)" -a $sleepCount -lt 300 ]; do
                 sleep $sleepUnit
                 let sleepCount=sleepCount+sleepUnit
             done
@@ -119,7 +121,7 @@ newsim()
         ;;
 
         'createUpgradePack')
-            local dockerImageName="build_core_install_${_nusim_build_upgrade_number}"
+            local dockerImageName="build_core_${_nusim_build_upgrade_number}"
             local pathToBaseBuildPack="${_nusim_tmppath}/builds/${_nusim_build_number}"
 
             if [ "${_nusim_build_with_nomad}" == 'true' ]; then
@@ -141,7 +143,9 @@ newsim()
             cmd="${cmd} --refinery-path ${_nusim_tmppath}/repo/refinery"
             cmd="${cmd} --build-path ${_nusim_tmppath}/builds/${_nusim_build_upgrade_number}"
             cmd="${cmd} --build-number ${_nusim_build_upgrade_number}"
-            cmd="${cmd} --sugar-version ${_nusim_sugar_version} --sugar-flavor ${_nusim_sugar_flavor}"
+            cmd="${cmd} --sugar-version ${_nusim_sugar_version} "
+            cmd="${cmd} --config-version ${_nusim_build_configversion}"
+            cmd="${cmd} --sugar-flavor ${_nusim_sugar_flavor}"
             if [ "$ME" == 'vagrant' ]; then
                 cmd="echo \"${cmd}\" | sudo su -"
             fi
@@ -150,7 +154,7 @@ newsim()
             tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
 
             local sleepCount=0
-            while [ -z "$(docker ps -a | grep build_core_install_)" -a $sleepCount -lt 300 ]; do
+            while [ -z "$(docker ps -a | grep build_core_)" -a $sleepCount -lt 300 ]; do
                 sleep $sleepUnit
                 let sleepCount=sleepCount+sleepUnit
             done

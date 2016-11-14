@@ -80,7 +80,7 @@ nusim:
   sugar:
     mango: /home/vagrant/git-repo/Mango
     name: Turbinado
-    version: 7.7.1.0
+    version: 7.7.1.2
     flavor: ult
     admin:
       user: admin
@@ -91,6 +91,7 @@ nusim:
       pass: pspass
     license: replace-me!
   build:
+    configversion: 7.7.1.0
     number: csp00n
     upgrade:
       number: csr2246
