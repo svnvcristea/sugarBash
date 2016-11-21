@@ -107,6 +107,8 @@ nusim:
       nomad: d9cdc6e
       translations: d2c4a4a
       refinery: 97b2240
+  log:
+    docker: false
 
 stacksON:
   repo: git@github.com:sugarcrm/stacks.git

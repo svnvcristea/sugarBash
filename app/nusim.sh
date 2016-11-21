@@ -53,11 +53,13 @@ newsim()
                 cmd="${cmd} --db-host ${_db_oracle_connect_host} --db-port ${_db_oracle_port} --db-name ${_db_oracle_setRoot_host}/orcl"
             else
                 cmd="${cmd} --db-type ${_db_mysql_type} --db-user ${_db_mysql_connect_user} --db-pass ${_db_mysql_connect_pass}"
-                cmd="${cmd} --db-host ${_db_mysql_connect_host} --db-port ${_db_mysql_port} --db-name turbinado"
+                cmd="${cmd} --db-host ${_db_mysql_connect_host} --db-port ${_db_mysql_port} --db-name ${_nusim_sugar_name,,}"
             fi
-            secho "${cmd}" 'menu'
-            ${cmd} &
-            ssudo 'tail -f /tmp/nusim/nusim.log'
+            tailPidCmd "${cmd}" '/tmp/nusim/nusim.log'
+
+            wait $cmdPID
+            sleep $sleepUnit
+            secho "nusim command finished" 'menu'
             local localIpCmd="ip -f inet addr show eth1 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*'"
             local ipVal=$(eval "${localIpCmd}")
             secho "http://${ipVal}/${_nusim_sugar_name}/${_nusim_sugar_flavor}" 'green'
@@ -101,13 +103,15 @@ newsim()
                 let sleepCount=sleepCount+sleepUnit
             done
 
-            cmd="docker logs -f ${dockerImageName}"
-            if [ "$ME" == 'vagrant' ]; then
-                secho "echo '${cmd} &' | sudo su -" 'menu'
-                echo "${cmd}" | sudo su -
-            else
-                secho "${cmd}" 'menu'
-                ${cmd}
+            if [ ${_nusim_log_docker} == "true" ]; then
+                cmd="docker logs -f ${dockerImageName}"
+                if [ "$ME" == 'vagrant' ]; then
+                    secho "echo '${cmd} &' | sudo su -" 'menu'
+                    echo "${cmd}" | sudo su -
+                else
+                    secho "${cmd}" 'menu'
+                    ${cmd}
+                fi
             fi
 
             wait $cmdPID
@@ -159,13 +163,15 @@ newsim()
                 let sleepCount=sleepCount+sleepUnit
             done
 
-            cmd="docker logs -f ${dockerImageName}"
-            if [ "$ME" == 'vagrant' ]; then
-                secho "echo '${cmd} &' | sudo su -" 'menu'
-                echo "${cmd}" | sudo su -
-            else
-                secho "${cmd}" 'menu'
-                ${cmd}
+            if [ ${_nusim_log_docker} == "true" ]; then
+                cmd="docker logs -f ${dockerImageName}"
+                if [ "$ME" == 'vagrant' ]; then
+                    secho "echo '${cmd} &' | sudo su -" 'menu'
+                    echo "${cmd}" | sudo su -
+                else
+                    secho "${cmd}" 'menu'
+                    ${cmd}
+                fi
             fi
 
             wait $cmdPID
@@ -191,7 +197,7 @@ newsim()
                 cmd="${cmd} --db-type ${_db_oracle_type} --db-name ${_db_oracle_setRoot_host}/orcl"
                 cmd="${cmd} --db-host ${_db_oracle_connect_host} --db-port ${_db_oracle_port}"
             else
-                cmd="${cmd} --db-type ${_db_mysql_type} --db-name turbinado_${_nusim_build_number}"
+                cmd="${cmd} --db-type ${_db_mysql_type} --db-name ${_nusim_sugar_name,,}_${_nusim_build_number}"
                 cmd="${cmd} --db-host ${_db_mysql_connect_host} --db-port ${_db_mysql_port}"
             fi
             cmd="${cmd} --license-key ${_nusim_sugar_license}"
