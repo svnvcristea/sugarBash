@@ -108,6 +108,15 @@ option:
           5:
             name: deploy upgrade pack
             func: "newsim deployUpgradePack"
+          6:
+            name: create core install pack
+            func: "newsim createInstallPack core"
+          7:
+            name: deploy core install pack
+            func: "newsim deployInstallPack core"
+          8:
+            name: deploy core upgrade pack
+            func: "newsim deployUpgradePack core"
   7:
     name: "DB"
     func: "menu option_7_opt"

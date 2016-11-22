@@ -9,10 +9,15 @@
 
 newsim()
 {
-    secho "# nusim: $@" 'menu'
+    local title="# nusim: $@"
+    secho "${title}" 'menu'
     startTime=$(date '+%Y-%m-%d %H:%M');
-    secho "${startTime}" 'blue'
+    secho "${startTime}" 'green'
     sleepUnit=3
+    local scope="ps"
+    if [ ! -z $2 ]; then
+        scope="core"
+    fi
 
     case ${1} in
         'check')
@@ -76,7 +81,7 @@ newsim()
             cd ${_nusim_sugar_mango}
             gitMango postCheckout
 
-            local cmd="nusim package:create:ps:install -e dev --mango-path ${_nusim_sugar_mango}"
+            local cmd="nusim package:create:${scope}:install -e dev --mango-path ${_nusim_sugar_mango}"
             if [ "${_nusim_build_with_nomad}" == 'true' ]; then
                 cmd="${cmd} --nomad-path=${_nusim_tmppath}/repo/nomad"
             fi
@@ -185,7 +190,7 @@ newsim()
         ;;
 
         'deployInstallPack')
-            local cmd="nusim package:deploy:ps:install -e dev"
+            local cmd="nusim package:deploy:${scope}:install -e dev"
 #            local installPack=$(ls ${_nusim_tmppath}/builds/refinery/${_nusim_build_number} | grep -oP "^[Sa-z]*.[\.|0-9]*.zip$")
 
             cmd="${cmd} --package-zip ${_nusim_tmppath}/builds/zip/${_nusim_build_number}.zip"
@@ -214,7 +219,7 @@ newsim()
         ;;
 
         'deployUpgradePack')
-            local cmd="nusim package:deploy:ps:upgrade -e dev --relative-path ${_nusim_build_number}${_nusim_sugar_name}"
+            local cmd="nusim package:deploy:${scope}:upgrade -e dev --relative-path ${_nusim_build_number}${_nusim_sugar_name}"
             cmd="${cmd} --package-zip ${_nusim_tmppath}/builds/zip/${_nusim_build_upgrade_to}.zip"
 
             if [ "$ME" == 'vagrant' ]; then
