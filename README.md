@@ -34,11 +34,14 @@ SugarBash Helper: option
      1 - Check
      2 - Install
      3 - Use
-         1 - install Turbinado instance
-         2 - create install pack
-         3 - deploy install pack
-         4 - create upgrade pack
-         5 - deploy upgrade pack
+         1 - dev install Turbinado instance
+         2 - ps install pack create
+         3 - ps install pack deploy
+         4 - ps upgrade pack create
+         5 - ps upgrade pack deploy
+         6 - core install pack create
+         7 - core install pack deploy
+         8 - core upgrade pack deploy
  7 - DB MySQL
      1 - MySQL
          1 - show users

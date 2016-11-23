@@ -96,6 +96,7 @@ nusim:
     upgrade:
       number: csr2246
       to: csr2247
+      silent: 7.7.1.0
     with:
       nomad: false
       translations: false

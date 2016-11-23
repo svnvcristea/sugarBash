@@ -155,6 +155,9 @@ newsim()
             cmd="${cmd} --sugar-version ${_nusim_sugar_version} "
             cmd="${cmd} --config-version ${_nusim_build_configversion}"
             cmd="${cmd} --sugar-flavor ${_nusim_sugar_flavor}"
+            if [ "${_nusim_build_with_translations}" == 'false' ]; then
+                cmd="${cmd} --no-latin"
+            fi
             if [ "$ME" == 'vagrant' ]; then
                 cmd="echo \"${cmd}\" | sudo su -"
             fi
@@ -221,6 +224,10 @@ newsim()
         'deployUpgradePack')
             local cmd="nusim package:deploy:${scope}:upgrade -e dev --relative-path ${_nusim_build_number}${_nusim_sugar_name}"
             cmd="${cmd} --package-zip ${_nusim_tmppath}/builds/zip/${_nusim_build_upgrade_to}.zip"
+
+            if [ "$scope" == 'core' ]; then
+                cmd="${cmd} --silent-upgrader ${_nusim_tmppath}/builds/refinery/${_nusim_build_number}/silentUpgrade-PRO-${_nusim_build_upgrade_silent}.zip"
+            fi
 
             if [ "$ME" == 'vagrant' ]; then
                 cmd="echo \"${cmd}\" | sudo su -"
