@@ -7,6 +7,7 @@ CHANGELOG
  * PSDEVOPS-77 Nusim #225 dedicated build config version
  * nusim tail docker logs optional
  * nusim core pack options
+ * nusim git init on deploy new install pack
 
 1.5.0
 -----

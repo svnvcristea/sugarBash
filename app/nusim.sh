@@ -219,6 +219,11 @@ newsim()
             wait $cmdPID
             sleep $sleepUnit
             secho "nusim command finished" 'menu'
+            if [ ${_nusim_sugar_git_init} == "true" ]; then
+                cd "${_nusim_sugar_git_rootPath}/${_nusim_build_number}${_nusim_sugar_name}"
+                pwd
+                gitConfig initSugarBuild "- ${scope} install pack ${_nusim_build_number}"
+            fi
         ;;
 
         'deployUpgradePack')

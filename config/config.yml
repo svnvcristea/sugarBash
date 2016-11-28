@@ -75,42 +75,6 @@ db:
       name: csqa
       pass: pspass
 
-nusim:
-  tmppath: /tmp/nusim
-  sugar:
-    mango: /home/vagrant/git-repo/Mango
-    name: Turbinado
-    version: 7.7.1.2
-    flavor: ult
-    admin:
-      user: admin
-      pass: asdf
-    db:
-      key: oracle
-      user: csp00
-      pass: pspass
-    license: replace-me!
-  build:
-    configversion: 7.7.1.0
-    number: csp00n
-    upgrade:
-      number: csr2246
-      to: csr2247
-      silent: 7.7.1.0
-    with:
-      nomad: false
-      translations: false
-    branch:
-      nomad: v3_0
-      translations: 7_7
-      refinery: master
-    checkout:
-      nomad: d9cdc6e
-      translations: d2c4a4a
-      refinery: 97b2240
-  log:
-    docker: false
-
 stacksON:
   repo: git@github.com:sugarcrm/stacks.git
   path: ~/git-repo/stacks/vagrant-on

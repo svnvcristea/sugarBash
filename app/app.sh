@@ -99,7 +99,7 @@ custom/modules/Connectors/metadata/connectors.php
 custom/modules/*/Ext/**
 custom/application/Ext/**
 EOL
-			git init && git add . && git commit -m 'Initial commit' &> /dev/null
+			git init && git add . && git commit -m "Initial commit ${2}" &> /dev/null
         ;;
 
         *)
