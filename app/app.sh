@@ -87,6 +87,7 @@ config_override.php
 
 cache/
 upload/
+vendor/
 _PSBook/
 
 include/javascript/yui3/

@@ -1,38 +1,63 @@
 nusim:
-  tmppath: /tmp/nusim
-  sugar:
+  path:
+    tmp: /tmp/nusim
+    root: /var/www/html
     mango: /home/vagrant/git-repo/Mango
-    name: Turbinado
-    version: 7.7.1.2
-    flavor: ult
+  build:
+    recipe: ps7700nt
+    license: replace-me!
+    suffix: Turbinado
     admin:
       user: admin
       pass: asdf
     db:
       key: oracle
-      user: csp00
-      pass: pspass
-    git:
-      init: false
-      rootPath: /var/www/html
-    license: replace-me!
-  build:
-    configversion: 7.7.1.0
-    number: csp00n
-    upgrade:
-      number: csr2246
-      to: csr2247
-      silent: 7.7.1.0
-    with:
-      nomad: false
-      translations: false
-    branch:
-      nomad: v3_0
-      translations: 7_7
-      refinery: master
-    checkout:
-      nomad: d9cdc6e
-      translations: d2c4a4a
-      refinery: 97b2240
-  log:
-    docker: false
+  recipes:
+    ps7700nt:
+      version: 7.7.0.0
+      configv: 7.7.0.0
+      flavor: ult
+      upgrade: r01-01
+      mangoCore:
+        branch: 7_7_0
+        commit: ccc6a66
+      refinery:
+        branch: master
+        commit: 97b2240
+      translations:
+        branch: 7_7
+        commit: d2c4a4a
+      nomad:
+        branch: v3_0
+        commit: c2c463e
+      use:
+        mangoCore: false
+        nomad: false
+        translations: false
+        initGit: true
+        log:
+          docker: false
+    ps7710nt:
+      version: 7.7.1.0
+      configv: 7.7.1.0
+      flavor: ult
+      upgrade: r01-01
+      mangoCore:
+        branch: 7_7_1
+        commit: 26db414
+      refinery:
+        branch: master
+        commit: 97d4aaf
+      translations:
+        branch: 7_7
+        commit: d2c4a4a
+      nomad:
+        branch: v3_0
+        commit: d9cdc6e
+      use:
+        mangoCore: false
+        nomad: false
+        translations: false
+        initGit: true
+        log:
+          docker: false

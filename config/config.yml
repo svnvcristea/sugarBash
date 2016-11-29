@@ -23,6 +23,7 @@ git:
     nomad: git@github.com:sugarcrm/nomad.git
     refinery: git@github.com:sugarcrm/refinery.git
     translations: git@github.com:sugarcrm/translations.git
+    mangoCore: git@github.com:sugarcrm/Mango.git
 
 vpn:
   conf: /etc/vpnc/sugarvpn.conf
