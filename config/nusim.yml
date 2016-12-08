@@ -3,6 +3,8 @@ nusim:
     tmp: /tmp/nusim
     root: /var/www/html
     mango: /home/vagrant/git-repo/Mango
+  install:
+    branch: master
   build:
     recipe: ps7700nt
     license: replace-me!

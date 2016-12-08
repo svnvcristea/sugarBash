@@ -38,7 +38,7 @@ newsim()
             cd ${gitRepoPath}
             ssudo "rm /usr/local/bin/nusim"
             secho "# git clone ${_git_GitHub_nusim} ${gitRepoPath}" 'menu'
-            git clone -b develop --recursive ${_git_GitHub_nusim} ./nusim
+            git clone -b ${_nusim_install_branch} --recursive ${_git_GitHub_nusim} ./nusim
             cd nusim
             composer install
             ssudo "touch ${tmp}/nusim.log"
@@ -299,6 +299,7 @@ newStep() {
         'gitInit')
             if [ ${useG} == "true" ]; then
                 cd "${_nusim_path_root}/${sugarName}"
+                rm -rf .git
                 pwd
                 gitConfig "initSugarBuild" "- ${2} install pack ${build}"
                 chown vagrant:vagrant -R .git
@@ -328,4 +329,5 @@ nusimCpFullBuild() {
     cp ${tmp}/repo/refinery/build/* ${tmp}/builds/refinery/${1}
     secho "ls -la ${tmp}/builds/refinery/${1}" 'menu'
     ls -la ${tmp}/builds/refinery/${1}
+    rm -rf ${tmp}/repo/refinery/build/
 }
