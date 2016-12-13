@@ -269,14 +269,14 @@ newStep() {
         'dbKey')
             cmdConcat "--db-type ${dbType} --db-host ${dbHost} --db-port ${dbPort}"
             if [ ${dbKey} == 'oracle' ]; then
-                sqlPlusCreateUser ${_nusim_sugar_db_user} ${_nusim_sugar_db_pass}
+                sqlPlusCreateUser ${_db_oracle_createuser_name} ${_db_oracle_createuser_pass}
                 cmdConcat "--db-name ${_db_oracle_setRoot_host}/orcl"
             else
                 cmdConcat "--db-name ${build,,}_${suffix}"
             fi
         ;;
 
-        'dbKeyUser')            
+        'dbKeyUser')
             newStep 'dbKey'
             cmdConcat "--db-user ${dbUser} --db-pass ${dbPass}"
         ;;
