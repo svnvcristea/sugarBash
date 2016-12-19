@@ -73,7 +73,7 @@ db:
       user: system
       pass: manager
     createuser:
-      name: csqa
+      user: csqa
       pass: pspass
 
 stacksON:

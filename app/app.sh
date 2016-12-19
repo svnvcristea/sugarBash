@@ -863,8 +863,8 @@ dbOracle()
             sqlPlusCLI "SELECT TABLESPACE_NAME, STATUS, CONTENTS FROM USER_TABLESPACES;"
         ;;
         'createUser')
-            local username="${_db_oracle_createuser_name}"
-            sqlPlusCreateUser "${_db_oracle_createuser_name}" "${_db_oracle_createuser_pass}"
+            local username="${_db_oracle_createuser_user}"
+            sqlPlusCreateUser "${_db_oracle_createuser_user}" "${_db_oracle_createuser_pass}"
         ;;
         'changePass')
             sqlPlusCLI 'password'

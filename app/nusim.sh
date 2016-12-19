@@ -257,6 +257,11 @@ newStep() {
             if [ "${useMC}" == "true" ]; then
                 mango="${tmp}/repo/mangoCore"
             fi
+
+            if [ ${dbKey} == 'oracle' ]; then
+                setYmlVal "_db_${dbKey}_createuser_user" 'dbUser'
+                setYmlVal "_db_${dbKey}_createuser_pass" 'dbPass'
+            fi
         ;;
 
         'gitCloneOrUpdate')
@@ -269,7 +274,7 @@ newStep() {
         'dbKey')
             cmdConcat "--db-type ${dbType} --db-host ${dbHost} --db-port ${dbPort}"
             if [ ${dbKey} == 'oracle' ]; then
-                sqlPlusCreateUser ${_db_oracle_createuser_name} ${_db_oracle_createuser_pass}
+                sqlPlusCreateUser ${dbUser} ${dbPass}
                 cmdConcat "--db-name ${_db_oracle_setRoot_host}/orcl"
             else
                 cmdConcat "--db-name ${build,,}_${suffix}"
