@@ -94,20 +94,29 @@ option:
             name: Nusim Menu
             func: menu option_6_opt
           1:
-            name: install Turbinado instance
+            name: dev install Turbinado instance
             func: "newsim installInstance"
           2:
-            name: create install pack
+            name: ps install pack create
             func: "newsim createInstallPack"
           3:
-            name: deploy install pack
+            name: ps install pack deploy
             func: "newsim deployInstallPack"
           4:
-            name: create upgrade pack
+            name: ps upgrade pack create
             func: "newsim createUpgradePack"
           5:
-            name: deploy upgrade pack
+            name: ps upgrade pack deploy
             func: "newsim deployUpgradePack"
+          6:
+            name: core install pack create
+            func: "newsim createInstallPack core"
+          7:
+            name: core install pack deploy
+            func: "newsim deployInstallPack core"
+          8:
+            name: core upgrade pack deploy
+            func: "newsim deployUpgradePack core"
   7:
     name: "DB"
     func: "menu option_7_opt"

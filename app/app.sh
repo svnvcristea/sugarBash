@@ -87,6 +87,7 @@ config_override.php
 
 cache/
 upload/
+vendor/
 _PSBook/
 
 include/javascript/yui3/
@@ -99,7 +100,7 @@ custom/modules/Connectors/metadata/connectors.php
 custom/modules/*/Ext/**
 custom/application/Ext/**
 EOL
-			git init && git add . && git commit -m 'Initial commit' &> /dev/null
+			git init && git add . && git commit -m "Initial commit ${2}" &> /dev/null
         ;;
 
         *)
@@ -862,8 +863,8 @@ dbOracle()
             sqlPlusCLI "SELECT TABLESPACE_NAME, STATUS, CONTENTS FROM USER_TABLESPACES;"
         ;;
         'createUser')
-            local username="${_db_oracle_createuser_name}"
-            sqlPlusCreateUser "${_db_oracle_createuser_name}" "${_db_oracle_createuser_pass}"
+            local username="${_db_oracle_createuser_user}"
+            sqlPlusCreateUser "${_db_oracle_createuser_user}" "${_db_oracle_createuser_pass}"
         ;;
         'changePass')
             sqlPlusCLI 'password'

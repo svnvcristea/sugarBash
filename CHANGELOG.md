@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+1.6.0
+-----
+ * PSDEVOPS-76 Nusim #222 build excluding translation packs (nusim 0.5.0)
+ * PSDEVOPS-77 Nusim #225 dedicated build config version
+ * nusim tail docker logs optional
+ * nusim core pack options
+ * nusim git init on deploy new install pack
+
 1.5.0
 -----
  * check installed nusim version

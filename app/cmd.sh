@@ -67,6 +67,7 @@ day()
     case ${1} in
         'on'|'ON')
             local count=0
+            local sleepUnit=5
             touch ${logFile}
             now=$(date '+%Y-%m-%d %H:%M');
             echo ${now} > ${logFile}
@@ -87,7 +88,12 @@ day()
                     *) logFileApp="${logFileApp}app.log" ;;
                 esac
                 touch ${logFileApp}
+                if [  "$count" -gt "7"  ]; then
+                    sleep $sleepUnit
+                fi
                 ${ymlVal} &>> ${logFileApp} &
+                eval "PID${count}=$!"
+                echo "PID${count}: $!" >> ${logFileApp}
                 count=$(( $count + 1 ))
                 setYmlVal "_day_on_${count}"
             done

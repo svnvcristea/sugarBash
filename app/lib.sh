@@ -306,8 +306,8 @@ gitCloneOrUpdate()
             git fetch
             git reset --hard origin/${branch}
             if [ ! -z "$5" ]; then
-                secho "git checkout -f ${5}" 'menu'
-                git checkout -f ${5}
+                secho "git reset --hard ${5}" 'menu'
+                git reset --hard ${5}
             fi
             git submodule update
             if [ -f composer.json ]; then
@@ -342,6 +342,7 @@ gitClone()
 tailPidCmd()
 {
     secho "${1}" 'menu'
+    askToProceed
     ${1} &
     cmdPID=$!
     secho "$cmdPID" 'blue'
