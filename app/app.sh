@@ -830,14 +830,15 @@ sqlPlusCLI()
         echo 'Type `password`'
         ${sqlplus} ${orcl}
     else
-        echo "${1}" | ${sqlplus} ${orcl}
+        echo "${1}" | ${sqlplus} -S ${orcl}
     fi
 #    echo -e "\033[0m"
 }
 
 sqlPlusDropUser()
 {
-    sqlPlusCLI "DROP ROLE ${1}; DROP USER ${1} CASCADE;"
+    sqlPlusCLI "DROP ROLE ${1};"
+    sqlPlusCLI "DROP USER ${1} CASCADE;"
     sqlPlusCLI "DROP TABLESPACE ${1} INCLUDING CONTENTS AND DATAFILES CASCADE CONSTRAINTS;"
 }
 

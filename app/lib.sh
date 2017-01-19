@@ -347,6 +347,7 @@ tailPidCmd()
     cmdPID=$!
     secho "$cmdPID" 'blue'
 
+    touch "${2}"
     cmd="tail -f -n 2 --pid $cmdPID ${2}"
     secho "${cmd}" 'menu'
     ${cmd} &
