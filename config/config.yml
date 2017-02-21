@@ -39,7 +39,7 @@ mount:
       0: "192.168.56.14:/var/www/html"
 
 backup:
-  serverip: 192.168.99.10
+  serverip: storage-tm.softvision.ro
   mountpoint: "/mnt/BackupSynk"
   path: "$PATH:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
   command:
@@ -52,7 +52,7 @@ backup:
 db:
   mysql:
     type: mysql
-    port: 13306
+    port: 3306
     connect:
       host: localhost
       user: root
@@ -79,7 +79,7 @@ db:
 stacksON:
   repo: git@github.com:sugarcrm/stacks.git
   path: ~/git-repo/stacks/vagrant-on
-  stack: oracle12c
+  stack: php56
 
 day:
   on:
