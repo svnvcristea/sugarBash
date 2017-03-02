@@ -469,7 +469,6 @@ EOL
 );
 EOL
             dbOracle setRoot
-            sqlPlusCLI "DROP DATABASE IF EXISTS ${db}; DROP USER ${db} CASCADE;"
         ;;
 
         'configOverride')
@@ -499,14 +498,15 @@ EOL
 EOL
                 fi
             else
+                echo "$installHtml" > /tmp/${repoName}_installation_fail.html
                 echo "-> cat install.log"
-                cat ${rootPath}/${repoName}/install.log
+                cat ${rootPath}/${repoName}/install.log; echo
                 draw -
                 echo "-> cat sugarcrm.log"
                 cat ${rootPath}/${repoName}/sugarcrm.log
                 draw -
                 echo "-> cat /tmp/${repoName}_installation_fail.html"
-                echo "$installHtml" > /tmp/${repoName}_installation_fail.html
+                cat /tmp/${repoName}_installation_fail.html
                 draw -
                 error "Installation failed! Please refer install.log, sugarcrm.log and /tmp/${repoName}_installation_fail.html"
             fi
@@ -837,7 +837,6 @@ sqlPlusCLI()
 
 sqlPlusDropUser()
 {
-    sqlPlusCLI "DROP ROLE ${1};"
     sqlPlusCLI "DROP USER ${1} CASCADE;"
     sqlPlusCLI "DROP TABLESPACE ${1} INCLUDING CONTENTS AND DATAFILES CASCADE CONSTRAINTS;"
 }
@@ -879,9 +878,10 @@ dbOracle()
             setYmlVal "_db_oracle_setRoot_user" "dbOracleSetRootUser"
             setYmlVal "_db_oracle_setRoot_pass" "dbOracleSetRootPass"
 
-            query+="CREATE USER ${dbOracleSetRootUser} IDENTIFIED BY ${dbOracleSetRootUser} "
-            query+="DEFAULT TABLESPACE users TEMPORARY TABLESPACE temp QUOTA UNLIMITED ON users; "
-            query+="GRANT CONNECT, RESOURCE, DBA, CREATE DATABASE LINK, CREATE PUBLIC SYNONYM, CREATE SYNONYM, "
+            query="CREATE USER ${dbOracleSetRootUser} IDENTIFIED BY ${dbOracleSetRootUser} "
+            query+="DEFAULT TABLESPACE users TEMPORARY TABLESPACE temp QUOTA UNLIMITED ON users;"
+            sqlPlusCLI "${query}"
+            query="GRANT CONNECT, RESOURCE, DBA, CREATE DATABASE LINK, CREATE PUBLIC SYNONYM, CREATE SYNONYM, "
             query+="CREATE TYPE, CREATE MATERIALIZED VIEW, CREATE ROLE, CREATE TABLE, CREATE VIEW, CREATE PROCEDURE, "
             query+="CREATE SEQUENCE, CREATE TRIGGER TO ${dbOracleSetRootUser};"
             sqlPlusCLI "${query}"
