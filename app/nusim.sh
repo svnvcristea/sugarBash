@@ -95,9 +95,6 @@ newsim()
             gitMango postCheckout
 
             nusim -V
-            if [ "$ME" == 'vagrant' ]; then
-                cmd="echo \"${cmd}\" | sudo su -"
-            fi
             tailPidCmd "${cmd}" "${tmp}/nusim.log"
 
             local sleepCount=0
@@ -334,5 +331,5 @@ nusimCpFullBuild() {
     cp ${tmp}/repo/refinery/build/* ${tmp}/builds/refinery/${1}
     secho "ls -la ${tmp}/builds/refinery/${1}" 'menu'
     ls -la ${tmp}/builds/refinery/${1}
-    rm -rf ${tmp}/repo/refinery/build/
+    sudo rm -rf ${tmp}/repo/refinery/build/
 }

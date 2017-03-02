@@ -428,7 +428,7 @@ xbuild()
     'setup_site_url' => 'http://${buildUrl}',
 
     'default_currency_iso4217' => 'USD',
-    'default_currency_name' => 'US Dollar',
+    'default_currency_name' => 'US Dollars',
     'default_currency_significant_digits' => '2',
     'default_currency_symbol' => '$',
     'default_date_format' => 'Y-m-d',
